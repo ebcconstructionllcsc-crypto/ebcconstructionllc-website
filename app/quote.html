@@ -1,1 +1,215 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>EBC Quote & Plan Builder</title><meta name="theme-color" content="#11110f"><link rel="icon" href="../assets/images/logo.png"><link rel="stylesheet" href="quote.css"></head><body><header class="top"><a href="index.html" class="back">← EBC Manager</a><div><span>EBC Construction LLC</span><h1>Quote & Plan Builder</h1></div><button id="print-btn">Print / Save PDF</button></header><main><section class="editor"><div class="grid"><label>Quote number<input id="quote-number"></label><label>Date<input id="quote-date" type="date"></label><label>Valid through<input id="valid-through" type="date"></label><label>Status<select id="quote-status"><option>Draft</option><option>Sent</option><option>Accepted</option><option>Declined</option></select></label></div><h2>Client</h2><div class="grid"><label>Client name<input id="client-name"></label><label>Phone<input id="client-phone" inputmode="tel"></label><label>Email<input id="client-email" type="email"></label><label>Project address<input id="project-address"></label></div><h2>Project plan</h2><div class="plan-controls"><label>Shape<select id="plan-shape"><option value="rectangle">Rectangle</option><option value="lshape">L shape</option></select></label><label>Overall length A (ft)<input id="plan-a" type="number" step="0.1" value="30"></label><label>Overall width B (ft)<input id="plan-b" type="number" step="0.1" value="20"></label><label class="l-only">Cutout width C (ft)<input id="plan-c" type="number" step="0.1" value="10"></label><label class="l-only">Cutout depth D (ft)<input id="plan-d" type="number" step="0.1" value="8"></label><label>Thickness (in)<input id="thickness" type="number" step="0.01" value="4"></label><label>Finish<select id="plan-finish"><option>Broom finish</option><option>Smooth finish</option><option>Stamped concrete</option><option>Gravel / base</option></select></label></div><div class="plan-actions"><button id="view-2d" type="button" class="secondary active">2D plan</button><button id="view-3d" type="button" class="secondary">3D view</button><button id="use-plan-area" type="button">Use area in quote</button></div><div class="plan-stage"><canvas id="plan-canvas" width="900" height="520" aria-label="Project plan preview"></canvas></div><div class="measurements plan-metrics"><div class="calc-card"><span>Plan area</span><strong id="area">0 sq ft</strong></div><div class="calc-card"><span>Concrete</span><strong id="yards">0 yd³</strong></div><div class="calc-card"><span>Perimeter</span><strong id="perimeter">0 linear ft</strong></div></div><input id="length" type="hidden"><input id="width" type="hidden"><h2>Line items</h2><div class="line-head"><span>Description</span><span>Qty</span><span>Unit</span><span>Rate</span><span>Total</span><span></span></div><div id="items"></div><button id="add-item" class="secondary">+ Add item</button><h2>Terms and notes</h2><textarea id="notes" rows="7">Scope and specifications will be confirmed before work begins. Price may change if site conditions, access, quantities, materials or requested changes differ from the information provided. Warranty coverage and exclusions will be explained in writing for the specific project. The included plan and 3D view are conceptual sales illustrations and are not engineering, architectural, permit or survey drawings.</textarea><div class="totals-edit"><label>Discount<input id="discount" type="number" step="0.01" value="0"></label><label>Tax %<input id="tax" type="number" step="0.01" value="0"></label><label>Deposit required<input id="deposit" type="number" step="0.01" value="0"></label></div><div class="actions"><button id="save-btn">Save draft</button><button id="new-btn" class="secondary">New quote</button></div></section><aside class="preview" id="quote-preview"><div class="paper"><div class="brand-row"><img src="../assets/images/logo.png" alt="EBC Construction LLC"><div><h2>PROJECT QUOTE</h2><p id="p-number"></p></div></div><div class="company"><strong>EBC Construction LLC</strong><span>Greer, South Carolina</span><span>(864) 450-2954</span><span>ebcconstructionllcsc@gmail.com</span></div><div class="meta"><div><small>PREPARED FOR</small><strong id="p-client">Client name</strong><span id="p-contact"></span><span id="p-address"></span></div><div><small>QUOTE DETAILS</small><span id="p-date"></span><span id="p-valid"></span><span id="p-status"></span></div></div><div class="measurement-summary" id="measurement-summary"></div><section class="quote-plan"><div class="quote-plan-head"><small>CONCEPT PLAN & 3D PREVIEW</small><span id="p-plan-label"></span></div><canvas id="quote-plan-canvas" width="900" height="420"></canvas><p>Conceptual illustration only. Final dimensions, elevations, drainage, reinforcement and field conditions must be verified before construction.</p></section><table><thead><tr><th>Description</th><th>Qty</th><th>Unit</th><th>Rate</th><th>Total</th></tr></thead><tbody id="p-items"></tbody></table><div class="summary"><div><small>PROJECT NOTES</small><p id="p-notes"></p></div><div class="amounts"><p><span>Subtotal</span><strong id="p-subtotal">$0.00</strong></p><p><span>Discount</span><strong id="p-discount">$0.00</strong></p><p><span>Tax</span><strong id="p-tax">$0.00</strong></p><p class="grand"><span>Total</span><strong id="p-total">$0.00</strong></p><p><span>Deposit</span><strong id="p-deposit">$0.00</strong></p><p><span>Balance</span><strong id="p-balance">$0.00</strong></p></div></div><div class="signature"><div>Client acceptance: __________________________</div><div>Date: __________________</div></div><footer>Thank you for the opportunity to quote your project.</footer></div></aside></main><script src="quote.js"></script><script src="plan.js"></script></body></html>
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Cotizador y plano | EBC Manager</title>
+  <meta name="theme-color" content="#11110f">
+  <link rel="icon" href="../assets/images/logo.png">
+  <link rel="apple-touch-icon" href="../assets/images/logo.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="quote.css">
+</head>
+<body>
+  <div id="auth-check" class="auth-check">Verificando acceso privado…</div>
+
+  <div id="quote-app" hidden>
+    <header class="top">
+      <a href="index.html" class="back">← EBC Manager</a>
+      <div><span>EBC Construction LLC</span><h1>Cotizador y plano</h1></div>
+      <button id="print-btn">Imprimir / Guardar PDF</button>
+    </header>
+
+    <main>
+      <section class="editor">
+        <div class="quote-tools-note">
+          <strong>Cotización profesional</strong>
+          <span>Completa la información, revisa el documento y guárdalo como PDF para enviarlo al cliente.</span>
+        </div>
+
+        <div class="grid">
+          <label>Número de cotización<input id="quote-number"></label>
+          <label>Fecha<input id="quote-date" type="date"></label>
+          <label>Válida hasta<input id="valid-through" type="date"></label>
+          <label>Estado
+            <select id="quote-status">
+              <option value="Draft">Borrador</option>
+              <option value="Sent">Enviada</option>
+              <option value="Accepted">Aceptada</option>
+              <option value="Declined">Rechazada</option>
+            </select>
+          </label>
+          <label class="wide">Idioma del documento
+            <select id="quote-language">
+              <option value="en">English</option>
+              <option value="es">Español</option>
+            </select>
+          </label>
+        </div>
+
+        <h2>Cliente</h2>
+        <div class="grid">
+          <label>Nombre<input id="client-name"></label>
+          <label>Teléfono<input id="client-phone" inputmode="tel"></label>
+          <label>Correo electrónico<input id="client-email" type="email"></label>
+          <label>Dirección del proyecto<input id="project-address"></label>
+        </div>
+
+        <h2>Plano del proyecto</h2>
+        <div class="plan-controls">
+          <label>Forma
+            <select id="plan-shape">
+              <option value="rectangle">Rectángulo</option>
+              <option value="lshape">Forma L</option>
+            </select>
+          </label>
+          <label>Largo total A (ft)<input id="plan-a" type="number" step="0.1" value="30"></label>
+          <label>Ancho total B (ft)<input id="plan-b" type="number" step="0.1" value="20"></label>
+          <label class="l-only">Ancho del recorte C (ft)<input id="plan-c" type="number" step="0.1" value="10"></label>
+          <label class="l-only">Profundidad del recorte D (ft)<input id="plan-d" type="number" step="0.1" value="8"></label>
+          <label>Espesor (in)<input id="thickness" type="number" step="0.01" value="4"></label>
+          <label>Acabado
+            <select id="plan-finish">
+              <option value="Broom finish">Broom finish</option>
+              <option value="Smooth finish">Acabado liso</option>
+              <option value="Stamped concrete">Concreto estampado</option>
+              <option value="Gravel / base">Grava / base</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="plan-actions">
+          <button id="view-2d" type="button" class="secondary active">Plano 2D</button>
+          <button id="view-3d" type="button" class="secondary">Vista 3D</button>
+          <button id="use-plan-area" type="button">Usar área en la cotización</button>
+        </div>
+
+        <div class="plan-stage">
+          <canvas id="plan-canvas" width="900" height="520" aria-label="Vista previa del plano"></canvas>
+        </div>
+        <div class="measurements plan-metrics">
+          <div class="calc-card"><span>Área del plano</span><strong id="area">0 sq ft</strong></div>
+          <div class="calc-card"><span>Concreto</span><strong id="yards">0 yd³</strong></div>
+          <div class="calc-card"><span>Perímetro</span><strong id="perimeter">0 linear ft</strong></div>
+        </div>
+        <input id="length" type="hidden">
+        <input id="width" type="hidden">
+
+        <h2>Conceptos y precios</h2>
+        <div class="line-head">
+          <span>Descripción</span><span>Cantidad</span><span>Unidad</span><span>Precio</span><span>Total</span><span></span>
+        </div>
+        <div id="items"></div>
+        <button id="add-item" class="secondary">+ Agregar concepto</button>
+
+        <h2>Términos y notas</h2>
+        <textarea id="notes" rows="9"></textarea>
+
+        <h2>Pagos</h2>
+        <p class="section-help">La estructura predeterminada de EBC es 30% / 45% / 25%. Puedes modificarla según el alcance del proyecto.</p>
+        <div class="totals-edit">
+          <label>Descuento<input id="discount" type="number" step="0.01" value="0"></label>
+          <label>Impuesto %<input id="tax" type="number" step="0.01" value="0"></label>
+          <label>Primer pago %<input id="payment-1" type="number" step="0.01" value="30"></label>
+          <label>Segundo pago %<input id="payment-2" type="number" step="0.01" value="45"></label>
+          <label>Pago final %<input id="payment-3" type="number" step="0.01" value="25"></label>
+        </div>
+        <p id="payment-warning" class="payment-warning" aria-live="polite"></p>
+
+        <div class="actions">
+          <button id="save-btn">Guardar borrador</button>
+          <button id="new-btn" class="secondary">Nueva cotización</button>
+        </div>
+      </section>
+
+      <aside class="preview" id="quote-preview">
+        <div class="paper">
+          <div class="brand-row">
+            <img src="../assets/images/logo.png" alt="EBC Construction LLC">
+            <div><h2 id="p-document-title">PROJECT QUOTE</h2><p id="p-number"></p></div>
+          </div>
+
+          <div class="company">
+            <strong>EBC Construction LLC</strong>
+            <span>Greer, South Carolina</span>
+            <span>(864) 450-2954</span>
+            <span>ebcconstructionllcsc@gmail.com</span>
+          </div>
+
+          <div class="meta">
+            <div>
+              <small id="p-prepared-label">PREPARED FOR</small>
+              <strong id="p-client">Client name</strong>
+              <span id="p-contact"></span>
+              <span id="p-address"></span>
+            </div>
+            <div>
+              <small id="p-details-label">QUOTE DETAILS</small>
+              <span id="p-date"></span>
+              <span id="p-valid"></span>
+              <span id="p-status"></span>
+            </div>
+          </div>
+
+          <div class="measurement-summary" id="measurement-summary"></div>
+
+          <section class="quote-plan">
+            <div class="quote-plan-head">
+              <small id="p-plan-title">CONCEPT PLAN & 3D PREVIEW</small>
+              <span id="p-plan-label"></span>
+            </div>
+            <canvas id="quote-plan-canvas" width="900" height="420"></canvas>
+            <p id="p-plan-disclaimer"></p>
+          </section>
+
+          <table>
+            <thead>
+              <tr>
+                <th id="p-col-description">Description</th>
+                <th id="p-col-qty">Qty</th>
+                <th id="p-col-unit">Unit</th>
+                <th id="p-col-rate">Rate</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody id="p-items"></tbody>
+          </table>
+
+          <div class="summary">
+            <div>
+              <small id="p-notes-label">PROJECT NOTES</small>
+              <p id="p-notes"></p>
+            </div>
+            <div class="amounts">
+              <p><span id="p-subtotal-label">Subtotal</span><strong id="p-subtotal">$0.00</strong></p>
+              <p><span id="p-discount-label">Discount</span><strong id="p-discount">$0.00</strong></p>
+              <p><span id="p-tax-label">Tax</span><strong id="p-tax">$0.00</strong></p>
+              <p class="grand"><span>Total</span><strong id="p-total">$0.00</strong></p>
+            </div>
+          </div>
+
+          <section class="payment-schedule">
+            <small id="p-payment-title">PAYMENT SCHEDULE</small>
+            <div>
+              <p><span id="p-payment-1-label">Initial payment</span><strong id="p-payment-1">$0.00</strong></p>
+              <p><span id="p-payment-2-label">Second payment</span><strong id="p-payment-2">$0.00</strong></p>
+              <p><span id="p-payment-3-label">Final payment</span><strong id="p-payment-3">$0.00</strong></p>
+            </div>
+          </section>
+
+          <p id="p-approval-note" class="approval-note"></p>
+          <div class="signature">
+            <div id="p-signature">Client acknowledgment: __________________________</div>
+            <div id="p-signature-date">Date: __________________</div>
+          </div>
+          <footer id="p-footer">Thank you for the opportunity to quote your project.</footer>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="quote.js"></script>
+  <script src="plan.js"></script>
+</body>
+</html>
