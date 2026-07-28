@@ -76,6 +76,8 @@ alter table public.project_files enable row level security;
 -- Public website may submit new estimate requests only.
 drop policy if exists "public can create leads" on public.leads;
 create policy "public can create leads" on public.leads for insert to anon with check (source = 'website');
+drop policy if exists "public can add estimate file metadata" on public.project_files;
+create policy "public can add estimate file metadata" on public.project_files for insert to anon with check (lead_id is not null and project_id is null and uploaded_by is null and storage_path like 'incoming/%');
 
 -- Signed-in EBC staff can manage all CRM records.
 drop policy if exists "authenticated manage leads" on public.leads;
