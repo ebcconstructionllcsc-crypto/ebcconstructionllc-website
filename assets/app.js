@@ -6,17 +6,18 @@ const syncHeader = () => bar?.classList.toggle('scrolled', window.scrollY > 30);
 syncHeader();
 window.addEventListener('scroll', syncHeader, { passive: true });
 
-menu?.addEventListener('click', () => {
-  const open = links.classList.toggle('open');
-  menu.setAttribute('aria-expanded', String(open));
-  document.body.style.overflow = open ? 'hidden' : '';
-});
+const setMenu = (open) => {
+  links?.classList.toggle('open', open);
+  menu?.setAttribute('aria-expanded', String(open));
+  menu?.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+  if (menu) menu.textContent = open ? '×' : '☰';
+  document.body.classList.toggle('menu-open', open);
+};
 
-links?.querySelectorAll('a').forEach((link) => {
-  link.addEventListener('click', () => {
-    links.classList.remove('open');
-    document.body.style.overflow = '';
-  });
+menu?.addEventListener('click', () => setMenu(!links?.classList.contains('open')));
+links?.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => setMenu(false)));
+window.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape') setMenu(false);
 });
 
 const currentPage = location.pathname.split('/').pop() || 'index.html';
@@ -42,7 +43,10 @@ const heroVideo = document.querySelector('.hero video');
 if (heroVideo) {
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const saveData = navigator.connection?.saveData;
-  if (reduceMotion || saveData) heroVideo.removeAttribute('autoplay');
+  if (reduceMotion || saveData) {
+    heroVideo.pause();
+    heroVideo.removeAttribute('autoplay');
+  }
 }
 
 const form = document.querySelector('#estimate-form');
