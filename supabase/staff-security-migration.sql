@@ -1,7 +1,7 @@
--- EBC Manager database setup
--- Run this entire file once in Supabase Dashboard > SQL Editor for a new project.
-
-create extension if not exists pgcrypto;
+-- EBC Manager staff authorization and audit migration
+-- Use this file for an existing Supabase project that already ran schema.sql.
+-- Run it in Supabase Dashboard > SQL Editor, then bootstrap the first administrator
+-- using the statement at the bottom of this file.
 
 create table if not exists public.staff_profiles (
   user_id uuid primary key references auth.users(id) on delete cascade,
@@ -10,62 +10,6 @@ create table if not exists public.staff_profiles (
   is_active boolean not null default true,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
-);
-
-create table if not exists public.leads (
-  id uuid primary key default gen_random_uuid(),
-  name text not null,
-  phone text not null,
-  email text,
-  address text,
-  service text,
-  message text,
-  preferred_timing text,
-  status text not null default 'new' check (status in ('new','contacted','estimate_scheduled','quoted','won','lost')),
-  estimated_value numeric(12,2),
-  source text not null default 'website',
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
-);
-
-create table if not exists public.clients (
-  id uuid primary key default gen_random_uuid(),
-  name text not null,
-  phone text,
-  email text,
-  address text,
-  notes text,
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
-);
-
-create table if not exists public.projects (
-  id uuid primary key default gen_random_uuid(),
-  client_id uuid references public.clients(id) on delete set null,
-  name text not null,
-  service text,
-  status text not null default 'planning' check (status in ('planning','scheduled','in_progress','on_hold','completed','cancelled')),
-  address text,
-  start_date date,
-  end_date date,
-  contract_value numeric(12,2),
-  notes text,
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now(),
-  check (end_date is null or start_date is null or end_date >= start_date)
-);
-
-create table if not exists public.project_files (
-  id uuid primary key default gen_random_uuid(),
-  project_id uuid references public.projects(id) on delete cascade,
-  lead_id uuid references public.leads(id) on delete cascade,
-  file_name text not null,
-  storage_path text not null,
-  mime_type text,
-  size_bytes bigint check (size_bytes is null or size_bytes >= 0),
-  uploaded_by uuid references auth.users(id) on delete set null,
-  created_at timestamptz not null default now(),
-  check (not (project_id is not null and lead_id is not null))
 );
 
 create table if not exists public.audit_log (
@@ -78,17 +22,6 @@ create table if not exists public.audit_log (
   after_data jsonb,
   created_at timestamptz not null default now()
 );
-
-create or replace function public.set_updated_at()
-returns trigger
-language plpgsql
-set search_path = public
-as $$
-begin
-  new.updated_at = now();
-  return new;
-end;
-$$;
 
 create or replace function public.is_active_staff(check_user uuid default auth.uid())
 returns boolean
@@ -148,28 +81,13 @@ $$;
 
 revoke all on function public.write_audit_log() from public;
 
--- Updated-at triggers.
+-- Reuse the existing set_updated_at function from schema.sql.
 drop trigger if exists staff_profiles_set_updated_at on public.staff_profiles;
 create trigger staff_profiles_set_updated_at
 before update on public.staff_profiles
 for each row execute function public.set_updated_at();
 
-drop trigger if exists leads_set_updated_at on public.leads;
-create trigger leads_set_updated_at
-before update on public.leads
-for each row execute function public.set_updated_at();
-
-drop trigger if exists clients_set_updated_at on public.clients;
-create trigger clients_set_updated_at
-before update on public.clients
-for each row execute function public.set_updated_at();
-
-drop trigger if exists projects_set_updated_at on public.projects;
-create trigger projects_set_updated_at
-before update on public.projects
-for each row execute function public.set_updated_at();
-
--- Append-only audit triggers.
+-- Audit the existing core records.
 drop trigger if exists leads_write_audit on public.leads;
 create trigger leads_write_audit
 after insert or update or delete on public.leads
@@ -191,13 +109,9 @@ after insert or update or delete on public.project_files
 for each row execute function public.write_audit_log();
 
 alter table public.staff_profiles enable row level security;
-alter table public.leads enable row level security;
-alter table public.clients enable row level security;
-alter table public.projects enable row level security;
-alter table public.project_files enable row level security;
 alter table public.audit_log enable row level security;
 
--- Staff profile access. The first admin must be inserted from the SQL editor.
+-- Staff profile policies.
 drop policy if exists "staff read own profile" on public.staff_profiles;
 create policy "staff read own profile"
 on public.staff_profiles for select to authenticated
@@ -209,23 +123,12 @@ on public.staff_profiles for all to authenticated
 using (public.is_admin_staff())
 with check (public.is_admin_staff());
 
--- Public website may submit new estimate requests only.
-drop policy if exists "public can create leads" on public.leads;
-create policy "public can create leads"
-on public.leads for insert to anon
-with check (source = 'website');
+drop policy if exists "active staff read audit log" on public.audit_log;
+create policy "active staff read audit log"
+on public.audit_log for select to authenticated
+using (public.is_active_staff());
 
-drop policy if exists "public can add estimate file metadata" on public.project_files;
-create policy "public can add estimate file metadata"
-on public.project_files for insert to anon
-with check (
-  lead_id is not null
-  and project_id is null
-  and uploaded_by is null
-  and storage_path like 'incoming/%'
-);
-
--- Only explicitly approved EBC staff can manage private records.
+-- Replace broad authenticated policies with approved-staff policies.
 drop policy if exists "authenticated manage leads" on public.leads;
 drop policy if exists "active staff manage leads" on public.leads;
 create policy "active staff manage leads"
@@ -254,33 +157,7 @@ on public.project_files for all to authenticated
 using (public.is_active_staff())
 with check (public.is_active_staff());
 
-drop policy if exists "active staff read audit log" on public.audit_log;
-create policy "active staff read audit log"
-on public.audit_log for select to authenticated
-using (public.is_active_staff());
-
-insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
-values (
-  'project-files',
-  'project-files',
-  false,
-  52428800,
-  array[
-    'image/jpeg',
-    'image/png',
-    'image/webp',
-    'image/heic',
-    'video/mp4',
-    'video/quicktime',
-    'application/pdf'
-  ]
-)
-on conflict (id) do update
-set public = false,
-    file_size_limit = excluded.file_size_limit,
-    allowed_mime_types = excluded.allowed_mime_types;
-
--- Approved staff storage access.
+-- Replace storage policies with approved-staff checks.
 drop policy if exists "staff upload project files" on storage.objects;
 create policy "staff upload project files"
 on storage.objects for insert to authenticated
@@ -302,29 +179,21 @@ create policy "staff delete project files"
 on storage.objects for delete to authenticated
 using (bucket_id = 'project-files' and public.is_active_staff());
 
--- Public website uploads into a limited incoming folder. It cannot read that folder.
-drop policy if exists "public upload estimate photos" on storage.objects;
-create policy "public upload estimate photos"
-on storage.objects for insert to anon
-with check (
-  bucket_id = 'project-files'
-  and (storage.foldername(name))[1] = 'incoming'
-);
-
-create index if not exists leads_status_created_at_idx
-on public.leads (status, created_at desc);
-
-create index if not exists clients_name_idx
-on public.clients (name);
-
-create index if not exists projects_status_start_date_idx
-on public.projects (status, start_date);
-
-create index if not exists project_files_project_id_idx
-on public.project_files (project_id);
-
-create index if not exists project_files_lead_id_idx
-on public.project_files (lead_id);
+-- Harden site_media when that migration has already been installed.
+do $$
+begin
+  if to_regclass('public.site_media') is not null then
+    execute 'alter table public.site_media enable row level security';
+    execute 'drop policy if exists "public read active site media" on public.site_media';
+    execute 'create policy "public read active site media" on public.site_media for select to anon, authenticated using (is_active = true or public.is_active_staff())';
+    execute 'drop policy if exists "authenticated manage site media" on public.site_media';
+    execute 'drop policy if exists "active staff manage site media" on public.site_media';
+    execute 'create policy "active staff manage site media" on public.site_media for all to authenticated using (public.is_active_staff()) with check (public.is_active_staff())';
+    execute 'drop trigger if exists site_media_write_audit on public.site_media';
+    execute 'create trigger site_media_write_audit after insert or update or delete on public.site_media for each row execute function public.write_audit_log()';
+  end if;
+end;
+$$;
 
 create index if not exists audit_log_created_at_idx
 on public.audit_log (created_at desc);
@@ -332,7 +201,8 @@ on public.audit_log (created_at desc);
 create index if not exists audit_log_record_idx
 on public.audit_log (table_name, record_id, created_at desc);
 
--- Bootstrap the first administrator after creating the user in Authentication:
+-- REQUIRED: bootstrap the first administrator after this migration.
+-- Replace YOUR_ADMIN_EMAIL with the email of an existing Supabase Auth user.
 --
 -- insert into public.staff_profiles (user_id, display_name, role)
 -- select id, coalesce(raw_user_meta_data ->> 'full_name', email), 'admin'

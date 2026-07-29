@@ -14,6 +14,10 @@ function read(relativePath) {
   return fs.readFileSync(path.join(root, relativePath), 'utf8');
 }
 
+function compact(content) {
+  return content.replace(/\s+/g, ' ').trim();
+}
+
 function walk(directory) {
   return fs.readdirSync(directory, { withFileTypes: true }).flatMap(entry => {
     const absolute = path.join(directory, entry.name);
@@ -46,27 +50,64 @@ for (const file of runtimeFiles) {
 }
 
 const schema = read('supabase/schema.sql');
+const schemaOneLine = compact(schema);
 const mediaMigration = read('supabase/site-media-migration.sql');
+const mediaOneLine = compact(mediaMigration);
+const staffMigration = read('supabase/staff-security-migration.sql');
+const staffOneLine = compact(staffMigration);
 
 const requiredSchemaRules = [
-  ['private project-files bucket', /values\s*\(\s*'project-files'\s*,\s*'project-files'\s*,\s*false/i],
+  ['staff profile table', /create table if not exists public\.staff_profiles/i],
+  ['append-only audit table', /create table if not exists public\.audit_log/i],
+  ['approved-staff authorization function', /create or replace function public\.is_active_staff/i],
+  ['private project-files bucket', /values \( 'project-files', 'project-files', false,/i],
+  ['RLS on staff profiles', /alter table public\.staff_profiles enable row level security/i],
   ['RLS on leads', /alter table public\.leads enable row level security/i],
   ['RLS on clients', /alter table public\.clients enable row level security/i],
   ['RLS on projects', /alter table public\.projects enable row level security/i],
   ['RLS on project files', /alter table public\.project_files enable row level security/i],
+  ['RLS on audit log', /alter table public\.audit_log enable row level security/i],
   ['restricted anonymous lead creation', /for insert to anon with check \(source = 'website'\)/i],
-  ['restricted incoming upload folder', /bucket_id='project-files' and \(storage\.foldername\(name\)\)\[1\]='incoming'/i]
+  ['restricted incoming upload folder', /bucket_id = 'project-files' and \(storage\.foldername\(name\)\)\[1\] = 'incoming'/i],
+  ['staff-only lead management', /active staff manage leads.*using \(public\.is_active_staff\(\)\)/i],
+  ['staff-only client management', /active staff manage clients.*using \(public\.is_active_staff\(\)\)/i],
+  ['staff-only project management', /active staff manage projects.*using \(public\.is_active_staff\(\)\)/i],
+  ['staff-only project-file management', /active staff manage files.*using \(public\.is_active_staff\(\)\)/i],
+  ['audit trigger on leads', /create trigger leads_write_audit/i],
+  ['audit trigger on clients', /create trigger clients_write_audit/i],
+  ['audit trigger on projects', /create trigger projects_write_audit/i],
+  ['audit trigger on project files', /create trigger project_files_write_audit/i]
 ];
 
 for (const [label, pattern] of requiredSchemaRules) {
-  if (!pattern.test(schema)) fail(`supabase/schema.sql is missing ${label}`);
+  if (!pattern.test(schemaOneLine)) fail(`supabase/schema.sql is missing ${label}`);
 }
 
-if (!/alter table public\.site_media enable row level security/i.test(mediaMigration)) {
+if (/for all to authenticated using \(true\)/i.test(schemaOneLine)) {
+  fail('supabase/schema.sql contains a broad authenticated manage-all policy');
+}
+
+if (!/alter table public\.site_media enable row level security/i.test(mediaOneLine)) {
   fail('supabase/site-media-migration.sql is missing RLS on site_media');
 }
-if (!/bucket_id = 'project-files' and \(storage\.foldername\(name\)\)\[1\] = 'website'/i.test(mediaMigration)) {
+if (!/active staff manage site media.*using \(public\.is_active_staff\(\)\)/i.test(mediaOneLine)) {
+  fail('site media management is not restricted to approved staff');
+}
+if (!/create trigger site_media_write_audit/i.test(mediaOneLine)) {
+  fail('site media changes are not audited');
+}
+if (!/bucket_id = 'project-files' and \(storage\.foldername\(name\)\)\[1\] = 'website'/i.test(mediaOneLine)) {
   fail('site media public reads are not restricted to the website folder');
+}
+if (/for all to authenticated using \(true\)/i.test(mediaOneLine)) {
+  fail('site media contains a broad authenticated manage-all policy');
+}
+
+if (!/REQUIRED: bootstrap the first administrator/i.test(staffMigration)) {
+  fail('staff-security-migration.sql is missing first-admin bootstrap instructions');
+}
+if (!/public\.is_active_staff\(\)/i.test(staffOneLine)) {
+  fail('staff-security-migration.sql does not enforce approved-staff access');
 }
 
 const quoteHtml = read('app/quote.html');
