@@ -11,13 +11,13 @@ The following values may be present in browser JavaScript:
 - public business contact information;
 - public map and social-media URLs.
 
-The publishable Supabase key is not a secret. Security must come from row-level security policies, storage policies, authentication, approved staff membership, and input validation—not from hiding this key.
+The publishable Supabase key is not a secret. Security must come from row-level security policies, storage policies, authentication, approved staff membership, validated database functions, and input validation—not from hiding this key.
 
 Current browser clients are initialized in:
 
-- `app/app.js`;
-- `app/quote.js`;
-- the public estimate/contact workflow.
+- `assets/app.js` for the public website and estimate intake;
+- `app/app.js` for EBC Manager;
+- `app/quote.js` for quotes.
 
 A future refactor should centralize the project URL and publishable key in one small runtime configuration file so they are not duplicated. That refactor must preserve GitHub Pages compatibility and must not introduce a build step unless the deployment workflow is updated at the same time.
 
@@ -33,6 +33,16 @@ Never commit or expose any of the following in HTML, JavaScript, screenshots, do
 - webhook secrets.
 
 Private values belong in Supabase Edge Function secrets or GitHub Actions secrets and may only be used by trusted server-side code.
+
+## Public estimate intake
+
+Anonymous visitors do not insert arbitrary rows into `public.leads`. The website calls `public.submit_estimate_request`, a security-definer function that validates field lengths, service values, and an idempotent `submission_token` before creating a lead.
+
+The same token is reused when a browser retries an interrupted request, so the server returns the existing lead rather than creating a duplicate. This is duplicate prevention, not full abuse prevention. Production should add a server-verified challenge or rate-limited Edge Function before high-volume advertising campaigns.
+
+Public attachments are limited to eight files in the browser, 15 MB per image, and conservative image formats. Database and storage policies independently restrict metadata, size, MIME type, extension, and the `incoming/<lead-id>/` path. Anonymous users cannot read uploaded files.
+
+A lead is considered received as soon as the validated RPC succeeds. Photo failures are reported separately and do not erase the lead.
 
 ## Staff authorization
 
@@ -62,7 +72,8 @@ Do not store signatures, private credentials, payment-card information, or other
 3. Run the administrator bootstrap statement at the bottom of `schema.sql`.
 4. Run `supabase/site-media-migration.sql`.
 5. Run `supabase/quotes-migration.sql`.
-6. Verify anonymous estimate submission, approved staff access, quote saving, and quote revision creation independently.
+6. Run `supabase/public-intake-hardening.sql`.
+7. Verify anonymous estimate submission, retry deduplication, partial photo failure, approved staff access, quote saving, and quote revision creation independently.
 
 ### Existing project
 
@@ -70,14 +81,16 @@ Do not store signatures, private credentials, payment-card information, or other
 2. Bootstrap the first administrator during the same maintenance session.
 3. Run `supabase/site-media-migration.sql` again to apply staff-only media policies and auditing.
 4. Run `supabase/quotes-migration.sql`.
-5. Confirm row-level security is enabled for every private table.
-6. Confirm the `project-files` bucket is private.
-7. Confirm non-staff authenticated users cannot read CRM data, quotes, quote revisions, or private files.
-8. Confirm inserts, updates, and deletes create `audit_log` records.
-9. Confirm meaningful quote updates increase `revision` and create matching immutable `quote_versions` rows.
+5. Run `supabase/public-intake-hardening.sql`.
+6. Confirm row-level security is enabled for every private table.
+7. Confirm the `project-files` bucket is private.
+8. Confirm non-staff authenticated users cannot read CRM data, quotes, quote revisions, or private files.
+9. Confirm anonymous users cannot insert directly into `leads` or read `incoming/` files.
+10. Confirm inserts, updates, and deletes create `audit_log` records.
+11. Confirm meaningful quote updates increase `revision` and create matching immutable `quote_versions` rows.
 
 Review policies whenever a new table, storage path, role, document type, or customer-facing portal is added.
 
 ## Deployment rule
 
-No deployment should proceed when `npm test` fails. The verification suite checks static references, JavaScript syntax, authentication guards, obvious credential exposure, approved-staff policies, audit requirements, quote versioning, and critical Supabase storage assumptions.
+No deployment should proceed when `npm test` fails. The verification suite checks every public page, JavaScript syntax, authentication guards, obvious credential exposure, validated intake, approved-staff policies, audit requirements, quote versioning, and critical Supabase storage assumptions.

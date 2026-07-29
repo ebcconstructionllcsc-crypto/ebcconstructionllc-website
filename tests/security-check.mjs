@@ -57,6 +57,8 @@ const staffMigration = read('supabase/staff-security-migration.sql');
 const staffOneLine = compact(staffMigration);
 const quotesMigration = read('supabase/quotes-migration.sql');
 const quotesOneLine = compact(quotesMigration);
+const intakeMigration = read('supabase/public-intake-hardening.sql');
+const intakeOneLine = compact(intakeMigration);
 
 const requiredSchemaRules = [
   ['staff profile table', /create table if not exists public\.staff_profiles/i],
@@ -131,6 +133,45 @@ for (const [label, pattern] of requiredQuoteRules) {
 
 if (/for all to authenticated using \(true\)/i.test(quotesOneLine)) {
   fail('quotes migration contains a broad authenticated manage-all policy');
+}
+
+const requiredIntakeRules = [
+  ['idempotent submission token', /add column if not exists submission_token uuid/i],
+  ['unique submission token index', /create unique index if not exists leads_submission_token_uidx/i],
+  ['validated estimate RPC', /create or replace function public\.submit_estimate_request/i],
+  ['security-definer estimate RPC', /security definer/i],
+  ['public RPC execute grant', /grant execute on function public\.submit_estimate_request.*to anon, authenticated/i],
+  ['direct anonymous lead insert removal', /drop policy if exists "public can create leads"/i],
+  ['anonymous lead insert revoke', /revoke insert on public\.leads from anon/i],
+  ['lead-folder metadata binding', /storage_path like 'incoming\/' \|\| lead_id::text \|\| '\/%'/i],
+  ['public attachment size limit', /size_bytes between 1 and 15728640/i],
+  ['public image-only metadata types', /mime_type in \( 'image\/jpeg'.*'image\/avif'/i],
+  ['public image-only storage extensions', /lower\(storage\.extension\(name\)\) in \('jpg','jpeg','png','webp','heic','heif','avif'\)/i]
+];
+
+for (const [label, pattern] of requiredIntakeRules) {
+  if (!pattern.test(intakeOneLine)) fail(`supabase/public-intake-hardening.sql is missing ${label}`);
+}
+
+const publicScript = read('assets/app.js');
+const contactHtml = read('contact.html');
+if (/formsubmit\.co/i.test(contactHtml)) {
+  fail('contact.html still exposes customer submissions to an external form service');
+}
+if (!/\.rpc\('submit_estimate_request'/.test(publicScript)) {
+  fail('public estimate workflow does not use the validated RPC');
+}
+if (!/crypto\.randomUUID\(\)/.test(publicScript)) {
+  fail('public estimate workflow is missing idempotency identifiers');
+}
+if (!/MAX_FILES\s*=\s*8/.test(publicScript) || !/MAX_FILE_BYTES\s*=\s*15 \* 1024 \* 1024/.test(publicScript)) {
+  fail('public estimate workflow is missing conservative attachment limits');
+}
+if (!/failedAttachments/.test(publicScript)) {
+  fail('public estimate workflow can lose the lead when an attachment fails');
+}
+if (!/navigator\.onLine/.test(publicScript)) {
+  fail('public estimate workflow does not report offline submission attempts');
 }
 
 const quoteHtml = read('app/quote.html');
