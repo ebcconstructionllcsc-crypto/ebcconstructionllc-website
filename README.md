@@ -18,9 +18,13 @@ The private application is served from `/app/` and uses Supabase authentication 
 - clients and project tracking;
 - project scheduling;
 - a searchable quote center with status updates, accepted-value reporting, duplication, and direct reopening in the builder;
-- bilingual, cloud-backed quotes with immutable revision history and local recovery;
-- conceptual 2D/3D plan previews;
-- configurable 30% / 45% / 25% payment schedule;
+- bilingual, cloud-backed quotes with revision history and local recovery;
+- conceptual 2D/3D plan previews and touch-friendly freeform concrete takeoffs;
+- concrete, perimeter, order quantity, waste, and gravel-base calculations transferred into quote line items;
+- private AI construction renders from real jobsite photos and contractor-marked work areas;
+- selectable 50% / 50% same-day and 30% / 45% / 25% multi-stage payment schedules;
+- bilingual phase invoices with balance tracking, ACH, Chase Zelle, check, cash, and optional official Chase QuickAccept links;
+- a no-financing/no-open-credit policy without storing bank account or routing numbers;
 - private jobsite files;
 - public website photo and video management.
 
@@ -63,6 +67,8 @@ Run these files in the SQL editor:
 4. `supabase/site-media-migration.sql`
 5. `supabase/quotes-migration.sql`
 6. `supabase/public-intake-hardening.sql`
+7. `supabase/render-migration.sql`
+8. `supabase/invoice-migration.sql`
 
 ### Existing EBC Supabase project
 
@@ -73,9 +79,22 @@ Run:
 3. Run `supabase/site-media-migration.sql` again; it is idempotent and applies the hardened media policies and audit trigger.
 4. Run `supabase/quotes-migration.sql` to enable cloud-backed quotes and immutable revision history.
 5. Run `supabase/public-intake-hardening.sql` to enable validated, deduplicated estimate requests and strict public photo rules.
+6. Run `supabase/render-migration.sql` to enable private render jobs and storage.
+7. Run `supabase/invoice-migration.sql` to enable private invoice history.
 
 **Important:** complete the first-administrator bootstrap in the same maintenance session. Until an active administrator exists in `public.staff_profiles`, authenticated users will not have access to private CRM records or project files.
 
 The quote builder keeps a local recovery copy, but Supabase is the authoritative source after a quote is saved. Each meaningful cloud update creates a numbered immutable snapshot in `quote_versions`.
 
 After migration, verify anonymous estimate submission, duplicate-request retry behavior, partial attachment failure, approved staff access, rejected non-staff access, private-file signed URLs, website media visibility, quote create/update/history behavior, quote-center status changes, and audit-log creation before production use.
+
+## Activate the private render service
+
+The browser never receives the OpenAI API key. Source photos, masks, and outputs use private Supabase buckets scoped to the signed-in user's folder.
+
+1. Add `OPENAI_API_KEY` as a Supabase Edge Function secret.
+2. Optionally set `RENDER_DAILY_LIMIT` and `RENDER_ALLOWED_ORIGINS`.
+3. Deploy `supabase/functions/generate-render` with JWT verification enabled.
+4. Generate one low-quality test render before using final quality regularly.
+
+OpenAI API billing is separate from a ChatGPT subscription. The function uses `gpt-image-2`, blocks duplicate requests with an idempotency key, records request status, and does not automatically retry a render that may already have been billed.

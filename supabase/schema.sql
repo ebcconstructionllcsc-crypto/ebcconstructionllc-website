@@ -340,3 +340,159 @@ on public.audit_log (table_name, record_id, created_at desc);
 -- where email = 'YOUR_ADMIN_EMAIL'
 -- on conflict (user_id) do update
 -- set role = 'admin', is_active = true;
+
+-- Private, auditable AI construction render jobs.
+create table if not exists public.render_jobs (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  project_id uuid references public.projects(id) on delete set null,
+  source_storage_path text not null,
+  mask_storage_path text,
+  output_storage_path text,
+  service text not null,
+  finish text not null,
+  quality text not null check (quality in ('low','high')),
+  status text not null check (status in ('processing','completed','failed')),
+  model text not null,
+  prompt_version text not null,
+  idempotency_key uuid not null,
+  source_bytes bigint,
+  output_bytes bigint,
+  has_mask boolean not null default false,
+  error_code text,
+  request_id text,
+  created_at timestamptz not null default now(),
+  completed_at timestamptz,
+  unique (user_id, idempotency_key)
+);
+
+create index if not exists render_jobs_user_created_idx
+on public.render_jobs (user_id, created_at desc);
+
+create index if not exists render_jobs_project_idx
+on public.render_jobs (project_id, created_at desc);
+
+drop trigger if exists render_jobs_write_audit on public.render_jobs;
+create trigger render_jobs_write_audit
+after insert or update or delete on public.render_jobs
+for each row execute function public.write_audit_log();
+
+alter table public.render_jobs enable row level security;
+revoke all on public.render_jobs from anon, authenticated;
+grant select on public.render_jobs to authenticated;
+
+drop policy if exists "staff read own render jobs" on public.render_jobs;
+create policy "staff read own render jobs"
+on public.render_jobs for select to authenticated
+using (user_id = auth.uid() and public.is_active_staff());
+
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values
+  ('render-inputs', 'render-inputs', false, 12582912, array['image/jpeg','image/png','image/webp']),
+  ('project-renders', 'project-renders', false, 20971520, array['image/jpeg','image/webp'])
+on conflict (id) do update set
+  public = false,
+  file_size_limit = excluded.file_size_limit,
+  allowed_mime_types = excluded.allowed_mime_types;
+
+drop policy if exists "staff upload own render inputs" on storage.objects;
+create policy "staff upload own render inputs"
+on storage.objects for insert to authenticated
+with check (
+  bucket_id = 'render-inputs'
+  and (storage.foldername(name))[1] = auth.uid()::text
+  and public.is_active_staff()
+);
+
+drop policy if exists "staff read own render inputs" on storage.objects;
+create policy "staff read own render inputs"
+on storage.objects for select to authenticated
+using (
+  bucket_id = 'render-inputs'
+  and (storage.foldername(name))[1] = auth.uid()::text
+  and public.is_active_staff()
+);
+
+drop policy if exists "staff delete own render inputs" on storage.objects;
+create policy "staff delete own render inputs"
+on storage.objects for delete to authenticated
+using (
+  bucket_id = 'render-inputs'
+  and (storage.foldername(name))[1] = auth.uid()::text
+  and public.is_active_staff()
+);
+
+drop policy if exists "staff read own project renders" on storage.objects;
+create policy "staff read own project renders"
+on storage.objects for select to authenticated
+using (
+  bucket_id = 'project-renders'
+  and (storage.foldername(name))[1] = auth.uid()::text
+  and public.is_active_staff()
+);
+
+drop policy if exists "staff delete own project renders" on storage.objects;
+create policy "staff delete own project renders"
+on storage.objects for delete to authenticated
+using (
+  bucket_id = 'project-renders'
+  and (storage.foldername(name))[1] = auth.uid()::text
+  and public.is_active_staff()
+);
+
+-- Private invoices and payment tracking. Bank and card numbers are never stored.
+create table if not exists public.invoices (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null default auth.uid() references auth.users(id) on delete cascade,
+  invoice_number text not null,
+  quote_number text,
+  invoice_date date not null,
+  due_date date not null,
+  status text not null default 'Draft' check (status in ('Draft','Sent','Partially paid','Paid','Overdue')),
+  language text not null default 'en' check (language in ('en','es')),
+  client_name text,
+  client_phone text,
+  client_email text,
+  project_address text,
+  project_total numeric(12,2) not null default 0 check (project_total >= 0),
+  payment_schedule numeric[] not null default array[30,45,25]::numeric[] check (cardinality(payment_schedule) = 3),
+  payment_phase text not null check (payment_phase in ('initial','progress','final','custom')),
+  phase_percent numeric(7,2) not null default 0 check (phase_percent >= 0),
+  amount_due numeric(12,2) not null default 0 check (amount_due >= 0),
+  amount_paid numeric(12,2) not null default 0 check (amount_paid >= 0),
+  description text,
+  payment_methods text[] not null default '{}',
+  payment_link text,
+  payment_instructions text,
+  notes text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (user_id, invoice_number)
+);
+
+alter table public.invoices
+add column if not exists payment_schedule numeric[] not null
+default array[30,45,25]::numeric[] check (cardinality(payment_schedule) = 3);
+
+create index if not exists invoices_user_created_idx
+on public.invoices (user_id, created_at desc);
+
+drop trigger if exists invoices_set_updated_at on public.invoices;
+create trigger invoices_set_updated_at
+before update on public.invoices
+for each row execute function public.set_updated_at();
+
+drop trigger if exists invoices_write_audit on public.invoices;
+create trigger invoices_write_audit
+after insert or update or delete on public.invoices
+for each row execute function public.write_audit_log();
+
+alter table public.invoices enable row level security;
+revoke all on public.invoices from anon;
+grant select, insert, update, delete on public.invoices to authenticated;
+
+drop policy if exists "staff manage own invoices" on public.invoices;
+create policy "staff manage own invoices"
+on public.invoices for all to authenticated
+using (user_id = auth.uid() and public.is_active_staff())
+with check (user_id = auth.uid() and public.is_active_staff());

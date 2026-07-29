@@ -19,6 +19,8 @@ const translations = {
     statuses: { Draft: 'Draft', Sent: 'Sent', Accepted: 'Accepted', Declined: 'Declined', Expired: 'Expired' },
     planTitle: 'CONCEPT PLAN & 3D PREVIEW',
     planDisclaimer: 'Conceptual illustration only. Final dimensions, elevations, drainage, reinforcement and field conditions must be verified before construction.',
+    renderTitle: 'CONCEPTUAL PROJECT VISUALIZATION',
+    renderDisclaimer: 'AI-generated conceptual visualization only. Actual construction may vary based on field measurements, site conditions, drainage, materials, permits and the final signed agreement.',
     description: 'Description',
     quantity: 'Qty',
     unit: 'Unit',
@@ -31,6 +33,17 @@ const translations = {
     payment1: 'Initial payment',
     payment2: 'Progress payment',
     payment3: 'Final payment',
+    oneDayPayment1: 'Contract signing deposit — due before scheduling or work begins',
+    oneDayPayment3: 'Final payment — due immediately upon same-day completion',
+    paymentMethodsTitle: 'ACCEPTED PAYMENT METHODS',
+    paymentMethods: {
+      ach: 'ACH / bank transfer',
+      zelle: 'Zelle through Chase',
+      check: 'Company check payable to EBC Construction LLC',
+      cash: 'Cash with receipt',
+      online: 'Official Chase invoice / QuickAccept link'
+    },
+    noFinancing: 'EBC Construction LLC does not offer financing, open credit accounts, or deferred payment plans. Payments are due according to the written payment schedule.',
     approval: 'Approval of this quote does not constitute the final construction contract. After approval, EBC Construction LLC will send a separate Concrete Work Agreement with the project specifications, warranty coverage and exclusions. Work will not begin until that agreement is signed and the required initial payment is received.',
     signature: 'Client acknowledgment: __________________________',
     signatureDate: 'Date: __________________',
@@ -49,6 +62,8 @@ const translations = {
     statuses: { Draft: 'Borrador', Sent: 'Enviada', Accepted: 'Aceptada', Declined: 'Rechazada', Expired: 'Expirada' },
     planTitle: 'PLANO CONCEPTUAL Y VISTA 3D',
     planDisclaimer: 'Ilustración conceptual únicamente. Las dimensiones, elevaciones, drenaje, refuerzo y condiciones del terreno deberán verificarse antes de la construcción.',
+    renderTitle: 'VISUALIZACIÓN CONCEPTUAL DEL PROYECTO',
+    renderDisclaimer: 'Visualización conceptual generada con IA. La construcción real puede variar según medidas de campo, condiciones del terreno, drenaje, materiales, permisos y el acuerdo final firmado.',
     description: 'Descripción',
     quantity: 'Cantidad',
     unit: 'Unidad',
@@ -61,6 +76,17 @@ const translations = {
     payment1: 'Primer pago',
     payment2: 'Segundo pago',
     payment3: 'Pago final',
+    oneDayPayment1: 'Anticipo al firmar — vence antes de programar o comenzar',
+    oneDayPayment3: 'Pago final — vence inmediatamente al terminar el mismo día',
+    paymentMethodsTitle: 'MÉTODOS DE PAGO ACEPTADOS',
+    paymentMethods: {
+      ach: 'ACH / transferencia bancaria',
+      zelle: 'Zelle por medio de Chase',
+      check: 'Cheque a nombre de EBC Construction LLC',
+      cash: 'Efectivo con recibo',
+      online: 'Enlace oficial de Chase invoice / QuickAccept'
+    },
+    noFinancing: 'EBC Construction LLC no ofrece financiamiento, cuentas de crédito abiertas ni pagos aplazados. Los pagos vencen conforme al calendario escrito.',
     approval: 'La aprobación de esta cotización no constituye el contrato final de construcción. Después de la aprobación, EBC Construction LLC enviará un Concrete Work Agreement separado con las especificaciones del proyecto, la cobertura de garantía y sus exclusiones. El trabajo no comenzará hasta que dicho acuerdo esté firmado y se reciba el primer pago requerido.',
     signature: 'Confirmación del cliente: __________________________',
     signatureDate: 'Fecha: __________________',
@@ -71,8 +97,8 @@ const translations = {
 };
 
 const defaultTerms = {
-  en: 'Scope and specifications will be confirmed before work begins. Price may change if site conditions, access, quantities, materials or requested changes differ from the information provided. Approval of this quote is not the final construction contract. After approval, EBC Construction LLC will send a separate Concrete Work Agreement describing the project specifications, payment terms, warranty coverage and exclusions. No work will begin until the agreement is signed and the required initial payment is received. The included plan and 3D view are conceptual sales illustrations and are not engineering, architectural, permit or survey drawings.',
-  es: 'El alcance y las especificaciones se confirmarán antes de comenzar el trabajo. El precio puede cambiar si las condiciones del terreno, el acceso, las cantidades, los materiales o los cambios solicitados difieren de la información proporcionada. La aprobación de esta cotización no es el contrato final de construcción. Después de aprobarla, EBC Construction LLC enviará un Concrete Work Agreement separado con las especificaciones, los términos de pago, la cobertura de garantía y sus exclusiones. Ningún trabajo comenzará hasta que el acuerdo esté firmado y se reciba el primer pago requerido. El plano y la vista 3D incluidos son ilustraciones conceptuales de venta y no son planos de ingeniería, arquitectura, permisos ni levantamientos topográficos.'
+  en: 'Scope and specifications will be confirmed before work begins. Price may change if site conditions, access, quantities, materials or requested changes differ from the information provided. Approval of this quote is not the final construction contract. After approval, EBC Construction LLC will send a separate Concrete Work Agreement describing the project specifications, payment terms, warranty coverage and exclusions. No work will begin until the agreement is signed and the required initial payment is received. EBC Construction LLC does not offer financing, open credit accounts or deferred payment plans. The included plan and 3D view are conceptual sales illustrations and are not engineering, architectural, permit or survey drawings.',
+  es: 'El alcance y las especificaciones se confirmarán antes de comenzar el trabajo. El precio puede cambiar si las condiciones del terreno, el acceso, las cantidades, los materiales o los cambios solicitados difieren de la información proporcionada. La aprobación de esta cotización no es el contrato final de construcción. Después de aprobarla, EBC Construction LLC enviará un Concrete Work Agreement separado con las especificaciones, los términos de pago, la cobertura de garantía y sus exclusiones. Ningún trabajo comenzará hasta que el acuerdo esté firmado y se reciba el primer pago requerido. EBC Construction LLC no ofrece financiamiento, cuentas de crédito abiertas ni pagos aplazados. El plano y la vista 3D incluidos son ilustraciones conceptuales de venta y no son planos de ingeniería, arquitectura, permisos ni levantamientos topográficos.'
 };
 
 const fieldIds = [
@@ -91,15 +117,28 @@ const fieldIds = [
   'plan-c',
   'plan-d',
   'plan-finish',
+  'plan-waste',
+  'base-depth',
+  'plan-grid-size',
+  'plan-points',
+  'plan-closed',
   'length',
   'width',
   'thickness',
   'notes',
   'discount',
   'tax',
+  'payment-template',
   'payment-1',
   'payment-2',
-  'payment-3'
+  'payment-3',
+  'accept-ach',
+  'accept-zelle',
+  'accept-check',
+  'accept-cash',
+  'accept-online',
+  'payment-link',
+  'payment-instructions'
 ];
 
 const statusToDatabase = {
@@ -123,6 +162,7 @@ let savedQuotes = [];
 let quoteTableReady = true;
 let legacyAuthorization = false;
 let localSaveTimer = null;
+let quoteRender = null;
 
 function localDateInput(date = new Date()) {
   const local = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
@@ -167,6 +207,29 @@ function currentLanguage() {
   return $('#quote-language').value === 'es' ? 'es' : 'en';
 }
 
+function selectedPaymentMethods() {
+  return ['ach', 'zelle', 'check', 'cash', 'online'].filter(method => $(`#accept-${method}`).checked);
+}
+
+function inferPaymentTemplate(values) {
+  const schedule = values.map(value => Number(value) || 0);
+  if (schedule.every((value, index) => Math.abs(value - [50, 0, 50][index]) < 0.001)) return 'one-day';
+  if (schedule.every((value, index) => Math.abs(value - [30, 45, 25][index]) < 0.001)) return 'standard';
+  return 'custom';
+}
+
+function applyPaymentTemplate(template) {
+  const schedule = {
+    standard: [30, 45, 25],
+    'one-day': [50, 0, 50]
+  }[template];
+  if (!schedule) return handleChange();
+  schedule.forEach((value, index) => {
+    $(`#payment-${index + 1}`).value = value;
+  });
+  handleChange();
+}
+
 function isMissingRelation(error) {
   const code = String(error?.code || '');
   const message = String(error?.message || '');
@@ -183,6 +246,7 @@ function setSaveStatus(message, type = '') {
 function addItem(data = { description: '', qty: 1, unit: 'sq ft', rate: 0 }) {
   const row = document.createElement('div');
   row.className = 'item-row';
+  if (data.key) row.dataset.takeoffKey = data.key;
   row.innerHTML = `
     <input class="desc" aria-label="Descripción">
     <input class="qty" aria-label="Cantidad" type="number" step="0.01">
@@ -213,12 +277,30 @@ function addItem(data = { description: '', qty: 1, unit: 'sq ft', rate: 0 }) {
 
 function readItems() {
   return [...items.children].map(row => ({
+    key: row.dataset.takeoffKey || '',
     description: row.querySelector('.desc').value.trim(),
     qty: Number(row.querySelector('.qty').value) || 0,
     unit: row.querySelector('.unit').value,
     rate: Number(row.querySelector('.rate').value) || 0
   }));
 }
+
+function applyTakeoffItems(takeoffItems) {
+  takeoffItems.forEach(item => {
+    let row = [...items.children].find(candidate => candidate.dataset.takeoffKey === item.key);
+    if (!row) {
+      addItem(item);
+      row = items.lastElementChild;
+    }
+    row.dataset.takeoffKey = item.key;
+    row.querySelector('.desc').value = item.description;
+    row.querySelector('.qty').value = item.qty;
+    row.querySelector('.unit').value = item.unit;
+  });
+  handleChange();
+}
+
+window.ebcApplyTakeoffItems = applyTakeoffItems;
 
 function calculateTotals() {
   const lineItems = readItems();
@@ -250,6 +332,8 @@ function updatePreviewLanguage(language) {
   $('#p-details-label').textContent = copy.quoteDetails;
   $('#p-plan-title').textContent = copy.planTitle;
   $('#p-plan-disclaimer').textContent = copy.planDisclaimer;
+  $('#p-render-title').textContent = copy.renderTitle;
+  $('#p-render-disclaimer').textContent = copy.renderDisclaimer;
   $('#p-col-description').textContent = copy.description;
   $('#p-col-qty').textContent = copy.quantity;
   $('#p-col-unit').textContent = copy.unit;
@@ -259,6 +343,8 @@ function updatePreviewLanguage(language) {
   $('#p-discount-label').textContent = copy.discount;
   $('#p-tax-label').textContent = copy.tax;
   $('#p-payment-title').textContent = copy.paymentTitle;
+  $('#p-payment-methods-title').textContent = copy.paymentMethodsTitle;
+  $('#p-no-financing').textContent = copy.noFinancing;
   $('#p-approval-note').textContent = copy.approval;
   $('#p-signature').textContent = copy.signature;
   $('#p-signature-date').textContent = copy.signatureDate;
@@ -301,23 +387,47 @@ function update() {
   $('#p-discount').textContent = `-${money(totals.discount)}`;
   $('#p-tax').textContent = money(totals.taxAmount);
   $('#p-total').textContent = money(totals.total);
-  $('#p-payment-1-label').textContent = `${copy.payment1} (${totals.paymentPercentages[0]}%)`;
+  const oneDay = $('#payment-template').value === 'one-day';
+  $('#p-payment-1-label').textContent = `${oneDay ? copy.oneDayPayment1 : copy.payment1} (${totals.paymentPercentages[0]}%)`;
   $('#p-payment-2-label').textContent = `${copy.payment2} (${totals.paymentPercentages[1]}%)`;
-  $('#p-payment-3-label').textContent = `${copy.payment3} (${totals.paymentPercentages[2]}%)`;
+  $('#p-payment-3-label').textContent = `${oneDay ? copy.oneDayPayment3 : copy.payment3} (${totals.paymentPercentages[2]}%)`;
+  $('#p-payment-2-row').hidden = oneDay;
+  $('#p-payment-schedule-grid').classList.toggle('one-day', oneDay);
   $('#p-payment-1').textContent = money(totals.total * totals.paymentPercentages[0] / 100);
   $('#p-payment-2').textContent = money(totals.total * totals.paymentPercentages[1] / 100);
   $('#p-payment-3').textContent = money(totals.total * totals.paymentPercentages[2] / 100);
+  const methods = selectedPaymentMethods();
+  $('#p-payment-methods').textContent = methods.length
+    ? methods.map(method => copy.paymentMethods[method]).join(' · ')
+    : '—';
+  $('#p-payment-instructions').textContent = $('#payment-instructions').value.trim();
 
   if (window.ebcRenderPlan) window.ebcRenderPlan();
 }
 
 function serialize() {
   return {
-    fields: Object.fromEntries(fieldIds.map(id => [id, $(`#${id}`).value])),
+    fields: Object.fromEntries(fieldIds.map(id => {
+      const element = $(`#${id}`);
+      return [id, element.type === 'checkbox' ? element.checked : element.value];
+    })),
     items: readItems(),
     quoteId: currentQuoteId,
     leadId: sourceLeadId
   };
+}
+
+function setQuoteRender(payload) {
+  quoteRender = payload?.image ? payload : null;
+  $('#render-editor-section').hidden = !quoteRender;
+  $('#quote-render-section').hidden = !quoteRender;
+  if (quoteRender) {
+    $('#render-editor-thumb').src = quoteRender.image;
+    $('#p-render-image').src = quoteRender.image;
+  } else {
+    $('#render-editor-thumb').removeAttribute('src');
+    $('#p-render-image').removeAttribute('src');
+  }
 }
 
 function saveLocalDraft(message = true) {
@@ -352,8 +462,18 @@ function load(data, context = {}) {
   }
 
   fieldIds.forEach(id => {
-    if (data?.fields?.[id] != null) $(`#${id}`).value = data.fields[id];
+    if (data?.fields?.[id] == null) return;
+    const element = $(`#${id}`);
+    if (element.type === 'checkbox') element.checked = Boolean(data.fields[id]);
+    else element.value = data.fields[id];
   });
+  if (!['standard', 'one-day', 'custom'].includes(data?.fields?.['payment-template'])) {
+    $('#payment-template').value = inferPaymentTemplate([
+      data?.fields?.['payment-1'],
+      data?.fields?.['payment-2'],
+      data?.fields?.['payment-3']
+    ]);
+  }
 
   items.innerHTML = '';
   const savedItems = data?.items?.length
@@ -366,7 +486,20 @@ function load(data, context = {}) {
   lastDefaultTerms = defaultTerms[currentLanguage()];
   update();
 
-  ['plan-shape', 'plan-a', 'plan-b', 'plan-c', 'plan-d', 'thickness', 'plan-finish'].forEach(id => {
+  [
+    'plan-shape',
+    'plan-a',
+    'plan-b',
+    'plan-c',
+    'plan-d',
+    'thickness',
+    'plan-finish',
+    'plan-waste',
+    'base-depth',
+    'plan-grid-size',
+    'plan-points',
+    'plan-closed'
+  ].forEach(id => {
     $(`#${id}`).dispatchEvent(new Event('input', { bubbles: true }));
   });
 
@@ -390,13 +523,26 @@ function fresh() {
       'plan-c': '10',
       'plan-d': '8',
       'plan-finish': 'Broom finish',
+      'plan-waste': '10',
+      'base-depth': '4',
+      'plan-grid-size': '5',
+      'plan-points': '',
+      'plan-closed': 'false',
       thickness: '4',
       notes: defaultTerms[language],
       discount: '0',
       tax: '0',
+      'payment-template': 'standard',
       'payment-1': '30',
       'payment-2': '45',
-      'payment-3': '25'
+      'payment-3': '25',
+      'accept-ach': true,
+      'accept-zelle': true,
+      'accept-check': true,
+      'accept-cash': true,
+      'accept-online': false,
+      'payment-link': '',
+      'payment-instructions': 'Contact EBC Construction LLC for Zelle, check or bank-transfer instructions. An official Chase invoice link will be included only when online payment is enabled.'
     }
   }, { quoteId: null, leadId: null });
   saveLocalDraft(false);
@@ -605,6 +751,7 @@ async function loadSavedQuote(id) {
       'valid-through': quote.valid_through || ''
     };
 
+    setQuoteRender(null);
     load({ fields, items: quote.line_items || [] }, {
       quoteId: quote.id,
       leadId: quote.lead_id || null
@@ -620,8 +767,16 @@ async function loadSavedQuote(id) {
 
 function bindEvents() {
   fieldIds.forEach(id => {
-    if (id === 'quote-language') return;
+    if (['quote-language', 'payment-template', 'payment-1', 'payment-2', 'payment-3'].includes(id)) return;
     $(`#${id}`).addEventListener('input', handleChange);
+  });
+
+  $('#payment-template').addEventListener('change', event => applyPaymentTemplate(event.currentTarget.value));
+  ['payment-1', 'payment-2', 'payment-3'].forEach(id => {
+    $(`#${id}`).addEventListener('input', () => {
+      $('#payment-template').value = 'custom';
+      handleChange();
+    });
   });
 
   $('#quote-language').addEventListener('change', () => {
@@ -649,10 +804,31 @@ function bindEvents() {
 
   $('#save-btn').addEventListener('click', saveQuote);
 
+  $('#create-invoice-btn').addEventListener('click', () => {
+    const totals = calculateTotals();
+    sessionStorage.setItem('ebc-invoice-from-quote', JSON.stringify({
+      quoteNumber: $('#quote-number').value,
+      language: currentLanguage(),
+      clientName: $('#client-name').value,
+      clientPhone: $('#client-phone').value,
+      clientEmail: $('#client-email').value,
+      projectAddress: $('#project-address').value,
+      projectTotal: totals.total,
+      methods: selectedPaymentMethods(),
+      paymentLink: $('#payment-link').value.trim(),
+      paymentInstructions: $('#payment-instructions').value.trim(),
+      schedule: totals.paymentPercentages
+    }));
+    window.location.href = 'invoice.html';
+  });
+
   $('#new-btn').addEventListener('click', () => {
     if (!confirm('¿Comenzar una cotización nueva? La cotización actual seguirá disponible si ya fue guardada.')) return;
+    setQuoteRender(null);
     fresh();
   });
+
+  $('#remove-render').addEventListener('click', () => setQuoteRender(null));
 
   $('#saved-quotes').addEventListener('change', event => {
     $('#load-quote').disabled = !event.currentTarget.value;
@@ -665,6 +841,16 @@ async function initialize() {
   items = $('#items');
   bindEvents();
   await refreshSavedQuotes({ silent: true });
+
+  const renderPayload = sessionStorage.getItem('ebc-quote-render');
+  if (renderPayload) {
+    sessionStorage.removeItem('ebc-quote-render');
+    try {
+      setQuoteRender(JSON.parse(renderPayload));
+    } catch {
+      setQuoteRender(null);
+    }
+  }
 
   const leadPayload = sessionStorage.getItem('ebc-quote-lead');
   if (leadPayload) {
