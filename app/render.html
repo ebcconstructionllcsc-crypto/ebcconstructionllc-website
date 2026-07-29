@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Render conceptual | EBC Manager</title>
+  <meta name="theme-color" content="#11110f">
+  <link rel="icon" href="../assets/images/logo.png">
+  <link rel="apple-touch-icon" href="../assets/images/logo.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="render.css">
+</head>
+<body>
+  <div id="auth-check" class="auth-check">Verificando acceso privado…</div>
+
+  <div id="render-app" hidden>
+    <header class="top">
+      <a href="index.html" class="back">← EBC Manager</a>
+      <div><span>EBC Construction LLC</span><h1>Vista realista del proyecto</h1></div>
+      <strong class="private-badge">Privado</strong>
+    </header>
+
+    <main>
+      <section class="workspace">
+        <div class="intro">
+          <p class="eyebrow">Antes y después conceptual</p>
+          <h2>Convierte una foto de la propiedad en una idea visual para el cliente</h2>
+          <p>Sube la foto, pinta únicamente el área de trabajo y describe exactamente lo que EBC propone construir.</p>
+        </div>
+
+        <form id="render-form">
+          <div class="step">
+            <span class="step-number">1</span>
+            <div>
+              <h3>Fotografía del sitio</h3>
+              <p>Usa una foto clara, bien iluminada y tomada desde el ángulo que quieres conservar.</p>
+            </div>
+          </div>
+          <label class="upload-zone" id="upload-zone">
+            <input id="source-file" type="file" accept="image/*" required>
+            <strong>Seleccionar fotografía</strong>
+            <span>JPG, PNG o WEBP · se normaliza y elimina la metadata antes de enviarse</span>
+          </label>
+
+          <div id="marking-section" hidden>
+            <div class="step">
+              <span class="step-number">2</span>
+              <div>
+                <h3>Marca el área que debe cambiar</h3>
+                <p>Pinta sobre el driveway, patio, terreno o zona donde irá el trabajo. Lo demás se conserva.</p>
+              </div>
+            </div>
+            <div class="canvas-wrap">
+              <canvas id="photo-canvas" aria-label="Fotografía con área de trabajo marcada"></canvas>
+            </div>
+            <div class="brush-tools">
+              <label>Tamaño del pincel
+                <input id="brush-size" type="range" min="16" max="180" value="70">
+              </label>
+              <button id="clear-mask" type="button" class="secondary">Borrar selección</button>
+              <span id="mask-status" role="status">Todavía no has marcado el área.</span>
+            </div>
+          </div>
+
+          <div class="step">
+            <span class="step-number">3</span>
+            <div>
+              <h3>Define la propuesta</h3>
+              <p>Estos datos guían el material, acabado y límites del render.</p>
+            </div>
+          </div>
+          <div class="form-grid">
+            <label>Proyecto
+              <select id="project-id"><option value="">General / sin proyecto</option></select>
+            </label>
+            <label>Tipo de trabajo
+              <select id="service">
+                <option value="driveway">Driveway de concreto</option>
+                <option value="patio">Patio de concreto</option>
+                <option value="sidewalk">Sidewalk / walkway</option>
+                <option value="slab">Slab de concreto</option>
+                <option value="extension">Extensión de concreto</option>
+                <option value="grading">Grading y preparación</option>
+                <option value="pavers">Pavers</option>
+                <option value="retaining_wall">Retaining wall</option>
+                <option value="landscaping">Landscaping terminado</option>
+              </select>
+            </label>
+            <label>Acabado
+              <select id="finish">
+                <option value="broom">Broom finish</option>
+                <option value="smooth">Smooth finish</option>
+                <option value="stamped">Stamped concrete</option>
+                <option value="exposed">Exposed aggregate</option>
+                <option value="pavers">Pavers</option>
+                <option value="grading">Tierra compactada y nivelada</option>
+                <option value="custom">Personalizado</option>
+              </select>
+            </label>
+            <label>Color o tono
+              <input id="color" maxlength="80" placeholder="Ej. concrete gray, charcoal pavers">
+            </label>
+            <label class="wide">Descripción exacta del alcance
+              <textarea id="scope" minlength="10" maxlength="1200" required rows="5" placeholder="Ej. Extender el driveway 12 ft hacia la derecha, conservar el árbol y conectar al concreto existente con una transición limpia."></textarea>
+            </label>
+            <label>Calidad
+              <select id="quality">
+                <option value="low">Borrador · rápido y económico</option>
+                <option value="high">Final · más detalle y mayor costo</option>
+              </select>
+            </label>
+            <label class="check"><input id="preserve-structures" type="checkbox" checked> Conservar casa, puertas, ventanas, árboles, cercas y propiedades vecinas.</label>
+          </div>
+
+          <div class="notice">
+            <strong>Importante</strong>
+            <p>El resultado es una visualización conceptual para comunicar una idea. No sustituye medidas de campo, diseño de drenaje, ingeniería, permisos, survey ni contrato final.</p>
+            <label class="check"><input id="consent" type="checkbox" required> Confirmo que EBC está autorizado para procesar esta fotografía y que revisaré el resultado antes de mostrárselo al cliente.</label>
+          </div>
+
+          <button id="generate-btn" type="submit" class="primary" disabled>Generar render conceptual</button>
+          <p id="render-status" class="status" role="status" aria-live="polite"></p>
+        </form>
+
+        <section class="history-section">
+          <div>
+            <p class="eyebrow">Historial privado</p>
+            <h2>Renders recientes</h2>
+          </div>
+          <div id="render-history" class="render-history"><p>Cargando renders guardados…</p></div>
+        </section>
+      </section>
+
+      <aside class="result-panel">
+        <div id="empty-result" class="empty-result">
+          <span>Vista previa</span>
+          <h2>El resultado aparecerá aquí</h2>
+          <p>El primer render debe ser de calidad borrador. Cuando el encuadre y el alcance estén correctos, genera la versión final.</p>
+        </div>
+        <section id="render-result" hidden>
+          <div class="result-head">
+            <div><span>Resultado conceptual</span><h2>Antes y después</h2></div>
+            <span id="result-quality"></span>
+          </div>
+          <div class="comparison">
+            <figure><img id="before-image" alt="Fotografía original"><figcaption>Antes</figcaption></figure>
+            <figure><img id="after-image" alt="Render conceptual de la propuesta"><figcaption>Propuesta conceptual</figcaption></figure>
+          </div>
+          <p class="concept-note">Visualización conceptual generada con IA. La construcción real puede variar según mediciones, terreno, drenaje, materiales, permisos y condiciones de obra.</p>
+          <div class="result-actions">
+            <a id="download-render" class="primary" download="ebc-render-conceptual.jpg">Descargar</a>
+            <button id="use-in-quote" type="button" class="secondary">Usar en cotización</button>
+            <button id="new-render" type="button" class="secondary">Crear otro</button>
+          </div>
+        </section>
+      </aside>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="render-core.js"></script>
+  <script src="render.js"></script>
+</body>
+</html>

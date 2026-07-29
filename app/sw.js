@@ -1,12 +1,24 @@
-const CACHE_NAME = 'ebc-manager-v2';
+const CACHE_NAME = 'ebc-manager-v9';
 const APP_SHELL = [
   './',
   './index.html',
   './app.css',
   './app.js',
+  './quotes-center.css',
+  './quotes-center.js',
   './quote.html',
   './quote.css',
+  './quote-cloud.css',
   './quote.js',
+  './invoice.html',
+  './invoice.css',
+  './invoice-core.js',
+  './invoice.js',
+  './render.html',
+  './render.css',
+  './render-core.js',
+  './render.js',
+  './plan-math.js',
   './plan.js',
   './manifest.webmanifest',
   '../assets/images/logo.png'

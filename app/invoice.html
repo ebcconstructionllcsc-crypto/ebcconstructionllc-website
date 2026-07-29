@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Invoice | EBC Manager</title>
+  <meta name="theme-color" content="#11110f">
+  <link rel="icon" href="../assets/images/logo.png">
+  <link rel="apple-touch-icon" href="../assets/images/logo.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="quote.css">
+  <link rel="stylesheet" href="invoice.css">
+</head>
+<body>
+  <div id="auth-check" class="auth-check">Verificando acceso privado…</div>
+
+  <div id="invoice-app" hidden>
+    <header class="top">
+      <a href="index.html" class="back">← EBC Manager</a>
+      <div><span>EBC Construction LLC</span><h1>Invoice y cobro</h1></div>
+      <button id="print-btn">Imprimir / Guardar PDF</button>
+    </header>
+
+    <main>
+      <section class="editor">
+        <div class="quote-tools-note">
+          <strong>Documento de cobro profesional</strong>
+          <span>Genera el invoice, añade un enlace seguro del banco o procesador y conserva el calendario de pago del proyecto.</span>
+        </div>
+
+        <div class="grid">
+          <label>Número de invoice<input id="invoice-number"></label>
+          <label>Número de cotización<input id="quote-number"></label>
+          <label>Fecha<input id="invoice-date" type="date"></label>
+          <label>Vencimiento<input id="due-date" type="date"></label>
+          <label>Estado
+            <select id="invoice-status">
+              <option value="Draft">Borrador</option>
+              <option value="Sent">Enviado</option>
+              <option value="Partially paid">Pago parcial</option>
+              <option value="Paid">Pagado</option>
+              <option value="Overdue">Vencido</option>
+            </select>
+          </label>
+          <label>Idioma
+            <select id="invoice-language"><option value="en">English</option><option value="es">Español</option></select>
+          </label>
+        </div>
+
+        <h2>Cliente y proyecto</h2>
+        <div class="grid">
+          <label>Nombre<input id="client-name"></label>
+          <label>Teléfono<input id="client-phone" inputmode="tel"></label>
+          <label>Correo<input id="client-email" type="email"></label>
+          <label>Dirección del proyecto<input id="project-address"></label>
+        </div>
+
+        <h2>Importe a cobrar</h2>
+        <div class="grid">
+          <label>Total del proyecto<input id="project-total" type="number" min="0" step="0.01"></label>
+          <label>Fase del cobro
+            <select id="payment-phase">
+              <option value="initial">Primer pago</option>
+              <option value="progress">Segundo pago</option>
+              <option value="final">Pago final</option>
+              <option value="custom">Cobro personalizado</option>
+            </select>
+          </label>
+          <label>Porcentaje de esta fase<input id="phase-percent" type="number" min="0" step="0.01"></label>
+          <label>Importe del invoice<input id="amount-due" type="number" min="0" step="0.01"></label>
+          <label>Pago recibido<input id="amount-paid" type="number" min="0" step="0.01" value="0"></label>
+          <label>Saldo pendiente<input id="balance" type="number" readonly></label>
+        </div>
+        <label class="invoice-wide">Descripción del cobro
+          <textarea id="description" rows="4" maxlength="700"></textarea>
+        </label>
+
+        <h2>Cómo puede pagar el cliente</h2>
+        <div class="payment-method-editor">
+          <div class="payment-checks">
+            <label><input id="accept-ach" type="checkbox" checked> ACH / transferencia bancaria</label>
+            <label><input id="accept-zelle" type="checkbox" checked> Zelle por medio de Chase</label>
+            <label><input id="accept-check" type="checkbox" checked> Cheque a nombre de EBC Construction LLC</label>
+            <label><input id="accept-cash" type="checkbox" checked> Efectivo con recibo</label>
+            <label><input id="accept-online" type="checkbox"> Chase invoice / QuickAccept (tarjeta opcional)</label>
+          </div>
+          <label>Enlace seguro creado por Chase
+            <input id="payment-link" type="url" inputmode="url" placeholder="https://…">
+          </label>
+          <label>Instrucciones para el cliente
+            <textarea id="payment-instructions" rows="4" maxlength="500" placeholder="Ej. Para Zelle, cheque o transferencia, comuníquese con EBC."></textarea>
+          </label>
+          <p>Por seguridad, no escribas números de cuenta, routing, tarjeta ni información bancaria privada. Activa QuickAccept solo si deseas aceptar las opciones que Chase muestre al cliente, incluida tarjeta.</p>
+        </div>
+
+        <h2>Notas</h2>
+        <textarea id="notes" rows="5" maxlength="1000"></textarea>
+
+        <div class="actions invoice-actions">
+          <button id="save-btn" type="button">Guardar borrador</button>
+          <button id="copy-message-btn" type="button">Copiar mensaje de cobro</button>
+          <button id="new-btn" type="button" class="secondary">Nuevo invoice</button>
+        </div>
+        <p id="invoice-status-message" class="payment-warning" role="status" aria-live="polite"></p>
+
+        <section class="invoice-history-section">
+          <div><h2>Invoices guardados</h2><span>Selecciona uno para revisar pagos o volver a imprimirlo.</span></div>
+          <div id="invoice-history" class="invoice-history"><p>Cargando historial…</p></div>
+        </section>
+      </section>
+
+      <aside class="preview">
+        <div class="paper invoice-paper">
+          <div class="brand-row">
+            <img src="../assets/images/logo.png" alt="EBC Construction LLC">
+            <div><h2 id="p-title">INVOICE</h2><p id="p-number"></p></div>
+          </div>
+          <div class="company">
+            <strong>EBC Construction LLC</strong>
+            <span>Greer, South Carolina</span>
+            <span>(864) 450-2954</span>
+            <span>ebcconstructionllcsc@gmail.com</span>
+          </div>
+          <div class="meta">
+            <div>
+              <small id="p-bill-to-label">BILL TO</small>
+              <strong id="p-client">Client name</strong>
+              <span id="p-contact"></span>
+              <span id="p-address"></span>
+            </div>
+            <div>
+              <small id="p-details-label">INVOICE DETAILS</small>
+              <span id="p-date"></span>
+              <span id="p-due-date"></span>
+              <span id="p-quote-number"></span>
+              <span id="p-status"></span>
+            </div>
+          </div>
+          <table class="invoice-table">
+            <thead><tr><th id="p-description-label">Description</th><th id="p-amount-label">Amount</th></tr></thead>
+            <tbody><tr><td id="p-description"></td><td id="p-line-amount"></td></tr></tbody>
+          </table>
+          <div class="invoice-balance">
+            <p><span id="p-invoice-amount-label">Invoice amount</span><strong id="p-amount-due"></strong></p>
+            <p><span id="p-paid-label">Payment received</span><strong id="p-amount-paid"></strong></p>
+            <p class="grand"><span id="p-balance-label">BALANCE DUE</span><strong id="p-balance"></strong></p>
+          </div>
+          <section class="payment-methods invoice-methods">
+            <small id="p-payment-methods-title">PAYMENT OPTIONS</small>
+            <p id="p-payment-methods"></p>
+            <p id="p-payment-instructions"></p>
+            <a id="p-payment-link" class="invoice-pay-link" target="_blank" rel="noopener" hidden>PAY SECURELY ONLINE</a>
+            <strong id="p-no-financing"></strong>
+          </section>
+          <section class="invoice-notes">
+            <small id="p-notes-label">NOTES</small>
+            <p id="p-notes"></p>
+          </section>
+          <footer id="p-footer">Thank you for choosing EBC Construction LLC.</footer>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="invoice-core.js"></script>
+  <script src="invoice.js"></script>
+</body>
+</html>
