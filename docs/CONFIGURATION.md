@@ -36,7 +36,7 @@ Private values belong in Supabase Edge Function secrets or GitHub Actions secret
 
 ## Staff authorization
 
-A Supabase Authentication user is not automatically an EBC staff member. Private CRM and storage policies require an active record in `public.staff_profiles`.
+A Supabase Authentication user is not automatically an EBC staff member. Private CRM, quote, and storage policies require an active record in `public.staff_profiles`.
 
 Roles:
 
@@ -45,28 +45,39 @@ Roles:
 
 The first administrator must be bootstrapped from the Supabase SQL editor. Do not leave a production project with an empty `staff_profiles` table after applying the hardened policies, because all private staff access will be denied until the first active administrator exists.
 
+## Quote storage and recovery
+
+Cloud-saved quotes live in `public.quotes`. Each meaningful update creates a numbered snapshot in `public.quote_versions`. The revision table is readable by active staff but cannot be modified directly from the browser.
+
+The quote builder also writes a recovery draft to browser `localStorage`. This protects against accidental refreshes and temporary connectivity problems, but it is not the authoritative business record. After a cloud save succeeds, Supabase and its revision history are the source of truth.
+
+Do not store signatures, private credentials, payment-card information, or other secrets in the local recovery draft.
+
 ## Supabase requirements
 
 ### New project
 
 1. Run `supabase/schema.sql`.
-2. Run `supabase/site-media-migration.sql`.
-3. Create the first user in Supabase Authentication.
-4. Run the administrator bootstrap statement at the bottom of `schema.sql`.
-5. Verify anonymous estimate submission and approved staff access independently.
+2. Create the first user in Supabase Authentication.
+3. Run the administrator bootstrap statement at the bottom of `schema.sql`.
+4. Run `supabase/site-media-migration.sql`.
+5. Run `supabase/quotes-migration.sql`.
+6. Verify anonymous estimate submission, approved staff access, quote saving, and quote revision creation independently.
 
 ### Existing project
 
 1. Run `supabase/staff-security-migration.sql`.
 2. Bootstrap the first administrator during the same maintenance session.
 3. Run `supabase/site-media-migration.sql` again to apply staff-only media policies and auditing.
-4. Confirm row-level security is enabled for every private table.
-5. Confirm the `project-files` bucket is private.
-6. Confirm non-staff authenticated users cannot read CRM data or private files.
-7. Confirm inserts, updates, and deletes create `audit_log` records.
+4. Run `supabase/quotes-migration.sql`.
+5. Confirm row-level security is enabled for every private table.
+6. Confirm the `project-files` bucket is private.
+7. Confirm non-staff authenticated users cannot read CRM data, quotes, quote revisions, or private files.
+8. Confirm inserts, updates, and deletes create `audit_log` records.
+9. Confirm meaningful quote updates increase `revision` and create matching immutable `quote_versions` rows.
 
-Review policies whenever a new table, storage path, role, or customer-facing portal is added.
+Review policies whenever a new table, storage path, role, document type, or customer-facing portal is added.
 
 ## Deployment rule
 
-No deployment should proceed when `npm test` fails. The verification suite checks static references, JavaScript syntax, authentication guards, obvious credential exposure, approved-staff policies, audit requirements, and critical Supabase storage assumptions.
+No deployment should proceed when `npm test` fails. The verification suite checks static references, JavaScript syntax, authentication guards, obvious credential exposure, approved-staff policies, audit requirements, quote versioning, and critical Supabase storage assumptions.

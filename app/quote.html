@@ -9,6 +9,7 @@
   <link rel="apple-touch-icon" href="../assets/images/logo.png">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="stylesheet" href="quote.css">
+  <link rel="stylesheet" href="quote-cloud.css">
 </head>
 <body>
   <div id="auth-check" class="auth-check">Verificando acceso privado…</div>
@@ -24,8 +25,20 @@
       <section class="editor">
         <div class="quote-tools-note">
           <strong>Cotización profesional</strong>
-          <span>Completa la información, revisa el documento y guárdalo como PDF para enviarlo al cliente.</span>
+          <span>Completa la información, guarda una revisión segura y genera el PDF para el cliente.</span>
         </div>
+
+        <section class="cloud-quote-tools" aria-label="Cotizaciones guardadas">
+          <div class="cloud-quote-row">
+            <label>Cotizaciones guardadas
+              <select id="saved-quotes">
+                <option value="">Nueva cotización / no seleccionada</option>
+              </select>
+            </label>
+            <button id="load-quote" type="button" class="secondary">Cargar</button>
+          </div>
+          <p id="save-status" class="save-status" aria-live="polite">Los cambios se respaldan localmente en este dispositivo.</p>
+        </section>
 
         <div class="grid">
           <label>Número de cotización<input id="quote-number"></label>
@@ -117,7 +130,7 @@
         <p id="payment-warning" class="payment-warning" aria-live="polite"></p>
 
         <div class="actions">
-          <button id="save-btn">Guardar borrador</button>
+          <button id="save-btn">Guardar en la nube</button>
           <button id="new-btn" class="secondary">Nueva cotización</button>
         </div>
       </section>

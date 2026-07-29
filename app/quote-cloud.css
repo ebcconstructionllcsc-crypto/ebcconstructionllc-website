@@ -1,0 +1,59 @@
+.cloud-quote-tools {
+  margin: 18px 0 28px;
+  padding: 16px;
+  border: 1px solid rgba(17, 17, 15, 0.14);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.cloud-quote-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: end;
+}
+
+.cloud-quote-row label {
+  margin: 0;
+}
+
+.cloud-quote-row select {
+  width: 100%;
+}
+
+.save-status {
+  min-height: 1.4em;
+  margin: 10px 0 0;
+  font-size: 0.88rem;
+  color: rgba(17, 17, 15, 0.72);
+}
+
+.save-status.success {
+  font-weight: 700;
+}
+
+.save-status.error {
+  font-weight: 700;
+}
+
+#save-btn[disabled],
+#load-quote[disabled] {
+  cursor: wait;
+  opacity: 0.62;
+}
+
+@media (max-width: 680px) {
+  .cloud-quote-row {
+    grid-template-columns: 1fr;
+  }
+
+  .cloud-quote-row button {
+    width: 100%;
+  }
+}
+
+@media print {
+  .cloud-quote-tools {
+    display: none !important;
+  }
+}
