@@ -11,7 +11,7 @@ The following values may be present in browser JavaScript:
 - public business contact information;
 - public map and social-media URLs.
 
-The publishable Supabase key is not a secret. Security must come from row-level security policies, storage policies, authentication, and input validation—not from hiding this key.
+The publishable Supabase key is not a secret. Security must come from row-level security policies, storage policies, authentication, approved staff membership, and input validation—not from hiding this key.
 
 Current browser clients are initialized in:
 
@@ -34,18 +34,39 @@ Never commit or expose any of the following in HTML, JavaScript, screenshots, do
 
 Private values belong in Supabase Edge Function secrets or GitHub Actions secrets and may only be used by trusted server-side code.
 
+## Staff authorization
+
+A Supabase Authentication user is not automatically an EBC staff member. Private CRM and storage policies require an active record in `public.staff_profiles`.
+
+Roles:
+
+- `admin`: may manage staff profiles and use all staff workflows;
+- `staff`: may use approved operational workflows but cannot manage staff membership.
+
+The first administrator must be bootstrapped from the Supabase SQL editor. Do not leave a production project with an empty `staff_profiles` table after applying the hardened policies, because all private staff access will be denied until the first active administrator exists.
+
 ## Supabase requirements
 
-Before production use:
+### New project
 
-1. Run `supabase/schema.sql` once in the Supabase SQL editor.
-2. Run `supabase/site-media-migration.sql` once.
-3. Create staff accounts in Supabase Authentication.
+1. Run `supabase/schema.sql`.
+2. Run `supabase/site-media-migration.sql`.
+3. Create the first user in Supabase Authentication.
+4. Run the administrator bootstrap statement at the bottom of `schema.sql`.
+5. Verify anonymous estimate submission and approved staff access independently.
+
+### Existing project
+
+1. Run `supabase/staff-security-migration.sql`.
+2. Bootstrap the first administrator during the same maintenance session.
+3. Run `supabase/site-media-migration.sql` again to apply staff-only media policies and auditing.
 4. Confirm row-level security is enabled for every private table.
 5. Confirm the `project-files` bucket is private.
-6. Test anonymous estimate submission separately from authenticated staff access.
-7. Review policies whenever a new table, storage path, or customer-facing portal is added.
+6. Confirm non-staff authenticated users cannot read CRM data or private files.
+7. Confirm inserts, updates, and deletes create `audit_log` records.
+
+Review policies whenever a new table, storage path, role, or customer-facing portal is added.
 
 ## Deployment rule
 
-No deployment should proceed when `npm test` fails. The verification suite checks static references, JavaScript syntax, authentication guards, obvious credential exposure, and critical Supabase policy assumptions.
+No deployment should proceed when `npm test` fails. The verification suite checks static references, JavaScript syntax, authentication guards, obvious credential exposure, approved-staff policies, audit requirements, and critical Supabase storage assumptions.
