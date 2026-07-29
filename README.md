@@ -20,6 +20,8 @@ The private application is served from `/app/` and uses Supabase authentication 
 - private jobsite files;
 - public website photo and video management.
 
+Private CRM and storage access is granted only to users listed as active in `public.staff_profiles`. A Supabase Authentication account by itself is not sufficient.
+
 ## Verification
 
 Use Node.js 20 or newer, then run:
@@ -31,7 +33,7 @@ npm test
 The command performs:
 
 - static HTML, selector, and local-file checks;
-- security regression checks for credentials, authentication guards, storage rules, and critical RLS assumptions;
+- security regression checks for credentials, authentication guards, approved-staff policies, storage rules, audit logging, and critical RLS assumptions;
 - JavaScript syntax checks for the private manager, quote builder, and plan tool.
 
 GitHub Actions runs the same verification for pushes and pull requests targeting `main`.
@@ -46,9 +48,23 @@ Never place Supabase service-role keys, database passwords, payment secrets, sig
 
 ## Supabase setup
 
-Run the SQL files in the Supabase SQL editor as documented:
+### New Supabase project
+
+Run these files in the SQL editor:
 
 1. `supabase/schema.sql`
 2. `supabase/site-media-migration.sql`
+3. Create the first Supabase Authentication user.
+4. Run the administrator bootstrap statement documented at the bottom of `supabase/schema.sql`.
 
-After migrations, create authorized staff users in Supabase Authentication and verify all row-level security and storage policies before production use.
+### Existing EBC Supabase project
+
+Run:
+
+1. `supabase/staff-security-migration.sql`
+2. Bootstrap the first administrator using the statement at the bottom of that migration.
+3. Run `supabase/site-media-migration.sql` again; it is idempotent and applies the hardened media policies and audit trigger.
+
+**Important:** complete the first-administrator bootstrap in the same maintenance session. Until an active administrator exists in `public.staff_profiles`, authenticated users will not have access to private CRM records or project files.
+
+After migration, verify anonymous estimate submission, approved staff access, rejected non-staff access, private-file signed URLs, website media visibility, and audit-log creation before production use.
