@@ -148,4 +148,195 @@ $$;
 
 revoke all on function public.write_audit_log() from public;
 
+-- Updated-at triggers.
+drop trigger if exists staff_profiles_set_updated_at on public.staff_profiles;
+create trigger staff_profiles_set_updated_at
+before update on public.staff_profiles
 for each row execute function public.set_updated_at();
+
+drop trigger if exists leads_set_updated_at on public.leads;
+create trigger leads_set_updated_at
+before update on public.leads
+for each row execute function public.set_updated_at();
+
+drop trigger if exists clients_set_updated_at on public.clients;
+create trigger clients_set_updated_at
+before update on public.clients
+for each row execute function public.set_updated_at();
+
+drop trigger if exists projects_set_updated_at on public.projects;
+create trigger projects_set_updated_at
+before update on public.projects
+for each row execute function public.set_updated_at();
+
+-- Append-only audit triggers.
+drop trigger if exists leads_write_audit on public.leads;
+create trigger leads_write_audit
+after insert or update or delete on public.leads
+for each row execute function public.write_audit_log();
+
+drop trigger if exists clients_write_audit on public.clients;
+create trigger clients_write_audit
+after insert or update or delete on public.clients
+for each row execute function public.write_audit_log();
+
+drop trigger if exists projects_write_audit on public.projects;
+create trigger projects_write_audit
+after insert or update or delete on public.projects
+for each row execute function public.write_audit_log();
+
+drop trigger if exists project_files_write_audit on public.project_files;
+create trigger project_files_write_audit
+after insert or update or delete on public.project_files
+for each row execute function public.write_audit_log();
+
+alter table public.staff_profiles enable row level security;
+alter table public.leads enable row level security;
+alter table public.clients enable row level security;
+alter table public.projects enable row level security;
+alter table public.project_files enable row level security;
+alter table public.audit_log enable row level security;
+
+-- Staff profile access. The first admin must be inserted from the SQL editor.
+drop policy if exists "staff read own profile" on public.staff_profiles;
+create policy "staff read own profile"
+on public.staff_profiles for select to authenticated
+using (user_id = auth.uid() or public.is_admin_staff());
+
+drop policy if exists "admins manage staff profiles" on public.staff_profiles;
+create policy "admins manage staff profiles"
+on public.staff_profiles for all to authenticated
+using (public.is_admin_staff())
+with check (public.is_admin_staff());
+
+-- Public website may submit new estimate requests only.
+drop policy if exists "public can create leads" on public.leads;
+create policy "public can create leads"
+on public.leads for insert to anon
+with check (source = 'website');
+
+drop policy if exists "public can add estimate file metadata" on public.project_files;
+create policy "public can add estimate file metadata"
+on public.project_files for insert to anon
+with check (
+  lead_id is not null
+  and project_id is null
+  and uploaded_by is null
+  and storage_path like 'incoming/%'
+);
+
+-- Only explicitly approved EBC staff can manage private records.
+drop policy if exists "authenticated manage leads" on public.leads;
+drop policy if exists "active staff manage leads" on public.leads;
+create policy "active staff manage leads"
+on public.leads for all to authenticated
+using (public.is_active_staff())
+with check (public.is_active_staff());
+
+drop policy if exists "authenticated manage clients" on public.clients;
+drop policy if exists "active staff manage clients" on public.clients;
+create policy "active staff manage clients"
+on public.clients for all to authenticated
+using (public.is_active_staff())
+with check (public.is_active_staff());
+
+drop policy if exists "authenticated manage projects" on public.projects;
+drop policy if exists "active staff manage projects" on public.projects;
+create policy "active staff manage projects"
+on public.projects for all to authenticated
+using (public.is_active_staff())
+with check (public.is_active_staff());
+
+drop policy if exists "authenticated manage files" on public.project_files;
+drop policy if exists "active staff manage files" on public.project_files;
+create policy "active staff manage files"
+on public.project_files for all to authenticated
+using (public.is_active_staff())
+with check (public.is_active_staff());
+
+drop policy if exists "active staff read audit log" on public.audit_log;
+create policy "active staff read audit log"
+on public.audit_log for select to authenticated
+using (public.is_active_staff());
+
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values (
+  'project-files',
+  'project-files',
+  false,
+  52428800,
+  array[
+    'image/jpeg',
+    'image/png',
+    'image/webp',
+    'image/heic',
+    'video/mp4',
+    'video/quicktime',
+    'application/pdf'
+  ]
+)
+on conflict (id) do update
+set public = false,
+    file_size_limit = excluded.file_size_limit,
+    allowed_mime_types = excluded.allowed_mime_types;
+
+-- Approved staff storage access.
+drop policy if exists "staff upload project files" on storage.objects;
+create policy "staff upload project files"
+on storage.objects for insert to authenticated
+with check (bucket_id = 'project-files' and public.is_active_staff());
+
+drop policy if exists "staff read project files" on storage.objects;
+create policy "staff read project files"
+on storage.objects for select to authenticated
+using (bucket_id = 'project-files' and public.is_active_staff());
+
+drop policy if exists "staff update project files" on storage.objects;
+create policy "staff update project files"
+on storage.objects for update to authenticated
+using (bucket_id = 'project-files' and public.is_active_staff())
+with check (bucket_id = 'project-files' and public.is_active_staff());
+
+drop policy if exists "staff delete project files" on storage.objects;
+create policy "staff delete project files"
+on storage.objects for delete to authenticated
+using (bucket_id = 'project-files' and public.is_active_staff());
+
+-- Public website uploads into a limited incoming folder. It cannot read that folder.
+drop policy if exists "public upload estimate photos" on storage.objects;
+create policy "public upload estimate photos"
+on storage.objects for insert to anon
+with check (
+  bucket_id = 'project-files'
+  and (storage.foldername(name))[1] = 'incoming'
+);
+
+create index if not exists leads_status_created_at_idx
+on public.leads (status, created_at desc);
+
+create index if not exists clients_name_idx
+on public.clients (name);
+
+create index if not exists projects_status_start_date_idx
+on public.projects (status, start_date);
+
+create index if not exists project_files_project_id_idx
+on public.project_files (project_id);
+
+create index if not exists project_files_lead_id_idx
+on public.project_files (lead_id);
+
+create index if not exists audit_log_created_at_idx
+on public.audit_log (created_at desc);
+
+create index if not exists audit_log_record_idx
+on public.audit_log (table_name, record_id, created_at desc);
+
+-- Bootstrap the first administrator after creating the user in Authentication:
+--
+-- insert into public.staff_profiles (user_id, display_name, role)
+-- select id, coalesce(raw_user_meta_data ->> 'full_name', email), 'admin'
+-- from auth.users
+-- where email = 'YOUR_ADMIN_EMAIL'
+-- on conflict (user_id) do update
+-- set role = 'admin', is_active = true;
