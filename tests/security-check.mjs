@@ -55,6 +55,8 @@ const mediaMigration = read('supabase/site-media-migration.sql');
 const mediaOneLine = compact(mediaMigration);
 const staffMigration = read('supabase/staff-security-migration.sql');
 const staffOneLine = compact(staffMigration);
+const quotesMigration = read('supabase/quotes-migration.sql');
+const quotesOneLine = compact(quotesMigration);
 
 const requiredSchemaRules = [
   ['staff profile table', /create table if not exists public\.staff_profiles/i],
@@ -110,13 +112,49 @@ if (!/public\.is_active_staff\(\)/i.test(staffOneLine)) {
   fail('staff-security-migration.sql does not enforce approved-staff access');
 }
 
+const requiredQuoteRules = [
+  ['quotes table', /create table if not exists public\.quotes/i],
+  ['immutable quote versions table', /create table if not exists public\.quote_versions/i],
+  ['quote revision preparation trigger', /create trigger quotes_prepare_write/i],
+  ['quote revision archive trigger', /create trigger quotes_archive_revision/i],
+  ['quote audit trigger', /create trigger quotes_write_audit/i],
+  ['RLS on quotes', /alter table public\.quotes enable row level security/i],
+  ['RLS on quote versions', /alter table public\.quote_versions enable row level security/i],
+  ['staff-only quote management', /active staff manage quotes.*using \(public\.is_active_staff\(\)\)/i],
+  ['staff-only quote-version access', /active staff read quote versions.*using \(public\.is_active_staff\(\)\)/i],
+  ['unique quote revisions', /unique \(quote_id, revision\)/i]
+];
+
+for (const [label, pattern] of requiredQuoteRules) {
+  if (!pattern.test(quotesOneLine)) fail(`supabase/quotes-migration.sql is missing ${label}`);
+}
+
+if (/for all to authenticated using \(true\)/i.test(quotesOneLine)) {
+  fail('quotes migration contains a broad authenticated manage-all policy');
+}
+
 const quoteHtml = read('app/quote.html');
 const quoteScript = read('app/quote.js');
 if (!quoteHtml.includes('id="auth-check"') || !quoteHtml.includes('id="quote-app" hidden')) {
   fail('quote builder must remain hidden until authentication succeeds');
 }
+for (const id of ['saved-quotes', 'load-quote', 'save-status']) {
+  if (!quoteHtml.includes(`id="${id}"`)) fail(`quote builder is missing cloud control #${id}`);
+}
 if (!/quoteDb\.auth\.getSession\(\)/.test(quoteScript)) {
   fail('quote builder does not verify the Supabase session');
+}
+if (!/\.from\('staff_profiles'\)/.test(quoteScript)) {
+  fail('quote builder does not verify approved staff membership');
+}
+if (!/\.from\('quotes'\)/.test(quoteScript)) {
+  fail('quote builder does not persist quotes in Supabase');
+}
+if (!/localStorage\.setItem\('ebc-quote-draft'/.test(quoteScript)) {
+  fail('quote builder is missing local recovery storage');
+}
+if (!/validateQuote\(\)/.test(quoteScript)) {
+  fail('quote builder is missing validation before save or print');
 }
 
 if (failures) process.exit(1);
