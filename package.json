@@ -5,9 +5,10 @@
   "description": "Public website and private operations application for EBC Construction LLC.",
   "type": "module",
   "scripts": {
-    "test": "npm run test:static && npm run test:security && npm run test:syntax",
+    "test": "npm run test:static && npm run test:security && npm run test:quotes && npm run test:syntax",
     "test:static": "node tests/static-app-check.mjs",
     "test:security": "node tests/security-check.mjs",
+    "test:quotes": "node tests/quotes-center-check.mjs",
     "test:syntax": "node --check assets/app.js && node --check app/app.js && node --check app/quotes-center.js && node --check app/quote.js && node --check app/plan.js"
   },
   "engines": {
