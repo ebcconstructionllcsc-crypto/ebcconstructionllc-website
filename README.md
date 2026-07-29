@@ -15,7 +15,8 @@ The private application is served from `/app/` and uses Supabase authentication 
 - estimate requests and customer attachments;
 - clients and project tracking;
 - project scheduling;
-- bilingual quote and conceptual-plan builder;
+- bilingual, cloud-backed quotes with revision history and local recovery;
+- conceptual 2D/3D plan previews;
 - configurable 30% / 45% / 25% payment schedule;
 - private jobsite files;
 - public website photo and video management.
@@ -33,7 +34,7 @@ npm test
 The command performs:
 
 - static HTML, selector, and local-file checks;
-- security regression checks for credentials, authentication guards, approved-staff policies, storage rules, audit logging, and critical RLS assumptions;
+- security regression checks for credentials, authentication guards, approved-staff policies, storage rules, audit logging, quote versioning, and critical RLS assumptions;
 - JavaScript syntax checks for the private manager, quote builder, and plan tool.
 
 GitHub Actions runs the same verification for pushes and pull requests targeting `main`.
@@ -53,9 +54,10 @@ Never place Supabase service-role keys, database passwords, payment secrets, sig
 Run these files in the SQL editor:
 
 1. `supabase/schema.sql`
-2. `supabase/site-media-migration.sql`
-3. Create the first Supabase Authentication user.
-4. Run the administrator bootstrap statement documented at the bottom of `supabase/schema.sql`.
+2. Create the first Supabase Authentication user.
+3. Run the administrator bootstrap statement documented at the bottom of `supabase/schema.sql`.
+4. `supabase/site-media-migration.sql`
+5. `supabase/quotes-migration.sql`
 
 ### Existing EBC Supabase project
 
@@ -64,7 +66,10 @@ Run:
 1. `supabase/staff-security-migration.sql`
 2. Bootstrap the first administrator using the statement at the bottom of that migration.
 3. Run `supabase/site-media-migration.sql` again; it is idempotent and applies the hardened media policies and audit trigger.
+4. Run `supabase/quotes-migration.sql` to enable cloud-backed quotes and immutable revision history.
 
 **Important:** complete the first-administrator bootstrap in the same maintenance session. Until an active administrator exists in `public.staff_profiles`, authenticated users will not have access to private CRM records or project files.
 
-After migration, verify anonymous estimate submission, approved staff access, rejected non-staff access, private-file signed URLs, website media visibility, and audit-log creation before production use.
+The quote builder keeps a local recovery copy, but Supabase is the authoritative source after a quote is saved. Each meaningful cloud update creates a numbered immutable snapshot in `quote_versions`.
+
+After migration, verify anonymous estimate submission, approved staff access, rejected non-staff access, private-file signed URLs, website media visibility, quote create/update/history behavior, and audit-log creation before production use.
