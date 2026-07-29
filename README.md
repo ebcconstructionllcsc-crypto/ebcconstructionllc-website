@@ -17,7 +17,8 @@ The private application is served from `/app/` and uses Supabase authentication 
 - estimate requests and customer attachments;
 - clients and project tracking;
 - project scheduling;
-- bilingual, cloud-backed quotes with revision history and local recovery;
+- a searchable quote center with status updates, accepted-value reporting, duplication, and direct reopening in the builder;
+- bilingual, cloud-backed quotes with immutable revision history and local recovery;
 - conceptual 2D/3D plan previews;
 - configurable 30% / 45% / 25% payment schedule;
 - private jobsite files;
@@ -37,7 +38,8 @@ The command performs:
 
 - static checks across every public page and the private application;
 - security regression checks for credentials, authentication guards, validated public intake, approved-staff policies, storage rules, audit logging, quote versioning, and critical RLS assumptions;
-- JavaScript syntax checks for the public website, private manager, quote builder, and plan tool.
+- dedicated quote-center workflow and preservation checks;
+- JavaScript syntax checks for the public website, private manager, quote center, quote builder, and plan tool.
 
 GitHub Actions runs the same verification for pushes and pull requests targeting `main`.
 
@@ -76,4 +78,4 @@ Run:
 
 The quote builder keeps a local recovery copy, but Supabase is the authoritative source after a quote is saved. Each meaningful cloud update creates a numbered immutable snapshot in `quote_versions`.
 
-After migration, verify anonymous estimate submission, duplicate-request retry behavior, partial attachment failure, approved staff access, rejected non-staff access, private-file signed URLs, website media visibility, quote create/update/history behavior, and audit-log creation before production use.
+After migration, verify anonymous estimate submission, duplicate-request retry behavior, partial attachment failure, approved staff access, rejected non-staff access, private-file signed URLs, website media visibility, quote create/update/history behavior, quote-center status changes, and audit-log creation before production use.

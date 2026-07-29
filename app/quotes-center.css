@@ -1,0 +1,256 @@
+.manager-metrics {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.quotes-dashboard-panel {
+  margin-top: 18px;
+}
+
+.recent-quotes {
+  display: grid;
+  margin-top: 10px;
+}
+
+.recent-quote {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: center;
+  border: 0;
+  border-top: 1px solid var(--line);
+  background: transparent;
+  padding: 15px 0;
+  color: var(--ink);
+  text-align: left;
+}
+
+.recent-quote:hover {
+  background: #faf8f3;
+}
+
+.recent-quote > span:last-child {
+  text-align: right;
+}
+
+.recent-quote strong,
+.recent-quote small {
+  display: block;
+}
+
+.recent-quote small {
+  margin-top: 5px;
+  color: var(--muted);
+}
+
+.quote-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.quote-summary article {
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--white);
+}
+
+.quote-summary span,
+.quote-card-body span {
+  display: block;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.quote-summary strong {
+  display: block;
+  margin-top: 9px;
+  font: 400 32px Georgia, serif;
+}
+
+.quote-toolbar {
+  align-items: stretch;
+}
+
+.quote-new-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 170px;
+  text-decoration: none;
+}
+
+.quotes-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 16px;
+}
+
+.quote-card {
+  display: grid;
+  gap: 18px;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--white);
+}
+
+.quote-card-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: flex-start;
+}
+
+.quote-card-head p {
+  margin: 0;
+  color: var(--gold);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.quote-card-head h2 {
+  margin: 5px 0 0;
+  font: 400 27px Georgia, serif;
+}
+
+.quote-card-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.quote-card-body > div {
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: #faf8f3;
+}
+
+.quote-card-body .wide {
+  grid-column: 1 / -1;
+}
+
+.quote-card-body strong {
+  display: block;
+  margin-top: 6px;
+  overflow-wrap: anywhere;
+  font-size: 14px;
+}
+
+.quote-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: end;
+}
+
+.quote-card-actions button,
+.quote-card-actions a {
+  display: inline-flex;
+  min-height: 42px;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 13px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: white;
+  color: #72521c;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.quote-card-actions button.primary {
+  border-color: var(--gold);
+  background: var(--gold);
+  color: #17120a;
+}
+
+.quote-card-actions label {
+  display: grid;
+  min-width: 150px;
+  gap: 5px;
+  margin-left: auto;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.quote-card-actions select {
+  min-height: 42px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: white;
+  padding: 8px 10px;
+}
+
+.quote-status-accepted {
+  background: #e4f1e4;
+}
+
+.quote-status-sent {
+  background: #e5edf7;
+}
+
+.quote-status-declined,
+.quote-status-expired {
+  background: #f4e3e1;
+}
+
+.quote-setup {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 1000px) {
+  .manager-metrics,
+  .quote-summary {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+  .quote-toolbar {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .quote-toolbar select,
+  .quote-new-link {
+    width: 100%;
+  }
+
+  .quotes-list {
+    grid-template-columns: 1fr;
+  }
+
+  .quote-card-actions label {
+    width: 100%;
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .manager-metrics,
+  .quote-summary,
+  .quote-card-body {
+    grid-template-columns: 1fr;
+  }
+
+  .quote-card-body .wide {
+    grid-column: auto;
+  }
+
+  .recent-quote {
+    align-items: flex-start;
+  }
+}

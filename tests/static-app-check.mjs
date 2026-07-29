@@ -9,7 +9,7 @@ const pages = [
   { html: 'projects.html', scripts: ['assets/app.js'] },
   { html: 'about.html', scripts: ['assets/app.js'] },
   { html: 'contact.html', scripts: ['assets/app.js'] },
-  { html: 'app/index.html', scripts: ['app/app.js'] },
+  { html: 'app/index.html', scripts: ['app/app.js', 'app/quotes-center.js'] },
   { html: 'app/quote.html', scripts: ['app/quote.js', 'app/plan.js'] }
 ];
 
@@ -56,6 +56,20 @@ for (const requiredId of ['estimate-form', 'name', 'phone', 'address', 'service'
 }
 if (/formsubmit\.co/i.test(contactHtml)) fail('contact.html still sends customer information to FormSubmit');
 if (!/aria-live="polite"/.test(contactHtml)) fail('contact.html is missing an accessible live submission status');
+
+const managerHtml = fs.readFileSync(path.join(root, 'app/index.html'), 'utf8');
+for (const requiredId of [
+  'quotes',
+  'quote-search',
+  'quote-filter',
+  'quote-list',
+  'recent-quotes',
+  'metric-quotes',
+  'metric-quoted-value'
+]) {
+  if (!managerHtml.includes(`id="${requiredId}"`)) fail(`app/index.html is missing quote center #${requiredId}`);
+}
+if (!managerHtml.includes('src="quotes-center.js"')) fail('EBC Manager does not load quotes-center.js');
 
 const quoteHtml = fs.readFileSync(path.join(root, 'app/quote.html'), 'utf8');
 if (!/<div id="quote-app" hidden>/.test(quoteHtml)) fail('The quote builder is not hidden during authentication.');
