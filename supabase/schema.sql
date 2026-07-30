@@ -1,5 +1,6 @@
 -- EBC Manager database setup
 -- Run this entire file once in Supabase Dashboard > SQL Editor for a new project.
+-- This consolidated schema includes the core CRM, render, and invoice objects.
 
 create extension if not exists pgcrypto;
 

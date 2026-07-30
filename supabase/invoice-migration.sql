@@ -1,11 +1,19 @@
 -- EBC private invoice and payment tracking.
--- Run once in Supabase Dashboard > SQL Editor.
+-- Use this migration for an existing EBC project after staff-security-migration.sql.
+-- New projects using the current schema.sql already include the invoice objects.
 
 create extension if not exists pgcrypto;
 
 create or replace function public.set_updated_at()
-returns trigger language plpgsql as $$
-begin new.updated_at = now(); return new; end $$;
+returns trigger
+language plpgsql
+set search_path = public
+as $$
+begin
+  new.updated_at = now();
+  return new;
+end;
+$$;
 
 create table if not exists public.invoices (
   id uuid primary key default gen_random_uuid(),

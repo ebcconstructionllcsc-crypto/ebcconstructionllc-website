@@ -1,5 +1,6 @@
 -- EBC private AI construction-render feature.
--- Run once in Supabase Dashboard > SQL Editor before deploying generate-render.
+-- Use this migration for an existing EBC project before deploying generate-render.
+-- New projects using the current schema.sql already include the render objects.
 
 create extension if not exists pgcrypto;
 

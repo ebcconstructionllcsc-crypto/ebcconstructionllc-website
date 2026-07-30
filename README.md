@@ -50,6 +50,7 @@ GitHub Actions runs the same verification for pushes and pull requests targeting
 ## Configuration and security
 
 - Configuration strategy: [`docs/CONFIGURATION.md`](docs/CONFIGURATION.md)
+- Supabase migration ledger: [`docs/SUPABASE_MIGRATION_LEDGER.md`](docs/SUPABASE_MIGRATION_LEDGER.md)
 - Prioritized technical-debt report: [`docs/TECHNICAL-DEBT.md`](docs/TECHNICAL-DEBT.md)
 - Security policy: [`SECURITY.md`](SECURITY.md)
 
@@ -67,8 +68,8 @@ Run these files in the SQL editor:
 4. `supabase/site-media-migration.sql`
 5. `supabase/quotes-migration.sql`
 6. `supabase/public-intake-hardening.sql`
-7. `supabase/render-migration.sql`
-8. `supabase/invoice-migration.sql`
+
+The current consolidated `supabase/schema.sql` already creates the render and invoice objects. Do not run `render-migration.sql` or `invoice-migration.sql` again for a new project created from that schema.
 
 ### Existing EBC Supabase project
 
@@ -81,6 +82,8 @@ Run:
 5. Run `supabase/public-intake-hardening.sql` to enable validated, deduplicated estimate requests and strict public photo rules.
 6. Run `supabase/render-migration.sql` to enable private render jobs and storage.
 7. Run `supabase/invoice-migration.sql` to enable private invoice history.
+
+Record every production step and its evidence in [`docs/SUPABASE_MIGRATION_LEDGER.md`](docs/SUPABASE_MIGRATION_LEDGER.md). Do not infer that a migration ran because its file exists in GitHub.
 
 **Important:** complete the first-administrator bootstrap in the same maintenance session. Until an active administrator exists in `public.staff_profiles`, authenticated users will not have access to private CRM records or project files.
 

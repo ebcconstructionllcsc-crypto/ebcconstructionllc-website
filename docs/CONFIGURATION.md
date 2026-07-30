@@ -65,6 +65,8 @@ Do not store signatures, private credentials, payment-card information, or other
 
 ## Supabase requirements
 
+Use [`SUPABASE_MIGRATION_LEDGER.md`](SUPABASE_MIGRATION_LEDGER.md) as the canonical execution order and evidence record. Repository contents describe the expected state; they do not prove the production state.
+
 ### New project
 
 1. Run `supabase/schema.sql`.
@@ -75,6 +77,8 @@ Do not store signatures, private credentials, payment-card information, or other
 6. Run `supabase/public-intake-hardening.sql`.
 7. Verify anonymous estimate submission, retry deduplication, partial photo failure, approved staff access, quote saving, and quote revision creation independently.
 
+The current consolidated schema already includes render and invoice objects. The separate render and invoice migrations are upgrade paths for an existing project.
+
 ### Existing project
 
 1. Run `supabase/staff-security-migration.sql`.
@@ -82,12 +86,14 @@ Do not store signatures, private credentials, payment-card information, or other
 3. Run `supabase/site-media-migration.sql` again to apply staff-only media policies and auditing.
 4. Run `supabase/quotes-migration.sql`.
 5. Run `supabase/public-intake-hardening.sql`.
-6. Confirm row-level security is enabled for every private table.
-7. Confirm the `project-files` bucket is private.
-8. Confirm non-staff authenticated users cannot read CRM data, quotes, quote revisions, or private files.
-9. Confirm anonymous users cannot insert directly into `leads` or read `incoming/` files.
-10. Confirm inserts, updates, and deletes create `audit_log` records.
-11. Confirm meaningful quote updates increase `revision` and create matching immutable `quote_versions` rows.
+6. Run `supabase/render-migration.sql`.
+7. Run `supabase/invoice-migration.sql`.
+8. Confirm row-level security is enabled for every private table.
+9. Confirm the `project-files` bucket is private.
+10. Confirm non-staff authenticated users cannot read CRM data, quotes, quote revisions, invoices, render jobs, or private files.
+11. Confirm anonymous users cannot insert directly into `leads` or read `incoming/` files.
+12. Confirm inserts, updates, and deletes create `audit_log` records.
+13. Confirm meaningful quote updates increase `revision` and create matching immutable `quote_versions` rows.
 
 Review policies whenever a new table, storage path, role, document type, or customer-facing portal is added.
 
