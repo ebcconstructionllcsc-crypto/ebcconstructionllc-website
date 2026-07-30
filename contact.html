@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Free Construction Estimate | EBC Construction LLC</title>
-  <meta name="description" content="Request a free estimate for concrete, grading, excavation, landscaping or remodeling from EBC Construction LLC.">
+  <meta name="description" content="Request a free estimate for concrete, grading or excavation from EBC Construction LLC.">
   <meta name="theme-color" content="#10100f"><link rel="stylesheet" href="assets/masterpiece.css"><link rel="stylesheet" href="assets/refinement.css"><link rel="stylesheet" href="assets/phase-two.css"><link rel="icon" href="assets/images/logo.png">
 </head>
 <body>
@@ -22,19 +22,19 @@
 
         <label for="address" data-en="Project address" data-es="Dirección del proyecto">Project address</label>
         <div class="address-field">
-          <input id="address" name="Address" autocomplete="off" inputmode="text" maxlength="500" required role="combobox" aria-autocomplete="list" aria-controls="address-results" aria-expanded="false" data-en-placeholder="Start typing the street address" data-es-placeholder="Comienza a escribir la dirección" placeholder="Start typing the street address">
+          <input id="address" name="Address" autocomplete="street-address" inputmode="text" maxlength="500" required role="combobox" aria-autocomplete="list" aria-controls="address-results" aria-expanded="false" data-en-placeholder="Street number, street, city and state" data-es-placeholder="Número, calle, ciudad y estado" placeholder="Street number, street, city and state">
           <div class="address-results" id="address-results" role="listbox" hidden></div>
         </div>
-        <div class="address-tools"><button class="field-action" id="use-location" type="button" data-en="Use my current location" data-es="Usar mi ubicación actual">Use my current location</button><small class="address-status" id="address-status" aria-live="polite" data-en="Type at least 3 characters to search." data-es="Escribe al menos 3 caracteres para buscar.">Type at least 3 characters to search.</small></div>
+        <div class="address-tools"><button class="field-action" id="use-location" type="button" data-en="Use my current location" data-es="Usar mi ubicación actual">Use my current location</button><small class="address-status" id="address-status" aria-live="polite" data-en="Type the street number and name to see complete addresses." data-es="Escribe el número y la calle para ver direcciones completas.">Type the street number and name to see complete addresses.</small></div>
 
-        <label for="service" data-en="Service" data-es="Servicio">Service</label><select id="service" name="Service" required><option value="" data-en="Choose a service" data-es="Selecciona un servicio">Choose a service</option><option>Concrete / Concreto</option><option>Grading & Excavation / Nivelación y Excavación</option><option>Landscaping / Jardinería</option><option>Remodeling / Remodelación</option><option>Not sure / No estoy seguro</option></select>
+        <label for="service" data-en="Service" data-es="Servicio">Service</label><select id="service" name="Service" required><option value="" data-en="Choose a service" data-es="Selecciona un servicio">Choose a service</option><option>Concrete / Concreto</option><option>Grading & Excavation / Nivelación y Excavación</option><option>Not sure / No estoy seguro</option></select>
         <label for="timeline" data-en="Preferred timing" data-es="Fecha preferida">Preferred timing</label><input id="timeline" name="Preferred timing" maxlength="200" data-en-placeholder="When would you like to begin?" data-es-placeholder="¿Cuándo deseas comenzar?" placeholder="When would you like to begin?">
         <label for="project" data-en="Project details" data-es="Detalles del proyecto">Project details</label><textarea id="project" name="Project details" maxlength="5000" required data-en-placeholder="Describe the project, approximate size, access and any concerns" data-es-placeholder="Describe el proyecto, tamaño aproximado, acceso y cualquier preocupación" placeholder="Describe the project, approximate size, access and any concerns"></textarea>
 
         <div class="file-field">
-          <label data-en="Project photos" data-es="Fotos del proyecto">Project photos</label>
-          <input class="file-input-native" id="photos" name="attachment" type="file" accept="image/*,.heic,.heif,.avif" multiple>
-          <label class="photo-picker" for="photos"><strong data-en="Choose photos from your album" data-es="Seleccionar fotos del álbum">Choose photos from your album</strong><span data-en="You can also take a new photo from your phone." data-es="También puedes tomar una foto nueva desde tu teléfono.">You can also take a new photo from your phone.</span></label>
+          <label for="photos" data-en="Project photos" data-es="Fotos del proyecto">Project photos</label>
+          <input class="file-input-native" id="photos" name="attachment" type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,image/avif" multiple>
+          <label class="photo-picker" for="photos"><strong data-en="Open photo album" data-es="Abrir álbum de fotos">Open photo album</strong><span data-en="Select up to 8 photos of the area and the work needed." data-es="Selecciona hasta 8 fotos del área y del trabajo que necesitas.">Select up to 8 photos of the area and the work needed.</span></label>
           <small class="photo-selection" id="photo-selection" aria-live="polite" data-en="No photos selected yet." data-es="Aún no has seleccionado fotos.">No photos selected yet.</small>
           <small data-en="Up to 8 photos, 15 MB each. JPG, PNG, WebP, HEIC and AVIF are accepted." data-es="Hasta 8 fotos de 15 MB cada una. Se aceptan JPG, PNG, WebP, HEIC y AVIF.">Up to 8 photos, 15 MB each. JPG, PNG, WebP, HEIC and AVIF are accepted.</small>
         </div>
