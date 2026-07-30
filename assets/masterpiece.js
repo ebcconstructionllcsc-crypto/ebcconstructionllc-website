@@ -1,41 +1,4 @@
 (() => {
-  function setBilingual(node, en, es) {
-    if (!node) return;
-    node.dataset.en = en;
-    node.dataset.es = es;
-    node.textContent = document.documentElement.lang === 'es' ? es : en;
-  }
-
-  document.querySelectorAll('a.service-row').forEach(row => {
-    const href = row.getAttribute('href') || '';
-    if (href.includes('landscaping') || href.includes('remodeling')) row.remove();
-  });
-
-  document.querySelectorAll('[data-category]').forEach(card => {
-    const categories = (card.dataset.category || '').split(' ');
-    if (categories.includes('landscaping') || categories.includes('remodeling')) card.remove();
-  });
-
-  document.querySelectorAll('[data-filter]').forEach(button => {
-    if (['landscaping', 'remodeling'].includes(button.dataset.filter)) button.remove();
-  });
-
-  document.querySelectorAll('[data-video-src]').forEach(card => {
-    const label = `${card.dataset.caption || ''} ${card.textContent || ''}`.toLowerCase();
-    if (label.includes('landscap')) card.remove();
-  });
-
-  document.querySelectorAll('[data-en]').forEach(node => {
-    const en = node.dataset.en || '';
-    const es = node.dataset.es || '';
-    if (/five real services|five services/i.test(en)) setBilingual(node, 'Three core services', 'Tres servicios principales');
-    if (/one crew\. complete property solutions/i.test(en)) setBilingual(node, 'Concrete and site-work solutions.', 'Soluciones de concreto y trabajo de terreno.');
-    if (/real projects\. no filler/i.test(en)) setBilingual(node, 'Preparation, progress and finished work.', 'Preparación, avance y trabajos terminados.');
-    if (/every image below comes from/i.test(en)) setBilingual(node, 'Explore concrete, grading and excavation projects from preparation through completion.', 'Explora proyectos de concreto, nivelación y excavación desde la preparación hasta la terminación.');
-    if (/no stock project photos/i.test(en)) setBilingual(node, 'Prepared for demanding projects', 'Preparados para proyectos exigentes');
-    if (/concrete, grading, excavation, landscaping and remodeling/i.test(en)) setBilingual(node, en.replace(/, landscaping and remodeling/i, ''), es.replace(/, jardinería y remodelación/i, ''));
-  });
-
   const filters = document.querySelectorAll('[data-filter]');
   const cards = document.querySelectorAll('[data-category]');
   filters.forEach(button => {
