@@ -6,6 +6,8 @@
 
 **Production state:** **UNVERIFIED**
 
+**Environment confirmation:** **`main` / PRODUCTION; Free Plan; no platform backups**
+
 **Issue:** #9 — certify Supabase migrations and security
 
 This ledger is the canonical order for the SQL files currently stored in this repository. It separates the expected schema from the state actually observed in Supabase. A checked-in file is not evidence that production ran it.
@@ -75,8 +77,11 @@ Run `supabase/production-preflight.sql` from the Supabase SQL Editor. Every exec
 
 ### Public API probe observed on 2026-07-30
 
-The website and repository consistently identify project ref `agczzdjxnytjzgprvcxq`. Its role as the final production environment still requires administrative confirmation.
+The website and repository consistently identify project ref `agczzdjxnytjzgprvcxq`. An owner-supplied Supabase Dashboard screenshot confirms that the selected `main` environment is labeled **PRODUCTION**.
 
+- The Dashboard identifies the organization/project as **Free Plan**.
+- Database Backups states: `Free Plan does not include project backups`.
+- No scheduled backup or platform restore point is available for the production project.
 - Zero-row REST probes returned **present** for `leads`, `clients`, `projects`, and `project_files`.
 - Zero-row REST probes returned **missing** for `staff_profiles`, `audit_log`, `site_media`, `quotes`, `quote_versions`, `render_jobs`, and `invoices`.
 - The `leads.submission_token` probe returned `column leads.submission_token does not exist`, so public intake hardening has not been applied.
@@ -85,7 +90,7 @@ The website and repository consistently identify project ref `agczzdjxnytjzgprvc
 - The public REST catalog correctly required a secret API key, so policy definitions, migration history, administrator status, backups, and exact RLS state remain unverified.
 - No customer rows were requested, no credentials were copied, and no database or storage mutation was attempted.
 
-**Interim verdict:** this is a partial existing-project state. Do not run `schema.sql`. Continue only with the existing-project runbook after administrative preflight and backup evidence.
+**Interim verdict:** this is a partial existing-project state without a platform backup. Do not run `schema.sql`, purchase an upgrade, or execute any production migration from this PR. Continue only after the authenticated SQL preflight and a recoverable manual logical backup of the existing production data.
 
 ## Verification matrix
 
@@ -119,6 +124,7 @@ Fill one row per attempted production step. Leave the table unchanged until real
 
 | UTC time | Environment | File/action | Git SHA | Operator | Result | Evidence reference | Rollback/next action |
 |---|---|---|---|---|---|---|---|
+| 2026-07-30T03:58:58Z | `main` / PRODUCTION | Owner verification of Database Backups page | `1975289` | Edgar / Rictor | Free Plan; no project backups; no writes | Direction Técnica screenshot and Issue #9 | Require manual logical backup before any migration |
 | 2026-07-30T03:43:49Z | Configured project `agczzdjxnytjzgprvcxq`; production role unconfirmed | Public zero-row schema, bucket, auth-settings, and function probes | `71e51d4` | Rictor | Partial existing state; no writes | Issue #9 | Require administrative preflight and backup; do not migrate |
 | — | Production unverified | No migrations executed by this PR | — | — | Blocked | Issue #9 | Await backup, environment inventory, and Rictor approval |
 
