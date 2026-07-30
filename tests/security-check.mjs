@@ -158,20 +158,23 @@ const contactHtml = read('contact.html');
 if (/formsubmit\.co/i.test(contactHtml)) {
   fail('contact.html still exposes customer submissions to an external form service');
 }
-if (!/\.rpc\('submit_estimate_request'/.test(publicScript)) {
-  fail('public estimate workflow does not use the validated RPC');
+if (!/data-submission-mode="local-share"/.test(contactHtml)) {
+  fail('public estimate delivery is not locked to the local sharing flow');
 }
-if (!/crypto\.randomUUID\(\)/.test(publicScript)) {
-  fail('public estimate workflow is missing idempotency identifiers');
+if (/supabase\.co|createClient\(|\.rpc\('submit_estimate_request'|project-files/.test(publicScript)) {
+  fail('public estimate runtime still connects to the uncertified production intake');
 }
 if (!/MAX_FILES\s*=\s*8/.test(publicScript) || !/MAX_FILE_BYTES\s*=\s*15 \* 1024 \* 1024/.test(publicScript)) {
   fail('public estimate workflow is missing conservative attachment limits');
 }
-if (!/failedAttachments/.test(publicScript)) {
-  fail('public estimate workflow can lose the lead when an attachment fails');
+if (!/navigator\.share/.test(publicScript) || !/navigator\.canShare/.test(publicScript)) {
+  fail('public estimate workflow is missing device-local request and photo sharing');
 }
-if (!/navigator\.onLine/.test(publicScript)) {
-  fail('public estimate workflow does not report offline submission attempts');
+if (!/sms:\$\{EBC_PHONE\}/.test(publicScript) || !/mailto:\$\{EBC_EMAIL\}/.test(publicScript)) {
+  fail('public estimate workflow is missing prepared text and email fallbacks');
+}
+if (!/Your request has not been sent yet/.test(publicScript)) {
+  fail('public estimate workflow does not clearly disclose the unsent state');
 }
 
 const quoteHtml = read('app/quote.html');
