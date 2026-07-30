@@ -1,7 +1,11 @@
 -- EBC Manager staff authorization and audit migration
 -- Use this file for an existing Supabase project that already ran schema.sql.
--- Run it in Supabase Dashboard > SQL Editor, then bootstrap the first administrator
--- using the statement at the bottom of this file.
+-- REQUIRED: bootstrap the first administrator through this guarded transaction.
+-- Before the first run, create the intended administrator in Supabase Auth and
+-- replace YOUR_ADMIN_EMAIL below. The explicit transaction aborts and rolls
+-- back every change unless an active administrator exists before commit.
+
+begin;
 
 create table if not exists public.staff_profiles (
   user_id uuid primary key references auth.users(id) on delete cascade,
@@ -22,6 +26,19 @@ create table if not exists public.audit_log (
   after_data jsonb,
   created_at timestamptz not null default now()
 );
+
+-- Define the shared trigger function here instead of assuming an older setup
+-- completed every statement in schema.sql.
+create or replace function public.set_updated_at()
+returns trigger
+language plpgsql
+set search_path = public
+as $$
+begin
+  new.updated_at = now();
+  return new;
+end;
+$$;
 
 create or replace function public.is_active_staff(check_user uuid default auth.uid())
 returns boolean
@@ -81,7 +98,48 @@ $$;
 
 revoke all on function public.write_audit_log() from public;
 
--- Reuse the existing set_updated_at function from schema.sql.
+-- Bootstrap exactly one existing Auth user when no active administrator exists.
+-- On later idempotent runs, an existing active administrator satisfies the gate
+-- and the placeholder does not need to be changed again.
+do $$
+declare
+  bootstrap_admin_email text := 'YOUR_ADMIN_EMAIL';
+begin
+  if not exists (
+    select 1
+    from public.staff_profiles
+    where role = 'admin' and is_active = true
+  ) then
+    if bootstrap_admin_email = 'YOUR_ADMIN_EMAIL' then
+      raise exception 'active_admin_required: replace YOUR_ADMIN_EMAIL before the first run';
+    end if;
+
+    insert into public.staff_profiles (user_id, display_name, role, is_active)
+    select
+      id,
+      coalesce(nullif(trim(raw_user_meta_data ->> 'full_name'), ''), email),
+      'admin',
+      true
+    from auth.users
+    where lower(email) = lower(bootstrap_admin_email)
+    on conflict (user_id) do update
+    set role = 'admin', is_active = true;
+
+    if not found then
+      raise exception 'active_admin_required: matching Supabase Auth user was not found';
+    end if;
+  end if;
+
+  if not exists (
+    select 1
+    from public.staff_profiles
+    where role = 'admin' and is_active = true
+  ) then
+    raise exception 'active_admin_required: migration cannot harden access without an administrator';
+  end if;
+end;
+$$;
+
 drop trigger if exists staff_profiles_set_updated_at on public.staff_profiles;
 create trigger staff_profiles_set_updated_at
 before update on public.staff_profiles
@@ -109,6 +167,10 @@ after insert or update or delete on public.project_files
 for each row execute function public.write_audit_log();
 
 alter table public.staff_profiles enable row level security;
+alter table public.leads enable row level security;
+alter table public.clients enable row level security;
+alter table public.projects enable row level security;
+alter table public.project_files enable row level security;
 alter table public.audit_log enable row level security;
 
 -- Staff profile policies.
@@ -157,6 +219,30 @@ on public.project_files for all to authenticated
 using (public.is_active_staff())
 with check (public.is_active_staff());
 
+-- Repair or harden the private project bucket before installing its policies.
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values (
+  'project-files',
+  'project-files',
+  false,
+  52428800,
+  array[
+    'image/jpeg',
+    'image/png',
+    'image/webp',
+    'image/heic',
+    'image/heif',
+    'image/avif',
+    'video/mp4',
+    'video/quicktime',
+    'application/pdf'
+  ]
+)
+on conflict (id) do update
+set public = false,
+    file_size_limit = excluded.file_size_limit,
+    allowed_mime_types = excluded.allowed_mime_types;
+
 -- Replace storage policies with approved-staff checks.
 drop policy if exists "staff upload project files" on storage.objects;
 create policy "staff upload project files"
@@ -201,12 +287,4 @@ on public.audit_log (created_at desc);
 create index if not exists audit_log_record_idx
 on public.audit_log (table_name, record_id, created_at desc);
 
--- REQUIRED: bootstrap the first administrator after this migration.
--- Replace YOUR_ADMIN_EMAIL with the email of an existing Supabase Auth user.
---
--- insert into public.staff_profiles (user_id, display_name, role)
--- select id, coalesce(raw_user_meta_data ->> 'full_name', email), 'admin'
--- from auth.users
--- where email = 'YOUR_ADMIN_EMAIL'
--- on conflict (user_id) do update
--- set role = 'admin', is_active = true;
+commit;

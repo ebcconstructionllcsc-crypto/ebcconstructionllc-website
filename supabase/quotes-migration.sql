@@ -1,6 +1,8 @@
 -- EBC versioned quotes migration
 -- Run after schema.sql or staff-security-migration.sql.
 
+begin;
+
 create table if not exists public.quotes (
   id uuid primary key default gen_random_uuid(),
   quote_number text not null unique,
@@ -148,3 +150,5 @@ on public.quotes (project_id);
 
 create index if not exists quote_versions_quote_revision_idx
 on public.quote_versions (quote_id, revision desc);
+
+commit;

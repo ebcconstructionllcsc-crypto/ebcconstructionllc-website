@@ -4,8 +4,13 @@ import path from 'node:path';
 
 const root = path.resolve(import.meta.dirname, '..');
 const migration = fs.readFileSync(path.join(root, 'supabase/invoice-migration.sql'), 'utf8');
+const compactMigration = migration.replace(/\s+/g, ' ');
 const client = fs.readFileSync(path.join(root, 'app/invoice.js'), 'utf8');
 
+assert.match(
+  compactMigration,
+  /create or replace function public\.set_updated_at\(\).*set search_path = public.*as \$\$/i
+);
 assert.match(migration, /alter table public\.invoices enable row level security/);
 assert.match(migration, /revoke all on public\.invoices from anon/);
 assert.match(migration, /user_id = auth\.uid\(\)/g);
