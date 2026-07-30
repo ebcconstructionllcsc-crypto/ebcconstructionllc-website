@@ -92,7 +92,23 @@ The website and repository consistently identify project ref `agczzdjxnytjzgprvc
 - The public REST catalog correctly required a secret API key, so policy definitions, migration history, administrator status, backups, and exact RLS state remain unverified.
 - No customer rows were requested, no credentials were copied, and no database or storage mutation was attempted.
 
-**Interim verdict:** this is a partial existing-project state without a platform backup. Do not run `schema.sql`, purchase an upgrade, or execute any production migration from this PR. Continue only after the authenticated SQL preflight and a recoverable manual logical backup of the existing production data.
+### Authenticated SQL preflight observed on 2026-07-30
+
+Edgar ran the versioned metadata-only checks from the Supabase SQL Editor as role `postgres` in `main` / **PRODUCTION**.
+
+- `clients`, `leads`, `projects`, and `project_files` are present with RLS enabled and `force_rls=false`.
+- `staff_profiles`, `audit_log`, `site_media`, `quotes`, `quote_versions`, `render_jobs`, and `invoices` are missing.
+- `leads.submission_token` is missing. The expected `project_files` columns are present.
+- The legacy `authenticated` policies on all four core tables use command `ALL`, `using=true`, and `check=true`.
+- Anonymous insert policies remain on `leads` and `project_files`.
+- `public.set_updated_at()` is present with `security_definer=false` and no function configuration. The expected staff, audit, and public-intake functions are missing.
+- Three triggers are present on the expected tables.
+- `project-files` is present, private, and limited to 50 MiB. `project-renders` and `render-inputs` are missing.
+- `supabase_migrations.schema_migrations` is missing.
+- Fifty-six `anon` or `authenticated` table-level grants are present across the existing expected tables.
+- No customer rows were selected, no credentials were copied, and no database, Storage, or Auth mutation was performed.
+
+**Confirmed verdict:** this is a partial existing-project state without a platform backup and with a high-severity authorization gap. RLS is enabled, but every authenticated account currently qualifies for unrestricted access to all four core CRM tables. Do not run `schema.sql`, purchase an upgrade, create additional users, or execute any production migration. Continue only after a recoverable manual logical backup and a reviewed maintenance plan.
 
 ## Verification matrix
 
@@ -100,14 +116,14 @@ The website and repository consistently identify project ref `agczzdjxnytjzgprvc
 
 - [ ] Every private table has RLS enabled.
 - [ ] A valid active admin can access the private CRM.
-- [ ] An authenticated user absent from `staff_profiles` is rejected.
-- [ ] Anonymous users cannot insert directly into `leads`.
+- [ ] An authenticated user absent from `staff_profiles` is rejected. **FAILED:** unrestricted legacy `authenticated` policies are active.
+- [ ] Anonymous users cannot insert directly into `leads`. **FAILED:** the legacy anonymous insert policy remains active.
 - [ ] `submit_estimate_request` accepts a valid request and returns the same lead for the same submission token.
 - [ ] Invalid service, size, or file metadata is rejected.
 - [ ] `project-files`, `render-inputs`, and `project-renders` remain private.
 - [ ] Private-file access uses signed URLs.
 - [ ] Insert, update, and delete actions create append-only `audit_log` records.
-- [ ] `set_updated_at()` reports `search_path=public` in `pg_proc.proconfig`.
+- [ ] `set_updated_at()` reports `search_path=public` in `pg_proc.proconfig`. **FAILED:** `proconfig` is currently null.
 
 ### Business workflows
 
@@ -126,6 +142,7 @@ Fill one row per attempted production step. Leave the table unchanged until real
 
 | UTC time | Environment | File/action | Git SHA | Operator | Result | Evidence reference | Rollback/next action |
 |---|---|---|---|---|---|---|---|
+| 2026-07-30T05:08:00Z | `main` / PRODUCTION | Authenticated metadata-only SQL preflight | `9bace88` | Edgar / Rictor | Partial schema; high-severity unrestricted authenticated access; no writes | Owner screenshots, PR #11, and Issue #9 | Create recoverable manual logical backup; do not migrate |
 | 2026-07-30T03:58:58Z | `main` / PRODUCTION | Owner verification of Database Backups page | `1975289` | Edgar / Rictor | Free Plan; no project backups; no writes | Direction Técnica screenshot and Issue #9 | Require manual logical backup before any migration |
 | 2026-07-30T03:43:49Z | Configured project `agczzdjxnytjzgprvcxq`; production role unconfirmed | Public zero-row schema, bucket, auth-settings, and function probes | `71e51d4` | Rictor | Partial existing state; no writes | Issue #9 | Require administrative preflight and backup; do not migrate |
 | — | Production unverified | No migrations executed by this PR | — | — | Blocked | Issue #9 | Await backup, environment inventory, and Rictor approval |
