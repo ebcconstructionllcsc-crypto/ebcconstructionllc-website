@@ -4,9 +4,11 @@ Official public website and private operations application for EBC Construction 
 
 ## Public website
 
-The repository contains the bilingual marketing site for concrete, grading, excavation, pavers, landscaping, and remodeling services. Public pages are designed for GitHub Pages and connect validated estimate submissions and original project photos directly to Supabase.
+The repository contains the bilingual marketing site for EBC's concrete, grading, and excavation services. Public pages are designed for GitHub Pages and use original EBC project media.
 
-Public estimate requests use an idempotent database function. A retry cannot silently create duplicate leads, public uploads are restricted to conservative image types and sizes, and attachment failure does not discard the customer request.
+The public estimate form uses a device-local sharing flow while production Supabase intake remains uncertified. Visitors can validate and review their request, share details and selected photos through a compatible phone, or open prepared text and email messages. The site does not upload, retain, or claim to have received those details.
+
+The repository retains the hardened Supabase intake migration for a future controlled release. Do not reconnect the public form until the production backup, RLS, administrator, storage, function, and positive/negative test gates are complete.
 
 Project media must use original EBC photographs and videos. Do not replace source media, apply filters, overwrite originals, or introduce AI-styled edits.
 
@@ -41,6 +43,7 @@ npm test
 The command performs:
 
 - static checks across every public page and the private application;
+- a browser-level public-intake sharing flow covering request review, photo sharing, text/email fallbacks, Spanish content, invalid files, and service preselection;
 - security regression checks for credentials, authentication guards, validated public intake, approved-staff policies, storage rules, audit logging, quote versioning, and critical RLS assumptions;
 - dedicated quote-center workflow and preservation checks;
 - JavaScript syntax checks for the public website, private manager, quote center, quote builder, and plan tool.
@@ -86,7 +89,7 @@ Run:
 
 The quote builder keeps a local recovery copy, but Supabase is the authoritative source after a quote is saved. Each meaningful cloud update creates a numbered immutable snapshot in `quote_versions`.
 
-After migration, verify anonymous estimate submission, duplicate-request retry behavior, partial attachment failure, approved staff access, rejected non-staff access, private-file signed URLs, website media visibility, quote create/update/history behavior, quote-center status changes, and audit-log creation before production use.
+After migration, verify anonymous estimate submission, duplicate-request retry behavior, partial attachment failure, approved staff access, rejected non-staff access, private-file signed URLs, website media visibility, quote create/update/history behavior, quote-center status changes, and audit-log creation before production use. Keep `contact.html` in `data-submission-mode="local-share"` until those checks pass and Edgar expressly authorizes live intake.
 
 ## Activate the private render service
 
