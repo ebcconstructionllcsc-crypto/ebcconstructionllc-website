@@ -180,4 +180,30 @@ async function flush() {
   );
 }
 
+{
+  const { window, document } = setup();
+  let searchAborted = false;
+
+  window.fetch = (_url, options = {}) => new Promise((_resolve, reject) => {
+    options.signal?.addEventListener('abort', () => {
+      searchAborted = true;
+      const error = new Error('aborted');
+      error.name = 'AbortError';
+      reject(error);
+    }, { once: true });
+  });
+
+  fillRequiredFields(document);
+  const address = document.querySelector('#address');
+  address.dispatchEvent(new window.Event('input', { bubbles: true }));
+  await new Promise(resolve => setTimeout(resolve, 350));
+
+  submit(window, document.querySelector('#estimate-form'));
+  await flush();
+
+  assert.equal(searchAborted, true, 'submitting the review should cancel an unfinished address search');
+  assert.equal(document.querySelector('#address-results').hidden, true);
+  assert.equal(document.querySelector('#address').getAttribute('aria-expanded'), 'false');
+}
+
 console.log('Public intake sharing flow passed.');
