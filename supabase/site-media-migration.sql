@@ -2,6 +2,8 @@
 -- Run after supabase/schema.sql for a new project.
 -- For an existing project, run staff-security-migration.sql first.
 
+begin;
+
 create table if not exists public.site_media (
   id uuid primary key default gen_random_uuid(),
   title_en text not null default 'EBC field work',
@@ -56,3 +58,5 @@ using (
 
 create index if not exists site_media_public_order_idx
 on public.site_media (category, is_active, sort_order, created_at desc);
+
+commit;

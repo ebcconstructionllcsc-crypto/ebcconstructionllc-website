@@ -28,7 +28,7 @@ Do not paste access tokens, passwords, service-role keys, customer records, emai
 | SQL file | New project | Existing project | Required foundation | Purpose and replay note |
 |---|---:|---:|---|---|
 | `supabase/schema.sql` | 1 | Do not run as an upgrade | Empty/new Supabase project | Consolidated core CRM, staff authorization, audit, storage, render, and invoice objects. It is a new-project baseline, not a general existing-project migration. |
-| `supabase/staff-security-migration.sql` | Included | 1 | Existing core tables and `set_updated_at()` | Replaces broad authenticated access with approved-staff policies and audit controls. Bootstrap the first admin in the same maintenance session. |
+| `supabase/staff-security-migration.sql` | Included | 1 | Existing core tables and an existing Supabase Auth user | Atomically defines the shared trigger function, bootstraps the first admin, and replaces broad authenticated access with approved-staff policies and audit controls. It rolls back unless an active admin exists. |
 | `supabase/site-media-migration.sql` | 4 | 3 | Staff functions, audit function, `project-files` bucket | Adds website media and public read policy for the `website/` folder. Designed for replay after staff hardening. |
 | `supabase/quotes-migration.sql` | 5 | 4 | Core CRM tables, staff and audit functions | Adds quotes, immutable revisions, RLS, triggers, and indexes. |
 | `supabase/public-intake-hardening.sql` | 6 | 5 | Leads, project files, and `project-files` bucket | Replaces anonymous direct lead inserts with a validated idempotent RPC and tightens upload metadata and extensions. |
@@ -37,7 +37,7 @@ Do not paste access tokens, passwords, service-role keys, customer records, emai
 
 Steps 2 and 3 for a new project are operational actions: create the first Supabase Authentication user, then run the administrator bootstrap statement at the bottom of `schema.sql`.
 
-Step 2 for an existing project is the administrator bootstrap statement at the bottom of `staff-security-migration.sql`. Do not leave the hardened environment without an active admin.
+For an existing project, replace `YOUR_ADMIN_EMAIL` in `staff-security-migration.sql` before its first run. The migration performs the bootstrap inside an explicit transaction and aborts rather than leaving a hardened environment without an active admin.
 
 ## New-project runbook
 
@@ -54,48 +54,38 @@ Do not run the separate render or invoice migrations after the current consolida
 
 ## Existing-project runbook
 
-1. Capture a recoverable backup and the current object/policy inventory.
-2. Run `supabase/staff-security-migration.sql`.
-3. Bootstrap the first active administrator in the same maintenance session.
-4. Run `supabase/site-media-migration.sql`.
-5. Run `supabase/quotes-migration.sql`.
-6. Run `supabase/public-intake-hardening.sql`.
-7. Run `supabase/render-migration.sql`.
-8. Run `supabase/invoice-migration.sql`.
-9. Run the verification matrix below.
-10. Deploy `generate-render` only through a separate approved release after its secret names, JWT verification, origin restrictions, daily limit, and external billing are confirmed.
+1. Run `supabase/production-preflight.sql` and retain its metadata-only output.
+2. Capture a recoverable backup and confirm the maintenance window.
+3. Create or identify the intended administrator in Supabase Authentication.
+4. Replace `YOUR_ADMIN_EMAIL` in `supabase/staff-security-migration.sql` and run the complete transaction.
+5. Verify that the active administrator can sign in and that an unapproved authenticated user is rejected.
+6. Run `supabase/site-media-migration.sql`.
+7. Run `supabase/quotes-migration.sql`.
+8. Run `supabase/public-intake-hardening.sql`.
+9. Run `supabase/render-migration.sql`.
+10. Run `supabase/invoice-migration.sql`.
+11. Run the verification matrix below.
+12. Deploy `generate-render` only through a separate approved release after its secret names, JWT verification, origin restrictions, daily limit, and external billing are confirmed.
 
 Stop immediately on a SQL error, missing dependency, unexpected existing policy, failed bootstrap, or loss of approved-staff access. Do not continue down the list hoping a later migration repairs the environment.
 
 ## Read-only preflight evidence
 
-Capture results without customer data or identifiers:
+Run `supabase/production-preflight.sql` from the Supabase SQL Editor. Every executable statement in that file is read-only and returns schema, RLS, policy, function, trigger, bucket, migration-history, and grant metadata without selecting customer rows.
 
-```sql
-select
-  to_regclass('public.staff_profiles') as staff_profiles,
-  to_regclass('public.leads') as leads,
-  to_regclass('public.clients') as clients,
-  to_regclass('public.projects') as projects,
-  to_regclass('public.project_files') as project_files,
-  to_regclass('public.audit_log') as audit_log,
-  to_regclass('public.quotes') as quotes,
-  to_regclass('public.quote_versions') as quote_versions,
-  to_regclass('public.render_jobs') as render_jobs,
-  to_regclass('public.invoices') as invoices;
+### Public API probe observed on 2026-07-30
 
-select role, is_active, count(*) as staff_count
-from public.staff_profiles
-group by role, is_active
-order by role, is_active;
+The website and repository consistently identify project ref `agczzdjxnytjzgprvcxq`. Its role as the final production environment still requires administrative confirmation.
 
-select id, public, file_size_limit
-from storage.buckets
-where id in ('project-files', 'render-inputs', 'project-renders')
-order by id;
-```
+- Zero-row REST probes returned **present** for `leads`, `clients`, `projects`, and `project_files`.
+- Zero-row REST probes returned **missing** for `staff_profiles`, `audit_log`, `site_media`, `quotes`, `quote_versions`, `render_jobs`, and `invoices`.
+- The `leads.submission_token` probe returned `column leads.submission_token does not exist`, so public intake hardening has not been applied.
+- Storage metadata probes returned `Bucket not found` for `project-files`, `render-inputs`, and `project-renders`.
+- The `generate-render` Edge Function preflight returned HTTP 404.
+- The public REST catalog correctly required a secret API key, so policy definitions, migration history, administrator status, backups, and exact RLS state remain unverified.
+- No customer rows were requested, no credentials were copied, and no database or storage mutation was attempted.
 
-If `staff_profiles` does not yet exist, skip the staff-count query and record that fact.
+**Interim verdict:** this is a partial existing-project state. Do not run `schema.sql`. Continue only with the existing-project runbook after administrative preflight and backup evidence.
 
 ## Verification matrix
 
@@ -129,6 +119,7 @@ Fill one row per attempted production step. Leave the table unchanged until real
 
 | UTC time | Environment | File/action | Git SHA | Operator | Result | Evidence reference | Rollback/next action |
 |---|---|---|---|---|---|---|---|
+| 2026-07-30T03:43:49Z | Configured project `agczzdjxnytjzgprvcxq`; production role unconfirmed | Public zero-row schema, bucket, auth-settings, and function probes | `71e51d4` | Rictor | Partial existing state; no writes | Issue #9 | Require administrative preflight and backup; do not migrate |
 | — | Production unverified | No migrations executed by this PR | — | — | Blocked | Issue #9 | Await backup, environment inventory, and Rictor approval |
 
 ## Rollback policy

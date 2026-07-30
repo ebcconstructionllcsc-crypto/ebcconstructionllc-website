@@ -81,19 +81,20 @@ The current consolidated schema already includes render and invoice objects. The
 
 ### Existing project
 
-1. Run `supabase/staff-security-migration.sql`.
-2. Bootstrap the first administrator during the same maintenance session.
-3. Run `supabase/site-media-migration.sql` again to apply staff-only media policies and auditing.
-4. Run `supabase/quotes-migration.sql`.
-5. Run `supabase/public-intake-hardening.sql`.
-6. Run `supabase/render-migration.sql`.
-7. Run `supabase/invoice-migration.sql`.
-8. Confirm row-level security is enabled for every private table.
-9. Confirm the `project-files` bucket is private.
-10. Confirm non-staff authenticated users cannot read CRM data, quotes, quote revisions, invoices, render jobs, or private files.
-11. Confirm anonymous users cannot insert directly into `leads` or read `incoming/` files.
-12. Confirm inserts, updates, and deletes create `audit_log` records.
-13. Confirm meaningful quote updates increase `revision` and create matching immutable `quote_versions` rows.
+1. Run the read-only `supabase/production-preflight.sql` and retain its metadata-only output.
+2. Confirm a recoverable backup and an existing Supabase Authentication user for the first administrator.
+3. Replace `YOUR_ADMIN_EMAIL` in `supabase/staff-security-migration.sql` and run the complete transaction. It must abort unless an active administrator exists.
+4. Run `supabase/site-media-migration.sql` again to apply staff-only media policies and auditing.
+5. Run `supabase/quotes-migration.sql`.
+6. Run `supabase/public-intake-hardening.sql`.
+7. Run `supabase/render-migration.sql`.
+8. Run `supabase/invoice-migration.sql`.
+9. Confirm row-level security is enabled for every private table.
+10. Confirm the `project-files` bucket is private.
+11. Confirm non-staff authenticated users cannot read CRM data, quotes, quote revisions, invoices, render jobs, or private files.
+12. Confirm anonymous users cannot insert directly into `leads` or read `incoming/` files.
+13. Confirm inserts, updates, and deletes create `audit_log` records.
+14. Confirm meaningful quote updates increase `revision` and create matching immutable `quote_versions` rows.
 
 Review policies whenever a new table, storage path, role, document type, or customer-facing portal is added.
 

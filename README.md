@@ -75,17 +75,18 @@ The current consolidated `supabase/schema.sql` already creates the render and in
 
 Run:
 
-1. `supabase/staff-security-migration.sql`
-2. Bootstrap the first administrator using the statement at the bottom of that migration.
-3. Run `supabase/site-media-migration.sql` again; it is idempotent and applies the hardened media policies and audit trigger.
-4. Run `supabase/quotes-migration.sql` to enable cloud-backed quotes and immutable revision history.
-5. Run `supabase/public-intake-hardening.sql` to enable validated, deduplicated estimate requests and strict public photo rules.
-6. Run `supabase/render-migration.sql` to enable private render jobs and storage.
-7. Run `supabase/invoice-migration.sql` to enable private invoice history.
+1. Run the read-only `supabase/production-preflight.sql` and capture its output without customer records.
+2. Confirm a recoverable backup and create or identify the intended administrator in Supabase Authentication.
+3. Replace `YOUR_ADMIN_EMAIL` in `supabase/staff-security-migration.sql`, then run that entire file. Its explicit transaction bootstraps the administrator and rolls back if the access gate is not satisfied.
+4. Run `supabase/site-media-migration.sql` again; it is idempotent and applies the hardened media policies and audit trigger.
+5. Run `supabase/quotes-migration.sql` to enable cloud-backed quotes and immutable revision history.
+6. Run `supabase/public-intake-hardening.sql` to enable validated, deduplicated estimate requests and strict public photo rules.
+7. Run `supabase/render-migration.sql` to enable private render jobs and storage.
+8. Run `supabase/invoice-migration.sql` to enable private invoice history.
 
 Record every production step and its evidence in [`docs/SUPABASE_MIGRATION_LEDGER.md`](docs/SUPABASE_MIGRATION_LEDGER.md). Do not infer that a migration ran because its file exists in GitHub.
 
-**Important:** complete the first-administrator bootstrap in the same maintenance session. Until an active administrator exists in `public.staff_profiles`, authenticated users will not have access to private CRM records or project files.
+**Important:** never remove the migration transaction or bypass its active-administrator assertion. Until an active administrator exists in `public.staff_profiles`, authenticated users must not receive access to private CRM records or project files.
 
 The quote builder keeps a local recovery copy, but Supabase is the authoritative source after a quote is saved. Each meaningful cloud update creates a numbered immutable snapshot in `quote_versions`.
 

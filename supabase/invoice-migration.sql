@@ -2,6 +2,8 @@
 -- Use this migration for an existing EBC project after staff-security-migration.sql.
 -- New projects using the current schema.sql already include the invoice objects.
 
+begin;
+
 create extension if not exists pgcrypto;
 
 create or replace function public.set_updated_at()
@@ -64,3 +66,5 @@ create policy "staff manage own invoices" on public.invoices
   for all to authenticated
   using (user_id = auth.uid() and public.is_active_staff())
   with check (user_id = auth.uid() and public.is_active_staff());
+
+commit;

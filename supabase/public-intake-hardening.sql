@@ -2,6 +2,8 @@
 -- Run after schema.sql or staff-security-migration.sql.
 -- Replaces direct anonymous lead inserts with an idempotent validated RPC.
 
+begin;
+
 alter table public.leads
 add column if not exists submission_token uuid;
 
@@ -174,3 +176,5 @@ with check (
   and (storage.foldername(name))[1] = 'incoming'
   and lower(storage.extension(name)) in ('jpg','jpeg','png','webp','heic','heif','avif')
 );
+
+commit;

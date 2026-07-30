@@ -2,6 +2,8 @@
 -- Use this migration for an existing EBC project before deploying generate-render.
 -- New projects using the current schema.sql already include the render objects.
 
+begin;
+
 create extension if not exists pgcrypto;
 
 create table if not exists public.render_jobs (
@@ -74,3 +76,5 @@ drop policy if exists "staff delete own project renders" on storage.objects;
 create policy "staff delete own project renders" on storage.objects
   for delete to authenticated
   using (bucket_id='project-renders' and (storage.foldername(name))[1]=auth.uid()::text and public.is_active_staff());
+
+commit;
