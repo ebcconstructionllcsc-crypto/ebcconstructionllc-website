@@ -1,0 +1,100 @@
+.about-hero {
+  min-height: 100svh;
+  display: flex;
+  align-items: end;
+  padding-bottom: 110px;
+  background:
+    linear-gradient(90deg, rgba(8,8,7,.9) 0%, rgba(8,8,7,.62) 48%, rgba(8,8,7,.2) 78%),
+    linear-gradient(to top, rgba(8,8,7,.72), transparent 55%),
+    url("https://drive.google.com/thumbnail?id=1IKbBA7U_gXpmeCuYqwlGYQmH5Or16jRo&sz=w2000") center 42% / cover no-repeat;
+}
+.about-hero .shell { position: relative; z-index: 1; }
+.about-hero .hero-copy { max-width: 760px; }
+.founder-photo.portrait img { object-position: center 18%; }
+
+.service-text-card,
+.service-combo,
+.service-pair {
+  border-radius: 28px;
+  background: var(--white);
+  box-shadow: 0 18px 60px rgba(16,16,15,.1);
+  overflow: hidden;
+}
+.service-text-card { padding: clamp(38px, 6vw, 76px); }
+.service-text-card .num,
+.service-combo .num,
+.service-pair .num { color: var(--accent); font-weight: 900; letter-spacing: .12em; }
+.service-text-card h2,
+.service-combo h2,
+.service-pair h2 {
+  margin: 16px 0;
+  font-size: clamp(2.5rem, 5vw, 5.5rem);
+  line-height: .94;
+  text-transform: uppercase;
+}
+.service-text-card p,
+.service-combo p,
+.service-pair p { color: var(--muted); }
+.service-columns { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 28px; margin-top: 30px; }
+.service-columns article { padding: 30px; border: 1px solid var(--line); border-radius: 20px; background: #fbfaf7; }
+.service-columns h3 { margin: 0 0 12px; font-size: 1.55rem; text-transform: uppercase; }
+.service-columns ul { margin: 16px 0 0; padding-left: 1.1rem; color: var(--ink-soft); }
+
+.service-combo { padding: clamp(30px, 5vw, 64px); }
+.service-combo-head { max-width: 850px; }
+.service-media-grid { display: grid; grid-template-columns: 1.15fr .85fr; gap: 18px; margin-top: 36px; }
+.service-media-main,
+.service-media-stack img { width: 100%; border-radius: 22px; object-fit: cover; background: #d6cfc3; }
+.service-media-main { min-height: 560px; }
+.service-media-stack { display: grid; gap: 18px; }
+.service-media-stack img { min-height: 270px; }
+.service-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+
+.service-pair { padding: clamp(38px, 6vw, 76px); }
+.service-pair-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 22px; margin-top: 34px; }
+.service-pair-card { padding: 34px; border-radius: 22px; background: var(--ink); color: var(--white); }
+.service-pair-card h3 { margin: 0 0 14px; font-size: clamp(1.8rem, 3vw, 3rem); text-transform: uppercase; }
+.service-pair-card p { color: rgba(255,255,255,.68); }
+.service-pair-card ul { padding-left: 1.1rem; color: rgba(255,255,255,.82); }
+.anchor-target { display: block; position: relative; top: -110px; visibility: hidden; }
+
+.video-grid:has(> :nth-child(2):last-child) { grid-template-columns: repeat(2, minmax(0,1fr)); }
+
+.warranty-panel {
+  display: grid;
+  grid-template-columns: .75fr 1.25fr;
+  gap: 48px;
+  padding: clamp(38px, 6vw, 72px);
+  border-radius: 30px;
+  background: linear-gradient(135deg, #151412, #32271f 62%, #7b3211);
+  color: var(--white);
+  box-shadow: var(--shadow);
+}
+.warranty-panel p { margin: 0; color: rgba(255,255,255,.74); font-size: 1.1rem; }
+.faq { display: grid; gap: 12px; }
+.faq details { border: 1px solid var(--line); border-radius: 18px; background: rgba(255,255,255,.52); padding: 0 22px; }
+.faq summary { cursor: pointer; list-style: none; padding: 22px 36px 22px 0; font-weight: 900; position: relative; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: "+"; position: absolute; right: 0; top: 18px; font-size: 1.5rem; color: var(--accent); }
+.faq details[open] summary::after { content: "−"; }
+.faq details p { margin: 0; padding: 0 0 22px; color: var(--muted); }
+
+@media (max-width: 980px) {
+  .service-media-grid,
+  .warranty-panel { grid-template-columns: 1fr; }
+  .service-media-main { min-height: 440px; }
+}
+
+@media (max-width: 680px) {
+  .about-hero { min-height: 92svh; padding: 150px 0 86px; background-position: 58% center; }
+  .about-hero h1 { font-size: clamp(3.6rem, 17vw, 5.7rem); }
+  .founder-photo.portrait { min-height: 560px; }
+  .service-columns,
+  .service-pair-grid { grid-template-columns: 1fr; }
+  .service-media-grid { grid-template-columns: 1fr; }
+  .service-media-main { min-height: 420px; }
+  .service-media-stack { grid-template-columns: 1fr 1fr; }
+  .service-media-stack img { min-height: 210px; }
+  .video-grid:has(> :nth-child(2):last-child) { grid-template-columns: 1fr; }
+  .warranty-panel { padding: 36px 26px; gap: 26px; }
+}
