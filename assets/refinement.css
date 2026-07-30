@@ -65,8 +65,8 @@
   grid-template-columns: .75fr 1.25fr;
   gap: 48px;
   padding: clamp(38px, 6vw, 72px);
-  border-radius: 30px;
-  background: linear-gradient(135deg, #151412, #32271f 62%, #7b3211);
+  border-radius: 18px;
+  background: linear-gradient(135deg, #151412, #30291d 62%, #6a4b1e);
   color: var(--white);
   box-shadow: var(--shadow);
 }
