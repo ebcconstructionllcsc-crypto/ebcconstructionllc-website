@@ -84,6 +84,8 @@ Run:
 7. Run `supabase/render-migration.sql` to enable private render jobs and storage.
 8. Run `supabase/invoice-migration.sql` to enable private invoice history.
 
+For an iPhone operator, run the table/RLS and expected-column statements first, then use `supabase/production-preflight-mobile.sql` to return the remaining policy, function, trigger, bucket, migration-history, and grant checks in one result table.
+
 Record every production step and its evidence in [`docs/SUPABASE_MIGRATION_LEDGER.md`](docs/SUPABASE_MIGRATION_LEDGER.md). Do not infer that a migration ran because its file exists in GitHub.
 
 **Important:** never remove the migration transaction or bypass its active-administrator assertion. Until an active administrator exists in `public.staff_profiles`, authenticated users must not receive access to private CRM records or project files.

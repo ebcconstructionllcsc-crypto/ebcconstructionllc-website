@@ -75,6 +75,8 @@ Stop immediately on a SQL error, missing dependency, unexpected existing policy,
 
 Run `supabase/production-preflight.sql` from the Supabase SQL Editor. Every executable statement in that file is read-only and returns schema, RLS, policy, function, trigger, bucket, migration-history, and grant metadata without selecting customer rows.
 
+For an iPhone operator, run the table/RLS and expected-column statements first, then run `supabase/production-preflight-mobile.sql`. The mobile follow-up is one read-only CTE query that consolidates the remaining policy expressions, functions, triggers, buckets, migration-history state, and grants into one result table.
+
 ### Public API probe observed on 2026-07-30
 
 The website and repository consistently identify project ref `agczzdjxnytjzgprvcxq`. An owner-supplied Supabase Dashboard screenshot confirms that the selected `main` environment is labeled **PRODUCTION**.

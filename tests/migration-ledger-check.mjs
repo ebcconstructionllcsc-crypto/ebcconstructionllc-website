@@ -14,6 +14,7 @@ const ledger = read('docs/SUPABASE_MIGRATION_LEDGER.md');
 const schema = read('supabase/schema.sql');
 const staffSecurityMigration = read('supabase/staff-security-migration.sql');
 const productionPreflight = read('supabase/production-preflight.sql');
+const mobileProductionPreflight = read('supabase/production-preflight-mobile.sql');
 const renderMigration = read('supabase/render-migration.sql');
 const invoiceMigration = read('supabase/invoice-migration.sql');
 
@@ -28,6 +29,8 @@ assert.ok(newProjectSection, 'README must define the new-project migration path'
 assert.ok(existingProjectSection, 'README must define the existing-project migration path');
 assert.match(readme, /docs\/SUPABASE_MIGRATION_LEDGER\.md/);
 assert.match(configuration, /SUPABASE_MIGRATION_LEDGER\.md/);
+assert.match(readme, /production-preflight-mobile\.sql/);
+assert.match(ledger, /production-preflight-mobile\.sql/);
 
 assert.match(schema, /create table if not exists public\.render_jobs/i);
 assert.match(schema, /create table if not exists public\.invoices/i);
@@ -108,5 +111,37 @@ assert.match(productionPreflight, /pg_policies/i);
 assert.match(productionPreflight, /storage\.buckets/i);
 assert.match(productionPreflight, /submission_token/i);
 assert.match(productionPreflight, /set_updated_at/i);
+
+const executableMobilePreflight = mobileProductionPreflight
+  .replace(/--.*$/gm, '')
+  .split(';')
+  .map(statement => statement.trim())
+  .filter(Boolean);
+
+assert.equal(
+  executableMobilePreflight.length,
+  1,
+  'mobile production preflight must return one consolidated result set'
+);
+assert.match(
+  executableMobilePreflight[0],
+  /^with\b/i,
+  'mobile production preflight must remain one read-only CTE query'
+);
+assert.doesNotMatch(
+  mobileProductionPreflight,
+  /\b(insert|update|delete|alter|create|drop|truncate|grant|revoke|call|do)\b/i,
+  'mobile production preflight must not contain write-capable SQL'
+);
+for (const metadataSource of [
+  'pg_policies',
+  'pg_proc',
+  'information_schema.triggers',
+  'storage.buckets',
+  'supabase_migrations.schema_migrations',
+  'information_schema.role_table_grants'
+]) {
+  assert.match(mobileProductionPreflight, new RegExp(metadataSource.replace('.', '\\.'), 'i'));
+}
 
 console.log('Supabase migration ledger checks passed.');
