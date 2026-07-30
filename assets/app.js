@@ -2,6 +2,15 @@ const header = document.querySelector('.topbar');
 const menuButton = document.querySelector('.menu-btn');
 const navigation = document.querySelector('.navlinks');
 
+function isSpanish() {
+  return document.documentElement.lang === 'es';
+}
+
+function menuLabel(open) {
+  if (isSpanish()) return open ? 'Cerrar menú' : 'Abrir menú';
+  return open ? 'Close menu' : 'Open menu';
+}
+
 function syncHeader() {
   header?.classList.toggle('scrolled', window.scrollY > 30);
 }
@@ -9,7 +18,7 @@ function syncHeader() {
 function setMenu(open) {
   navigation?.classList.toggle('open', open);
   menuButton?.setAttribute('aria-expanded', String(open));
-  menuButton?.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+  menuButton?.setAttribute('aria-label', menuLabel(open));
   if (menuButton) menuButton.textContent = open ? '×' : '☰';
   document.body.classList.toggle('menu-open', open);
 }
@@ -59,10 +68,21 @@ function applyLanguage(language) {
       ? element.dataset.esPlaceholder
       : element.dataset.enPlaceholder;
   });
+  document.querySelectorAll('[data-en-content]').forEach(element => {
+    element.content = language === 'es'
+      ? element.dataset.esContent
+      : element.dataset.enContent;
+  });
   document.querySelectorAll('[data-lang-btn]').forEach(button => {
-    button.classList.toggle('active', button.dataset.langBtn === language);
+    const active = button.dataset.langBtn === language;
+    button.classList.toggle('active', active);
+    button.setAttribute('aria-pressed', String(active));
   });
   localStorage.setItem('ebc-lang', language);
+  setMenu(false);
+  window.dispatchEvent(new CustomEvent('ebc:languagechange', {
+    detail: { language }
+  }));
 }
 
 document.querySelectorAll('[data-lang-btn]').forEach(button => {
@@ -73,12 +93,10 @@ applyLanguage(localStorage.getItem('ebc-lang') || 'en');
 const estimateForm = document.querySelector('#estimate-form');
 
 if (estimateForm) {
-  const SUPABASE_URL = 'https://agczzdjxnytjzgprvcxq.supabase.co';
-  const SUPABASE_KEY = 'sb_publishable_0Sn8fs22OGVbNdvyZMILHA_Vv9NI2BE';
+  const EBC_PHONE = '+18644502954';
+  const EBC_EMAIL = 'ebcconstructionllcsc@gmail.com';
   const MAX_FILES = 8;
   const MAX_FILE_BYTES = 15 * 1024 * 1024;
-  const SUBMISSION_TOKEN_KEY = 'ebc-estimate-submission-token';
-  const LAST_SUCCESS_KEY = 'ebc-estimate-last-success';
   const allowedImageTypes = new Set([
     'image/jpeg',
     'image/png',
@@ -89,12 +107,25 @@ if (estimateForm) {
   ]);
   const allowedExtensions = new Set(['jpg', 'jpeg', 'png', 'webp', 'heic', 'heif', 'avif']);
 
-  // JavaScript owns submission. This prevents the legacy external form action from
-  // receiving customer data when the Supabase workflow is available.
+  const photosInput = estimateForm.querySelector('#photos');
+  const photoPicker = estimateForm.querySelector('.photo-picker');
+  const photoSelection = estimateForm.querySelector('#photo-selection');
+  const estimateReview = estimateForm.querySelector('#estimate-review');
+  const estimateReviewDetails = estimateForm.querySelector('#estimate-review-details');
+  const estimateReviewPhotos = estimateForm.querySelector('#estimate-review-photos');
+  const estimateReviewEdit = estimateForm.querySelector('#estimate-review-edit');
+  const shareRequest = estimateForm.querySelector('#share-request');
+  const textRequest = estimateForm.querySelector('#text-request');
+  const emailRequest = estimateForm.querySelector('#email-request');
+  const copyRequest = estimateForm.querySelector('#copy-request');
+  const submitButton = estimateForm.querySelector('button[type="submit"]');
+  let preparedRequest = null;
+  let preparedFiles = [];
+
   estimateForm.removeAttribute('action');
 
   function language() {
-    return document.documentElement.lang === 'es' ? 'es' : 'en';
+    return isSpanish() ? 'es' : 'en';
   }
 
   function text(english, spanish) {
@@ -105,17 +136,8 @@ if (estimateForm) {
     const status = estimateForm.querySelector('.form-status');
     if (!status) return;
     status.textContent = message;
-    status.classList.remove('success', 'error');
+    status.classList.remove('success', 'error', 'ready');
     if (type) status.classList.add(type);
-  }
-
-  function safeFileName(name) {
-    const normalized = String(name || 'project-photo')
-      .normalize('NFKD')
-      .replace(/[^a-zA-Z0-9._-]/g, '-')
-      .replace(/-+/g, '-')
-      .replace(/^-|-$/g, '');
-    return normalized || 'project-photo';
   }
 
   function fileExtension(name) {
@@ -146,30 +168,314 @@ if (estimateForm) {
     }
   }
 
-  function submissionToken() {
-    let token = sessionStorage.getItem(SUBMISSION_TOKEN_KEY);
-    if (!token) {
-      token = crypto.randomUUID();
-      sessionStorage.setItem(SUBMISSION_TOKEN_KEY, token);
-    }
-    return token;
+  function selectedFiles() {
+    return [...(photosInput?.files || [])];
   }
 
-  function loadSupabase() {
-    return new Promise((resolve, reject) => {
-      if (window.supabase) {
-        resolve();
-        return;
+  function formatFileSize(bytes) {
+    const unit = bytes >= 1024 * 1024 ? 'MB' : 'KB';
+    const value = bytes / (unit === 'MB' ? 1024 * 1024 : 1024);
+    return `${new Intl.NumberFormat(language() === 'es' ? 'es-US' : 'en-US', {
+      maximumFractionDigits: 1
+    }).format(value)} ${unit}`;
+  }
+
+  function renderPhotoSelection(files = selectedFiles()) {
+    if (!photoSelection) return;
+    photoPicker?.classList.toggle('has-files', files.length > 0);
+    if (!files.length) {
+      photoSelection.textContent = text(
+        'No photos selected yet.',
+        'Aún no has seleccionado fotos.'
+      );
+      return;
+    }
+
+    const names = files.map(file => file.name).join(', ');
+    photoSelection.textContent = text(
+      `${files.length} photo${files.length === 1 ? '' : 's'} selected: ${names}`,
+      `${files.length} foto${files.length === 1 ? '' : 's'} seleccionada${files.length === 1 ? '' : 's'}: ${names}`
+    );
+  }
+
+  function updatePhotoStatus(files = selectedFiles()) {
+    try {
+      validateFiles(files);
+      if (files.length) {
+        setFormStatus(text(
+          `${files.length} photo${files.length === 1 ? '' : 's'} ready. They stay on this device until you choose how to share.`,
+          `${files.length} foto${files.length === 1 ? '' : 's'} lista${files.length === 1 ? '' : 's'}. Permanecen en este dispositivo hasta que elijas cómo compartirlas.`
+        ), 'ready');
+      } else {
+        setFormStatus(text(
+          'Complete the form to review your request before sharing it.',
+          'Completa el formulario para revisar tu solicitud antes de compartirla.'
+        ));
       }
-      const script = document.createElement('script');
-      script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
-      script.onload = resolve;
-      script.onerror = () => reject(new Error('supabase_library_unavailable'));
-      document.head.appendChild(script);
+    } catch (error) {
+      setFormStatus(error.message, 'error');
+    }
+  }
+
+  function prepareRequest(files) {
+    const formData = new FormData(estimateForm);
+    return {
+      name: String(formData.get('Name') || '').trim(),
+      phone: String(formData.get('Phone') || '').trim(),
+      email: String(formData.get('Email') || '').trim(),
+      address: String(formData.get('Address') || '').trim(),
+      service: String(formData.get('Service') || '').trim(),
+      preferredTiming: String(formData.get('Preferred timing') || '').trim(),
+      project: String(formData.get('Project details') || '').trim(),
+      files: files.map(file => ({
+        name: file.name,
+        size: file.size,
+        type: file.type
+      }))
+    };
+  }
+
+  function requestText() {
+    if (!preparedRequest) return '';
+    const labels = language() === 'es'
+      ? {
+          title: 'Solicitud de estimado para EBC Construction LLC',
+          name: 'Nombre',
+          phone: 'Teléfono',
+          email: 'Correo',
+          address: 'Dirección del proyecto',
+          service: 'Servicio',
+          timing: 'Fecha preferida',
+          project: 'Detalles',
+          photos: 'Fotos seleccionadas'
+        }
+      : {
+          title: 'Estimate request for EBC Construction LLC',
+          name: 'Name',
+          phone: 'Phone',
+          email: 'Email',
+          address: 'Project address',
+          service: 'Service',
+          timing: 'Preferred timing',
+          project: 'Project details',
+          photos: 'Selected photos'
+        };
+
+    return [
+      labels.title,
+      '',
+      `${labels.name}: ${preparedRequest.name}`,
+      `${labels.phone}: ${preparedRequest.phone}`,
+      preparedRequest.email ? `${labels.email}: ${preparedRequest.email}` : '',
+      `${labels.address}: ${preparedRequest.address}`,
+      `${labels.service}: ${preparedRequest.service}`,
+      preparedRequest.preferredTiming ? `${labels.timing}: ${preparedRequest.preferredTiming}` : '',
+      `${labels.project}: ${preparedRequest.project}`,
+      `${labels.photos}: ${preparedRequest.files.length}`
+    ].filter(Boolean).join('\n');
+  }
+
+  function supportsSharingFiles(files) {
+    if (typeof navigator.share !== 'function') return false;
+    if (!files.length) return true;
+    if (typeof navigator.canShare !== 'function') return false;
+    try {
+      return navigator.canShare({ files });
+    } catch {
+      return false;
+    }
+  }
+
+  function updateTransferActions() {
+    const body = requestText();
+    if (textRequest) {
+      textRequest.href = `sms:${EBC_PHONE}?&body=${encodeURIComponent(body)}`;
+    }
+    if (emailRequest) {
+      const subject = text('Free estimate request', 'Solicitud de estimado gratis');
+      emailRequest.href = `mailto:${EBC_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    }
+    if (shareRequest) {
+      shareRequest.hidden = !supportsSharingFiles(preparedFiles);
+      shareRequest.textContent = preparedFiles.length
+        ? text('Share details + photos', 'Compartir detalles + fotos')
+        : text('Share request', 'Compartir solicitud');
+    }
+    if (copyRequest) {
+      copyRequest.hidden = !navigator.clipboard?.writeText;
+    }
+  }
+
+  function renderPreparedRequest() {
+    if (
+      !preparedRequest ||
+      !estimateReview ||
+      !estimateReviewDetails ||
+      !estimateReviewPhotos
+    ) return;
+
+    const fields = [
+      [text('Name', 'Nombre'), preparedRequest.name],
+      [text('Phone', 'Teléfono'), preparedRequest.phone],
+      [text('Email', 'Correo electrónico'), preparedRequest.email],
+      [text('Project address', 'Dirección del proyecto'), preparedRequest.address],
+      [text('Service', 'Servicio'), preparedRequest.service],
+      [text('Preferred timing', 'Fecha preferida'), preparedRequest.preferredTiming],
+      [text('Project details', 'Detalles del proyecto'), preparedRequest.project]
+    ];
+
+    estimateReviewDetails.replaceChildren();
+    for (const [label, value] of fields) {
+      if (!value) continue;
+      const term = document.createElement('dt');
+      const description = document.createElement('dd');
+      term.textContent = label;
+      description.textContent = value;
+      estimateReviewDetails.append(term, description);
+    }
+
+    estimateReviewPhotos.replaceChildren();
+    if (!preparedRequest.files.length) {
+      const item = document.createElement('li');
+      item.textContent = text(
+        'No photos selected. You can still text or email the project details.',
+        'No hay fotos seleccionadas. Aun así puedes enviar los detalles por texto o correo.'
+      );
+      estimateReviewPhotos.append(item);
+    } else {
+      for (const file of preparedRequest.files) {
+        const item = document.createElement('li');
+        item.textContent = `${file.name} · ${formatFileSize(file.size)}`;
+        estimateReviewPhotos.append(item);
+      }
+    }
+
+    updateTransferActions();
+    estimateReview.hidden = false;
+  }
+
+  function resetPreparedRequest() {
+    if (!preparedRequest) return;
+    preparedRequest = null;
+    preparedFiles = [];
+    if (estimateReview) estimateReview.hidden = true;
+    if (submitButton) {
+      submitButton.textContent = text('Review estimate request', 'Revisar solicitud de estimado');
+    }
+    setFormStatus(text(
+      'Details changed. Review the updated request before sharing it.',
+      'Los detalles cambiaron. Revisa la solicitud actualizada antes de compartirla.'
+    ));
+  }
+
+  function showPreparedRequest(files) {
+    preparedFiles = files;
+    preparedRequest = prepareRequest(files);
+    renderPreparedRequest();
+    setFormStatus(text(
+      'Review ready. Your request has not been sent yet.',
+      'La revisión está lista. Tu solicitud todavía no se ha enviado.'
+    ), 'ready');
+
+    if (submitButton) {
+      submitButton.textContent = text('Update review', 'Actualizar revisión');
+    }
+
+    estimateReview?.focus({ preventScroll: true });
+    estimateReview?.scrollIntoView({
+      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+      block: 'nearest'
     });
   }
 
-  estimateForm.addEventListener('submit', async event => {
+  photosInput?.addEventListener('change', () => {
+    resetPreparedRequest();
+    const files = selectedFiles();
+    renderPhotoSelection(files);
+    updatePhotoStatus(files);
+  });
+
+  estimateForm.addEventListener('input', event => {
+    if (event.target === photosInput) return;
+    resetPreparedRequest();
+  });
+
+  estimateReviewEdit?.addEventListener('click', () => {
+    estimateForm.querySelector('#name')?.focus();
+    estimateForm.querySelector('#name')?.scrollIntoView({
+      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+      block: 'center'
+    });
+  });
+
+  shareRequest?.addEventListener('click', async () => {
+    if (!preparedRequest || !supportsSharingFiles(preparedFiles)) return;
+    const payload = {
+      title: text('EBC Construction estimate request', 'Solicitud de estimado para EBC Construction'),
+      text: requestText()
+    };
+    if (preparedFiles.length) payload.files = preparedFiles;
+
+    try {
+      await navigator.share(payload);
+      setFormStatus(text(
+        'The sharing action finished. Confirm delivery in the app you chose.',
+        'La acción de compartir terminó. Confirma la entrega en la aplicación que elegiste.'
+      ), 'success');
+    } catch (error) {
+      if (error?.name === 'AbortError') return;
+      setFormStatus(text(
+        'Sharing is unavailable right now. Use the prepared text or email options below.',
+        'No se puede compartir en este momento. Usa las opciones de texto o correo de abajo.'
+      ), 'error');
+    }
+  });
+
+  copyRequest?.addEventListener('click', async () => {
+    if (!preparedRequest || !navigator.clipboard?.writeText) return;
+    try {
+      await navigator.clipboard.writeText(requestText());
+      setFormStatus(text(
+        'Project details copied. Paste them into your preferred messaging app.',
+        'Detalles copiados. Pégalos en la aplicación de mensajes que prefieras.'
+      ), 'success');
+    } catch {
+      setFormStatus(text(
+        'The details could not be copied. Use the text or email option instead.',
+        'No se pudieron copiar los detalles. Usa la opción de texto o correo.'
+      ), 'error');
+    }
+  });
+
+  textRequest?.addEventListener('click', () => {
+    setFormStatus(text(
+      'Your messaging app is opening with the details. Send the message and attach photos if needed.',
+      'Tu aplicación de mensajes se abrirá con los detalles. Envía el mensaje y adjunta las fotos si es necesario.'
+    ), 'ready');
+  });
+
+  emailRequest?.addEventListener('click', () => {
+    setFormStatus(text(
+      'Your email app is opening with the details. Send the email and attach photos if needed.',
+      'Tu aplicación de correo se abrirá con los detalles. Envía el correo y adjunta las fotos si es necesario.'
+    ), 'ready');
+  });
+
+  window.addEventListener('ebc:languagechange', () => {
+    renderPhotoSelection();
+    if (preparedRequest) {
+      renderPreparedRequest();
+      setFormStatus(text(
+        'Review ready. Your request has not been sent yet.',
+        'La revisión está lista. Tu solicitud todavía no se ha enviado.'
+      ), 'ready');
+      if (submitButton) submitButton.textContent = text('Update review', 'Actualizar revisión');
+    } else {
+      updatePhotoStatus();
+    }
+  });
+
+  estimateForm.addEventListener('submit', event => {
     event.preventDefault();
 
     if (!estimateForm.checkValidity()) {
@@ -177,10 +483,7 @@ if (estimateForm) {
       return;
     }
 
-    const button = estimateForm.querySelector('button[type="submit"]');
-    const originalButtonText = button.textContent;
-    const files = [...estimateForm.querySelector('#photos').files];
-
+    const files = selectedFiles();
     try {
       validateFiles(files);
     } catch (error) {
@@ -188,115 +491,9 @@ if (estimateForm) {
       return;
     }
 
-    const lastSuccess = Number(localStorage.getItem(LAST_SUCCESS_KEY) || 0);
-    if (Date.now() - lastSuccess < 30000) {
-      setFormStatus(text(
-        'Your request was already received. Please wait a moment before sending another.',
-        'Tu solicitud ya fue recibida. Espera un momento antes de enviar otra.'
-      ), 'success');
-      return;
-    }
-
-    if (!navigator.onLine) {
-      setFormStatus(text(
-        'You appear to be offline. Reconnect and send the request again.',
-        'Parece que no tienes conexión. Conéctate y vuelve a enviar la solicitud.'
-      ), 'error');
-      return;
-    }
-
-    button.disabled = true;
-    button.textContent = text('SENDING…', 'ENVIANDO…');
-    estimateForm.setAttribute('aria-busy', 'true');
-    setFormStatus(text(
-      'Sending your project information securely…',
-      'Enviando la información de tu proyecto de forma segura…'
-    ));
-
-    try {
-      await loadSupabase();
-      const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-      const formData = new FormData(estimateForm);
-      const token = submissionToken();
-
-      const request = await client.rpc('submit_estimate_request', {
-        p_submission_token: token,
-        p_name: String(formData.get('Name') || '').trim(),
-        p_phone: String(formData.get('Phone') || '').trim(),
-        p_email: String(formData.get('Email') || '').trim() || null,
-        p_address: String(formData.get('Address') || '').trim(),
-        p_service: String(formData.get('Service') || '').trim(),
-        p_preferred_timing: String(formData.get('Preferred timing') || '').trim() || null,
-        p_message: String(formData.get('Project details') || '').trim()
-      });
-
-      if (request.error) throw request.error;
-      const leadId = request.data;
-      if (!leadId) throw new Error('missing_lead_id');
-
-      const failedAttachments = [];
-      let uploadedAttachments = 0;
-
-      for (const file of files) {
-        const storagePath = `incoming/${leadId}/${crypto.randomUUID()}-${safeFileName(file.name)}`;
-        const upload = await client.storage.from('project-files').upload(storagePath, file, {
-          contentType: file.type,
-          cacheControl: '3600',
-          upsert: false
-        });
-
-        if (upload.error) {
-          failedAttachments.push(file.name);
-          continue;
-        }
-
-        const metadata = await client.from('project_files').insert({
-          lead_id: leadId,
-          file_name: file.name,
-          storage_path: storagePath,
-          mime_type: file.type,
-          size_bytes: file.size
-        });
-
-        if (metadata.error) {
-          failedAttachments.push(file.name);
-          continue;
-        }
-
-        uploadedAttachments += 1;
-      }
-
-      localStorage.setItem(LAST_SUCCESS_KEY, String(Date.now()));
-      sessionStorage.removeItem(SUBMISSION_TOKEN_KEY);
-      estimateForm.reset();
-
-      if (failedAttachments.length) {
-        setFormStatus(text(
-          `Your request was received. ${uploadedAttachments} photo${uploadedAttachments === 1 ? '' : 's'} uploaded; ${failedAttachments.length} could not be attached. Text the missing photos to (864) 450-2954.`,
-          `Tu solicitud fue recibida. Se subieron ${uploadedAttachments} foto${uploadedAttachments === 1 ? '' : 's'}; ${failedAttachments.length} no se pudieron adjuntar. Envía las fotos faltantes por mensaje al (864) 450-2954.`
-        ), 'success');
-      } else {
-        setFormStatus(text(
-          'Request received. EBC Construction will contact you soon.',
-          'Solicitud recibida. EBC Construction se comunicará contigo pronto.'
-        ), 'success');
-      }
-
-      button.textContent = text('SENT', 'ENVIADO');
-      window.setTimeout(() => {
-        button.disabled = false;
-        button.textContent = originalButtonText;
-      }, 3500);
-    } catch (error) {
-      console.error('Estimate submission:', error);
-      setFormStatus(text(
-        'Unable to send the request right now. Please call or text (864) 450-2954.',
-        'No se pudo enviar la solicitud en este momento. Llama o envía un mensaje al (864) 450-2954.'
-      ), 'error');
-      button.disabled = false;
-      button.textContent = originalButtonText;
-    } finally {
-      estimateForm.removeAttribute('aria-busy');
-    }
+    showPreparedRequest(files);
   });
+
+  renderPhotoSelection();
+  updatePhotoStatus();
 }
