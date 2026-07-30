@@ -110,6 +110,11 @@ if (!/\.form \.file-input-native\s*\{[^}]*width:\s*1px[^}]*clip-path:\s*inset\(5
   fail('the photo input must remain visually hidden without widening the estimate form');
 }
 
+const masterpieceCss = fs.readFileSync(path.join(root, 'assets/masterpiece.css'), 'utf8');
+if (!/@media \(max-width: 980px\)\s*\{[\s\S]*?\.topbar\.scrolled\s*\{\s*backdrop-filter:\s*none;\s*\}/.test(masterpieceCss)) {
+  fail('the mobile header must not trap the fixed navigation inside its blurred containing block');
+}
+
 if (!fs.existsSync(path.join(root, 'sitemap.xml'))) {
   fail('the public website is missing sitemap.xml');
 }
