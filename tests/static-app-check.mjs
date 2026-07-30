@@ -105,6 +105,11 @@ if (/row\.remove\(\)|categories\.includes\('landscaping'\)/.test(masterpieceScri
   fail('removed services are still being hidden at runtime instead of removed from source');
 }
 
+const phaseTwoCss = fs.readFileSync(path.join(root, 'assets/phase-two.css'), 'utf8');
+if (!/\.form \.file-input-native\s*\{[^}]*width:\s*1px[^}]*clip-path:\s*inset\(50%\)/.test(phaseTwoCss)) {
+  fail('the photo input must remain visually hidden without widening the estimate form');
+}
+
 if (!fs.existsSync(path.join(root, 'sitemap.xml'))) {
   fail('the public website is missing sitemap.xml');
 }
