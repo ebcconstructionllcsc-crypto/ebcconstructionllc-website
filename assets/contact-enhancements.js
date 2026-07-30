@@ -34,6 +34,13 @@
     addressInput.setAttribute('aria-expanded', 'false');
   }
 
+  function stopSearch() {
+    clearTimeout(timer);
+    controller?.abort();
+    controller = undefined;
+    closeResults();
+  }
+
   function choose(item) {
     addressInput.value = item.full;
     closeResults();
@@ -116,10 +123,9 @@
   }
 
   addressInput?.addEventListener('input', () => {
-    clearTimeout(timer);
+    stopSearch();
     const query = addressInput.value.trim();
     if (query.length < 5) {
-      closeResults();
       setStatus('Type the street number and name.', 'Escribe el número y el nombre de la calle.');
       return;
     }
@@ -127,17 +133,21 @@
   });
 
   addressInput?.addEventListener('keydown', event => {
+    if (event.key === 'Escape') {
+      stopSearch();
+      return;
+    }
     if (!items.length || !results) return;
     const buttons = [...results.querySelectorAll('.address-result')];
     if (event.key === 'ArrowDown') { event.preventDefault(); activeIndex = (activeIndex + 1) % buttons.length; }
     else if (event.key === 'ArrowUp') { event.preventDefault(); activeIndex = (activeIndex - 1 + buttons.length) % buttons.length; }
     else if (event.key === 'Enter' && activeIndex >= 0) { event.preventDefault(); choose(items[activeIndex]); return; }
-    else if (event.key === 'Escape') { closeResults(); return; }
     else return;
     buttons.forEach((button, index) => button.classList.toggle('active', index === activeIndex));
   });
 
-  document.addEventListener('click', event => { if (!event.target.closest('.address-field')) closeResults(); });
+  document.addEventListener('click', event => { if (!event.target.closest('.address-field')) stopSearch(); });
+  document.querySelector('#estimate-form')?.addEventListener('submit', stopSearch);
 
   locateButton?.addEventListener('click', () => {
     if (!navigator.geolocation) return setStatus('Location is unavailable on this device.', 'La ubicación no está disponible en este dispositivo.');
