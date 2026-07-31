@@ -44,6 +44,15 @@
     return Number(snapped.toFixed(4));
   }
 
+  function formatFeetInches(value) {
+    const totalInches = Math.round(Math.max(0, Number(value) || 0) * 12);
+    const feet = Math.floor(totalInches / 12);
+    const inches = totalInches % 12;
+    if (feet && inches) return `${feet}' ${inches}"`;
+    if (feet) return `${feet}'`;
+    return `${inches}"`;
+  }
+
   function clonePlanState(state = {}) {
     return {
       points: Array.isArray(state.points)
@@ -69,6 +78,11 @@
       this.current = clonePlanState(state);
       this.undoStack = [];
       this.redoStack = [];
+      return this.value();
+    }
+
+    sync(state) {
+      this.current = clonePlanState(state);
       return this.value();
     }
 
@@ -115,6 +129,7 @@
     polygonPerimeter,
     materialTakeoff,
     snapToIncrement,
+    formatFeetInches,
     clonePlanState,
     samePlanState,
     PlanHistory
