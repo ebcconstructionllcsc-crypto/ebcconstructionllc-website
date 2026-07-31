@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Propuesta profesional | EBC Manager</title>
+  <meta name="theme-color" content="#12365b">
+  <link rel="icon" href="../assets/images/logo.png">
+  <link rel="apple-touch-icon" href="../assets/images/logo.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="proposal.css">
+</head>
+<body>
+  <header class="proposal-toolbar">
+    <a href="quote.html" class="back">← Regresar a la cotización</a>
+    <div>
+      <span>EBC Construction LLC</span>
+      <strong>Propuesta profesional</strong>
+    </div>
+    <button id="print-proposal" type="button">Imprimir / Guardar PDF</button>
+  </header>
+
+  <main id="proposal-app" hidden>
+    <section class="proposal-page cover-page">
+      <div class="brand-heading">
+        <img src="../assets/images/logo.png" alt="EBC Construction LLC">
+        <div>
+          <h1 id="proposal-title">SITE IMPROVEMENT PROPOSAL</h1>
+          <p id="proposal-subtitle"></p>
+        </div>
+      </div>
+
+      <div class="meta-strip">
+        <div><span>PROPOSAL NO.</span><strong id="proposal-number"></strong></div>
+        <div><span>ISSUE DATE</span><strong id="proposal-date"></strong></div>
+        <div><span>VALID THROUGH</span><strong id="proposal-valid"></strong></div>
+        <div><span>PREPARED BY</span><strong id="proposal-prepared-by"></strong></div>
+      </div>
+
+      <div class="client-grid">
+        <section>
+          <h2>CLIENT INFORMATION</h2>
+          <strong id="proposal-client"></strong>
+          <p id="proposal-contact"></p>
+        </section>
+        <section>
+          <h2>PROJECT LOCATION</h2>
+          <strong id="proposal-address"></strong>
+          <p>Final layout to be field verified</p>
+        </section>
+      </div>
+
+      <section class="summary-card">
+        <h2>PROJECT SUMMARY</h2>
+        <p id="proposal-summary"></p>
+      </section>
+
+      <div id="proposal-packages" class="package-grid"></div>
+
+      <div class="total-banner">
+        <span>FINAL PROPOSAL TOTAL</span>
+        <strong id="proposal-total"></strong>
+      </div>
+
+      <section id="discount-card" class="discount-card">
+        <strong>Coordinated-project value</strong>
+        <p id="proposal-discount-narrative"></p>
+      </section>
+    </section>
+
+    <section class="proposal-page">
+      <header class="page-heading">
+        <h1>DETAILED PROJECT PRICING</h1>
+        <p>Construction-phase breakdown - labor, standard materials, equipment, deliveries, coordination, and cleanup included</p>
+      </header>
+      <div class="pricing-wrap">
+        <table>
+          <thead><tr><th>Scope / description</th><th>Qty.</th><th>Unit</th><th>Amount</th></tr></thead>
+          <tbody id="proposal-pricing"></tbody>
+          <tfoot id="proposal-pricing-totals"></tfoot>
+        </table>
+      </div>
+    </section>
+
+    <section class="proposal-page">
+      <header class="page-heading">
+        <h1>SCOPE, BASIS & COMMERCIAL TERMS</h1>
+        <p id="terms-address"></p>
+      </header>
+      <div class="terms-grid">
+        <section><h2>PRICING BASIS / INCLUDED SCOPE</h2><ul id="included-list"></ul></section>
+        <section><h2>EXCLUSIONS / OWNER RESPONSIBILITIES</h2><ul id="exclusions-list"></ul></section>
+      </div>
+      <section class="assumptions"><h2>PROJECT ASSUMPTIONS</h2><ul id="assumptions-list"></ul></section>
+      <section class="payment-section">
+        <h2>PROPOSED PAYMENT SCHEDULE</h2>
+        <table>
+          <thead><tr><th>Milestone</th><th>Due</th><th>Amount</th></tr></thead>
+          <tbody id="proposal-payments"></tbody>
+        </table>
+        <p id="proposal-schedule"></p>
+      </section>
+    </section>
+
+    <section class="proposal-page visual-page">
+      <header class="page-heading">
+        <h1>CONCEPTUAL PROJECT PLAN</h1>
+        <p>Proposal layout clarification; final dimensions, locations and property lines must be field verified.</p>
+      </header>
+      <div class="plan-panel">
+        <canvas id="proposal-plan" width="1200" height="620" aria-label="Conceptual project plan"></canvas>
+        <div class="plan-details">
+          <h2>PLAN BASIS</h2>
+          <p><strong>Area:</strong> <span id="proposal-area"></span></p>
+          <p><strong>Perimeter:</strong> <span id="proposal-perimeter"></span></p>
+          <p><strong>Thickness:</strong> <span id="proposal-thickness"></span></p>
+          <p><strong>Finish:</strong> <span id="proposal-finish"></span></p>
+          <p class="notice">Conceptual proposal drawing only. It is not an engineered, architectural, permit or survey drawing.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="render-page" class="proposal-page" hidden>
+      <header class="page-heading">
+        <h1>CONCEPTUAL COMPLETED-WORK RENDERING</h1>
+        <p>Visual intent for client understanding - written dimensions and scope control the proposal.</p>
+      </header>
+      <figure class="render-frame">
+        <img id="proposal-render" alt="Conceptual project rendering">
+        <figcaption>Conceptual visualization only. Actual construction may vary based on measurements, site conditions, drainage, materials, permits and the final signed agreement.</figcaption>
+      </figure>
+    </section>
+
+    <section class="proposal-page acceptance-page">
+      <header class="page-heading">
+        <h1>ESTIMATE ACCEPTANCE / NEXT STEP</h1>
+        <p id="acceptance-address"></p>
+      </header>
+      <section class="acceptance-card">
+        <p id="proposal-acceptance"></p>
+        <div class="signature-grid">
+          <div><span>Authorized Client Name</span></div>
+          <div><span>Signature / Approval</span></div>
+          <div><span>Date</span></div>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <section id="proposal-empty" class="empty-state" hidden>
+    <img src="../assets/images/logo.png" alt="EBC Construction LLC">
+    <h1>No hay una cotización disponible</h1>
+    <p>Crea o recupera una cotización primero. Después podrás generar la propuesta profesional completa.</p>
+    <a href="quote.html">Abrir cotizador</a>
+  </section>
+
+  <script src="proposal-core.js"></script>
+  <script src="proposal.js"></script>
+</body>
+</html>
