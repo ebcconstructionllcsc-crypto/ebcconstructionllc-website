@@ -1,0 +1,66 @@
+name: Verify public EBC release
+
+on:
+  push:
+    branches:
+      - agent/portfolio-audit-improvements
+    paths:
+      - .github/workflows/verify-public-release.yml
+
+permissions:
+  contents: write
+
+jobs:
+  verify-public-release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out verification branch
+        uses: actions/checkout@v4
+        with:
+          ref: agent/portfolio-audit-improvements
+          fetch-depth: 0
+
+      - name: Poll the public portfolio
+        run: |
+          set -euo pipefail
+          status="stale"
+          attempts=0
+          url="https://ebcconstructionllc.com/projects.html?release=${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+
+          for i in $(seq 1 20); do
+            attempts="$i"
+            body="$(curl -fsSL --retry 2 --connect-timeout 15 --max-time 30 \
+              -H 'Cache-Control: no-cache' \
+              -H 'Pragma: no-cache' \
+              "${url}&attempt=${i}" || true)"
+
+            if grep -q 'project-stories' <<<"$body" \
+              && grep -q 'assets/portfolio.js' <<<"$body" \
+              && ! grep -q 'drive.google.com/thumbnail' <<<"$body"; then
+              status="live"
+              break
+            fi
+
+            sleep 15
+          done
+
+          generated_at="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          cat > deployment-status.json <<JSON
+          {
+            "status": "${status}",
+            "generatedAt": "${generated_at}",
+            "attempts": ${attempts},
+            "expectedMainSha": "6d4e7b9a58a7365b2bf783907be30c8cd610ddf7",
+            "url": "https://ebcconstructionllc.com/projects.html"
+          }
+          JSON
+
+      - name: Record verification result
+        run: |
+          set -euo pipefail
+          git config user.name "EBC Release Verification"
+          git config user.email "actions@users.noreply.github.com"
+          git add deployment-status.json
+          git commit -m "Record public release verification"
+          git push origin HEAD:agent/portfolio-audit-improvements
