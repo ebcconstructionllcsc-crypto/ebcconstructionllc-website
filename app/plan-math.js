@@ -37,10 +37,94 @@
     };
   }
 
+  function snapToIncrement(value, increment = 0.25) {
+    const safeValue = Number(value) || 0;
+    const safeIncrement = Math.max(0.01, Number(increment) || 0.25);
+    const snapped = Math.round(safeValue / safeIncrement) * safeIncrement;
+    return Number(snapped.toFixed(4));
+  }
+
+  function clonePlanState(state = {}) {
+    return {
+      points: Array.isArray(state.points)
+        ? state.points.map(point => ({ x: Number(point.x) || 0, y: Number(point.y) || 0 }))
+        : [],
+      closed: Boolean(state.closed)
+    };
+  }
+
+  function samePlanState(first, second) {
+    return JSON.stringify(clonePlanState(first)) === JSON.stringify(clonePlanState(second));
+  }
+
+  class PlanHistory {
+    constructor(initialState = { points: [], closed: false }, limit = 50) {
+      this.limit = Math.max(1, Number(limit) || 50);
+      this.current = clonePlanState(initialState);
+      this.undoStack = [];
+      this.redoStack = [];
+    }
+
+    replace(state) {
+      this.current = clonePlanState(state);
+      this.undoStack = [];
+      this.redoStack = [];
+      return this.value();
+    }
+
+    commit(state) {
+      const next = clonePlanState(state);
+      if (samePlanState(next, this.current)) return this.value();
+      this.undoStack.push(clonePlanState(this.current));
+      if (this.undoStack.length > this.limit) this.undoStack.shift();
+      this.current = next;
+      this.redoStack = [];
+      return this.value();
+    }
+
+    undo() {
+      if (!this.undoStack.length) return this.value();
+      this.redoStack.push(clonePlanState(this.current));
+      this.current = this.undoStack.pop();
+      return this.value();
+    }
+
+    redo() {
+      if (!this.redoStack.length) return this.value();
+      this.undoStack.push(clonePlanState(this.current));
+      this.current = this.redoStack.pop();
+      return this.value();
+    }
+
+    value() {
+      return clonePlanState(this.current);
+    }
+
+    get canUndo() {
+      return this.undoStack.length > 0;
+    }
+
+    get canRedo() {
+      return this.redoStack.length > 0;
+    }
+  }
+
   root.EbcPlanMath = {
     polygonArea,
     distance,
     polygonPerimeter,
-    materialTakeoff
+    materialTakeoff,
+    snapToIncrement,
+    clonePlanState,
+    samePlanState,
+    PlanHistory
   };
+
+  if (typeof document !== 'undefined') {
+    document.addEventListener('DOMContentLoaded', () => {
+      import('./plan-enhancements.js').catch(error => {
+        console.error('Could not load plan field enhancements.', error);
+      });
+    }, { once: true });
+  }
 })(typeof window === 'undefined' ? globalThis : window);
