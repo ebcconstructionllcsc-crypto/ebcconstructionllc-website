@@ -71,13 +71,13 @@ jobs:
               -o "$body"; then
               marker="old"
               grep -q 'project-stories' "$body" && marker="new"
-              jq -n \
+              jq -cn \
                 --arg ip "$ip" \
                 --arg marker "$marker" \
                 --arg sha "$(sha256sum "$body" | awk '{print $1}')" \
                 '{ip:$ip, marker:$marker, sha256:$sha}' >> .release-diagnostics/origins.jsonl
             else
-              jq -n --arg ip "$ip" '{ip:$ip, marker:"unreachable", sha256:null}' >> .release-diagnostics/origins.jsonl
+              jq -cn --arg ip "$ip" '{ip:$ip, marker:"unreachable", sha256:null}' >> .release-diagnostics/origins.jsonl
             fi
           done
 
