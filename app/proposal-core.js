@@ -3,6 +3,8 @@
     en: {
       title: 'SITE IMPROVEMENT PROPOSAL',
       summaryPrefix: 'EBC Construction LLC proposes a coordinated construction package for',
+      summaryConnector: 'consisting of',
+      summaryVerification: 'Final dimensions, quantities, access, drainage, and field conditions will be verified before construction.',
       noAddress: 'the project location shown in this proposal',
       included: [
         'Field layout, measurements, elevation verification, and work-area coordination.',
@@ -29,6 +31,8 @@
     es: {
       title: 'PROPUESTA DE MEJORAS DEL PROYECTO',
       summaryPrefix: 'EBC Construction LLC propone un paquete coordinado de construcción para',
+      summaryConnector: 'que consiste en',
+      summaryVerification: 'Las dimensiones, cantidades, acceso, drenaje y condiciones del terreno se verificarán antes de construir.',
       noAddress: 'la ubicación indicada en esta propuesta',
       included: [
         'Trazado de campo, medidas, verificación de elevaciones y coordinación del área de trabajo.',
@@ -75,9 +79,7 @@
   }
 
   function normalizeLines(value, fallback = []) {
-    const lines = Array.isArray(value)
-      ? value
-      : String(value || '').split(/\r?\n/);
+    const lines = Array.isArray(value) ? value : String(value || '').split(/\r?\n/);
     const cleaned = lines
       .map(line => safeText(line).replace(/^[-*•]\s*/, ''))
       .filter(Boolean);
@@ -93,7 +95,11 @@
     const custom = parsePoints(fields['plan-points']);
 
     if (shape === 'freeform' && custom.length >= 2) {
-      return { shape, points: custom, closed: fields['plan-closed'] === true || fields['plan-closed'] === 'true' };
+      return {
+        shape,
+        points: custom,
+        closed: fields['plan-closed'] === true || fields['plan-closed'] === 'true'
+      };
     }
     if (shape === 'lshape') {
       return {
@@ -146,7 +152,10 @@
     const items = Array.isArray(raw?.items)
       ? raw.items.map((item, index) => ({
           key: safeText(item?.key),
-          title: safeText(item?.title || item?.description, language === 'es' ? `Concepto ${index + 1}` : `Item ${index + 1}`),
+          title: safeText(
+            item?.title || item?.description,
+            language === 'es' ? `Concepto ${index + 1}` : `Item ${index + 1}`
+          ),
           description: safeText(item?.description),
           qty: Math.max(0, number(item?.qty)),
           unit: safeText(item?.unit, 'lump sum'),
@@ -154,7 +163,7 @@
         }))
       : [];
     const subtotal = items.reduce((sum, item) => sum + item.qty * item.rate, 0);
-    const discount = Math.max(0, number(fields.discount));
+    const discount = Math.min(subtotal, Math.max(0, number(fields.discount)));
     const taxable = Math.max(0, subtotal - discount);
     const taxRate = Math.max(0, number(fields.tax));
     const taxAmount = taxable * taxRate / 100;
@@ -185,6 +194,7 @@
       items,
       subtotal,
       discount,
+      discountPercent: subtotal > 0 ? discount / subtotal * 100 : 0,
       taxable,
       taxRate,
       taxAmount,
@@ -227,7 +237,7 @@
     const scope = packages.length
       ? packages.join(', ')
       : draft.language === 'es' ? 'los trabajos cotizados' : 'the priced work';
-    return `${copy.summaryPrefix} ${location}, consisting of ${scope}. Final dimensions, quantities, access, drainage, and field conditions will be verified before construction.`;
+    return `${copy.summaryPrefix} ${location}, ${copy.summaryConnector} ${scope}. ${copy.summaryVerification}`;
   }
 
   function buildProposalModel(raw = {}, overrides = {}) {
