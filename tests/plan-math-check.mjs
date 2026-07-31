@@ -77,7 +77,7 @@ preserved.commit({ points: [{ x: 0.25, y: 0.5 }, { x: 18.5, y: 7.25 }], closed: 
 preserved.sync({ points: [{ x: 0.25, y: 0.5 }, { x: 18.5, y: 7.25 }], closed: true });
 assert.equal(preserved.canUndo, true);
 assert.deepEqual(preserved.undo(), {
-  points: [],
+  points: [{ x: 0.25, y: 0.5 }],
   closed: false
 });
 assert.deepEqual(preserved.redo(), {
