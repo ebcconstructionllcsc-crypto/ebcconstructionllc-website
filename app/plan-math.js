@@ -136,10 +136,19 @@
   };
 
   if (typeof document !== 'undefined') {
-    document.addEventListener('DOMContentLoaded', () => {
-      import('./plan-enhancements.js').catch(error => {
-        console.error('Could not load plan field enhancements.', error);
-      });
-    }, { once: true });
+    const source = document.currentScript?.src || '';
+    const enhancementUrl = source ? new URL('./plan-enhancements.js', source).href : '';
+    if (enhancementUrl) {
+      const loadEnhancements = () => {
+        import(enhancementUrl).catch(error => {
+          console.error('Could not load plan field enhancements.', error);
+        });
+      };
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', loadEnhancements, { once: true });
+      } else {
+        loadEnhancements();
+      }
+    }
   }
 })(typeof window === 'undefined' ? globalThis : window);
