@@ -134,21 +134,4 @@
     samePlanState,
     PlanHistory
   };
-
-  if (typeof document !== 'undefined') {
-    const source = document.currentScript?.src || '';
-    const enhancementUrl = source ? new URL('./plan-enhancements.js', source).href : '';
-    if (enhancementUrl) {
-      const loadEnhancements = () => {
-        import(enhancementUrl).catch(error => {
-          console.error('Could not load plan field enhancements.', error);
-        });
-      };
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', loadEnhancements, { once: true });
-      } else {
-        loadEnhancements();
-      }
-    }
-  }
 })(typeof window === 'undefined' ? globalThis : window);
