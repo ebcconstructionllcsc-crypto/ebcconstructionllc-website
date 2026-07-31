@@ -109,6 +109,7 @@
   dialog?.addEventListener('click', event => {
     if (event.target === dialog) closeDialog();
   });
+  window.addEventListener('pagehide', stopVideo);
 
   const fallbackPath = 'assets/images/image-fallback.webp';
   document.querySelectorAll('.portfolio-card img, .planning-board img').forEach(image => {
