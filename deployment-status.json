@@ -1,30 +1,64 @@
 {
-  "status": "stale",
-  "generatedAt": "2026-07-31T14:48:29Z",
-  "attempts": 30,
-  "expectedMainSha": "1d226064a2fc80d365faab807a1f03c37cffd4a5",
+  "status": "live",
+  "generatedAt": "2026-07-31T14:53:08.504672Z",
   "url": "https://ebcconstructionllc.com/projects.html",
+  "expectedMainSha": "1d226064a2fc80d365faab807a1f03c37cffd4a5",
   "pagesStatus": "built",
-  "pagesSite": {
-    "status": "built",
-    "cname": "ebcconstructionllc.com",
-    "htmlUrl": "https://ebcconstructionllc.com/",
-    "buildType": "legacy",
-    "source": {
-      "branch": "main",
-      "path": "/"
+  "html": {
+    "matchesMain": true,
+    "sha256": "0dc2b4baa733aca87a5bd6e53bfe2bf4c8e233a4b2ac54f7d25c18ab87f7cf34",
+    "bytes": 39402,
+    "usesLocalMedia": true
+  },
+  "portfolioController": {
+    "loaded": true,
+    "sha256": "09f61ebfb076434e9b6788256223327740435fd2c7f3ca453e243d2ea373f86a",
+    "bytes": 9543,
+    "editedStoriesWithAudio": 2
+  },
+  "videos": [
+    {
+      "path": "assets/video/portfolio/preparation-base.mp4",
+      "httpStatus": 200,
+      "bytes": 750485,
+      "contentType": "video/mp4"
     },
-    "httpsEnforced": true
-  },
-  "latestBuild": {
-    "status": "built",
-    "commit": "1d226064a2fc80d365faab807a1f03c37cffd4a5",
-    "createdAt": "2026-07-31T14:41:19Z",
-    "updatedAt": "2026-07-31T14:41:44Z",
-    "error": null
-  },
-  "buildRequest": {
-    "status": "queued",
-    "url": "https://api.github.com/repositories/1314558433/pages/builds/latest"
-  }
+    {
+      "path": "assets/video/portfolio/excavation-roots.mp4",
+      "httpStatus": 200,
+      "bytes": 3641305,
+      "contentType": "video/mp4"
+    },
+    {
+      "path": "assets/video/portfolio/finish-power-trowel.mp4",
+      "httpStatus": 200,
+      "bytes": 2712685,
+      "contentType": "video/mp4"
+    },
+    {
+      "path": "assets/video/portfolio/finish-large-slab.mp4",
+      "httpStatus": 200,
+      "bytes": 1401389,
+      "contentType": "video/mp4"
+    },
+    {
+      "path": "assets/video/portfolio/finish-cleanup.mp4",
+      "httpStatus": 200,
+      "bytes": 822388,
+      "contentType": "video/mp4"
+    },
+    {
+      "path": "assets/video/portfolio/stories/ebc-project-story-horizontal-with-audio.mp4",
+      "httpStatus": 200,
+      "bytes": 9300132,
+      "contentType": "video/mp4"
+    },
+    {
+      "path": "assets/video/portfolio/stories/ebc-project-story-vertical-with-audio.mp4",
+      "httpStatus": 200,
+      "bytes": 12396248,
+      "contentType": "video/mp4"
+    }
+  ],
+  "videoCount": 7
 }
