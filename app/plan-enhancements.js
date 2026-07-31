@@ -20,6 +20,7 @@
   let syncing = false;
   let pointerStart = null;
   let draggingIndex = null;
+  let pendingActionStart = null;
 
   function readState() {
     let points = [];
@@ -117,7 +118,7 @@
   }
 
   function pixelsPerFoot() {
-    return GRID_PIXELS / (Math.max(0.01, Number(gridSize?.value) || 5));
+    return GRID_PIXELS / Math.max(0.01, Number(gridSize?.value) || 5);
   }
 
   function eventPosition(event) {
@@ -156,6 +157,20 @@
       }
     });
     return closest;
+  }
+
+  function scheduleNativeActionCommit() {
+    pendingActionStart = readState();
+    queueMicrotask(() => {
+      const before = pendingActionStart;
+      pendingActionStart = null;
+      if (before) commitCurrent(before);
+    });
+  }
+
+  function replaceExternalState() {
+    history.replace(snapState(readState()));
+    updateButtons();
   }
 
   undoButton.addEventListener('click', event => {
@@ -222,15 +237,8 @@
   canvas.addEventListener('pointerup', finishPointerInteraction, true);
   canvas.addEventListener('pointercancel', finishPointerInteraction, true);
 
-  closeButton?.addEventListener('click', () => {
-    const before = readState();
-    queueMicrotask(() => commitCurrent(before));
-  }, true);
-
-  resetButton?.addEventListener('click', () => {
-    const before = readState();
-    queueMicrotask(() => commitCurrent(before));
-  }, true);
+  closeButton?.addEventListener('click', scheduleNativeActionCommit, true);
+  resetButton?.addEventListener('click', scheduleNativeActionCommit, true);
 
   precisionSelect.addEventListener('change', () => {
     const before = readState();
@@ -239,10 +247,10 @@
   });
 
   storedPoints.addEventListener('input', () => {
-    if (!syncing && !pointerStart) history.sync(snapState(readState()));
+    if (!syncing && !pointerStart && !pendingActionStart) replaceExternalState();
   });
   storedClosed.addEventListener('input', () => {
-    if (!syncing && !pointerStart) history.sync(snapState(readState()));
+    if (!syncing && !pointerStart && !pendingActionStart) replaceExternalState();
   });
 
   const initial = writeState(readState());
