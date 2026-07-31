@@ -1,11 +1,6 @@
-name: Publish and verify EBC Pages release
+name: Diagnose EBC Pages origin
 
 on:
-  push:
-    branches:
-      - agent/portfolio-audit-improvements
-    paths:
-      - .github/workflows/verify-public-release.yml
   pull_request:
     branches:
       - main
@@ -14,16 +9,17 @@ on:
 
 permissions:
   contents: write
-  pages: write
+  pages: read
 
 jobs:
-  publish-and-verify:
+  diagnose-pages-origin:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 10
     env:
       API_ROOT: https://api.github.com/repos/ebcconstructionllcsc-crypto/ebcconstructionllc-website
       PUBLIC_URL: https://ebcconstructionllc.com/projects.html
-      EXPECTED_MAIN_SHA: 1d226064a2fc80d365faab807a1f03c37cffd4a5
+      DEFAULT_URL: https://ebcconstructionllcsc-crypto.github.io/ebcconstructionllc-website/projects.html
+      RAW_URL: https://raw.githubusercontent.com/ebcconstructionllcsc-crypto/ebcconstructionllc-website/main/projects.html
     steps:
       - name: Check out verification branch
         uses: actions/checkout@v4
@@ -31,120 +27,140 @@ jobs:
           ref: agent/portfolio-audit-improvements
           fetch-depth: 0
 
-      - name: Request a GitHub Pages build
-        id: request
+      - name: Compare repository, Pages origin and custom domain
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          http_code="$(curl -sS -L \
-            -o pages-build-request.json \
-            -w '%{http_code}' \
-            -X POST \
+          mkdir -p .release-diagnostics
+
+          curl -fsSL \
             -H 'Accept: application/vnd.github+json' \
             -H "Authorization: Bearer ${GH_TOKEN}" \
             -H 'X-GitHub-Api-Version: 2022-11-28' \
-            "${API_ROOT}/pages/builds")"
-          echo "http_code=${http_code}" >> "$GITHUB_OUTPUT"
-          test "$http_code" = "201" || test "$http_code" = "202"
+            "${API_ROOT}/pages" > .release-diagnostics/pages-site.json
 
-      - name: Wait for Pages and the public domain
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-          pages_status="queued"
-          public_status="stale"
-          attempts=0
-          latest_build='{}'
-          pages_site='{}'
+          curl -fsSL \
+            -H 'Accept: application/vnd.github+json' \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H 'X-GitHub-Api-Version: 2022-11-28' \
+            "${API_ROOT}/pages/builds/latest" > .release-diagnostics/latest-build.json
 
-          for i in $(seq 1 30); do
-            attempts="$i"
-            pages_site="$(curl -fsSL \
-              -H 'Accept: application/vnd.github+json' \
-              -H "Authorization: Bearer ${GH_TOKEN}" \
-              -H 'X-GitHub-Api-Version: 2022-11-28' \
-              "${API_ROOT}/pages" || echo '{}')"
-            latest_build="$(curl -fsSL \
-              -H 'Accept: application/vnd.github+json' \
-              -H "Authorization: Bearer ${GH_TOKEN}" \
-              -H 'X-GitHub-Api-Version: 2022-11-28' \
-              "${API_ROOT}/pages/builds/latest" || echo '{}')"
-            pages_status="$(jq -r '.status // "unknown"' <<<"$latest_build")"
+          curl -fsSL -D .release-diagnostics/public-headers.txt \
+            -H 'Cache-Control: no-cache' \
+            -H 'Pragma: no-cache' \
+            "${PUBLIC_URL}?diagnostic=${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" \
+            -o .release-diagnostics/public.html
 
-            body="$(curl -fsSL --retry 2 --connect-timeout 15 --max-time 30 \
+          curl -sS -D .release-diagnostics/default-headers.txt \
+            -o .release-diagnostics/default.html \
+            "${DEFAULT_URL}?diagnostic=${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" || true
+
+          curl -fsSL "${RAW_URL}?diagnostic=${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" \
+            -o .release-diagnostics/raw-main.html
+
+          : > .release-diagnostics/origins.jsonl
+          for ip in 185.199.108.153 185.199.109.153 185.199.110.153 185.199.111.153; do
+            body=".release-diagnostics/origin-${ip}.html"
+            headers=".release-diagnostics/origin-${ip}-headers.txt"
+            if curl -fsSL --resolve "ebcconstructionllc.com:443:${ip}" \
+              -D "$headers" \
               -H 'Cache-Control: no-cache' \
               -H 'Pragma: no-cache' \
-              "${PUBLIC_URL}?release=${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${i}" || true)"
-
-            if grep -q 'project-stories' <<<"$body" \
-              && grep -q 'assets/portfolio.js' <<<"$body" \
-              && ! grep -q 'drive.google.com/thumbnail' <<<"$body"; then
-              public_status="live"
+              "${PUBLIC_URL}?diagnostic=${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${ip}" \
+              -o "$body"; then
+              marker="old"
+              grep -q 'project-stories' "$body" && marker="new"
+              jq -n \
+                --arg ip "$ip" \
+                --arg marker "$marker" \
+                --arg sha "$(sha256sum "$body" | awk '{print $1}')" \
+                '{ip:$ip, marker:$marker, sha256:$sha}' >> .release-diagnostics/origins.jsonl
+            else
+              jq -n --arg ip "$ip" '{ip:$ip, marker:"unreachable", sha256:null}' >> .release-diagnostics/origins.jsonl
             fi
-
-            if [ "$pages_status" = "built" ] && [ "$public_status" = "live" ]; then
-              break
-            fi
-
-            if [ "$pages_status" = "errored" ]; then
-              break
-            fi
-
-            sleep 15
           done
 
-          generated_at="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
-          jq -n \
-            --arg status "$public_status" \
-            --arg generatedAt "$generated_at" \
-            --arg expectedMainSha "$EXPECTED_MAIN_SHA" \
-            --arg url "$PUBLIC_URL" \
-            --arg pagesStatus "$pages_status" \
-            --argjson attempts "$attempts" \
-            --argjson pagesSite "$pages_site" \
-            --argjson latestBuild "$latest_build" \
-            --slurpfile buildRequest pages-build-request.json \
-            '{
-              status: $status,
-              generatedAt: $generatedAt,
-              attempts: $attempts,
-              expectedMainSha: $expectedMainSha,
-              url: $url,
-              pagesStatus: $pagesStatus,
-              pagesSite: {
-                status: ($pagesSite.status // null),
-                cname: ($pagesSite.cname // null),
-                htmlUrl: ($pagesSite.html_url // null),
-                buildType: ($pagesSite.build_type // null),
-                source: ($pagesSite.source // null),
-                httpsEnforced: ($pagesSite.https_enforced // null)
-              },
-              latestBuild: {
-                status: ($latestBuild.status // null),
-                commit: ($latestBuild.commit // null),
-                createdAt: ($latestBuild.created_at // null),
-                updatedAt: ($latestBuild.updated_at // null),
-                error: ($latestBuild.error.message // null)
-              },
-              buildRequest: ($buildRequest[0] // null)
-            }' > deployment-status.json
+          getent ahostsv4 ebcconstructionllc.com | awk '{print $1}' | sort -u > .release-diagnostics/resolved-ipv4.txt || true
 
-          test "$pages_status" = "built"
-          test "$public_status" = "live"
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          import json
+          from datetime import datetime, timezone
 
-      - name: Record publication evidence
-        if: always()
+          root = Path('.release-diagnostics')
+
+          def read(name):
+              path = root / name
+              return path.read_text(encoding='utf-8', errors='replace') if path.exists() else ''
+
+          def load(name):
+              text = read(name)
+              return json.loads(text) if text else {}
+
+          def file_info(name):
+              path = root / name
+              if not path.exists():
+                  return {'marker': 'missing', 'sha256': None, 'bytes': 0}
+              data = path.read_bytes()
+              text = data.decode('utf-8', errors='replace')
+              marker = 'new' if 'project-stories' in text and 'assets/portfolio.js' in text else 'old'
+              return {
+                  'marker': marker,
+                  'sha256': hashlib.sha256(data).hexdigest(),
+                  'bytes': len(data),
+              }
+
+          origins = []
+          for line in read('origins.jsonl').splitlines():
+              if line.strip():
+                  origins.append(json.loads(line))
+
+          pages = load('pages-site.json')
+          build = load('latest-build.json')
+          result = {
+              'generatedAt': datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'),
+              'pages': {
+                  'status': pages.get('status'),
+                  'cname': pages.get('cname'),
+                  'htmlUrl': pages.get('html_url'),
+                  'buildType': pages.get('build_type'),
+                  'source': pages.get('source'),
+                  'httpsEnforced': pages.get('https_enforced'),
+              },
+              'latestBuild': {
+                  'status': build.get('status'),
+                  'commit': build.get('commit'),
+                  'createdAt': build.get('created_at'),
+                  'updatedAt': build.get('updated_at'),
+                  'error': (build.get('error') or {}).get('message'),
+              },
+              'publicDomain': file_info('public.html'),
+              'defaultGithubIo': file_info('default.html'),
+              'rawMain': file_info('raw-main.html'),
+              'directGithubPagesOrigins': origins,
+              'resolvedIpv4': read('resolved-ipv4.txt').splitlines(),
+              'publicHeaders': read('public-headers.txt'),
+              'defaultHeaders': read('default-headers.txt'),
+          }
+          Path('deployment-diagnostics.json').write_text(
+              json.dumps(result, indent=2) + '\n',
+              encoding='utf-8',
+          )
+          PY
+
+          cat deployment-diagnostics.json
+
+      - name: Record diagnostics
         run: |
           set -euo pipefail
-          test -s deployment-status.json || printf '%s\n' '{"status":"workflow-error"}' > deployment-status.json
-          rm -f pages-build-request.json
+          rm -rf .release-diagnostics
           git config user.name "EBC Release Verification"
           git config user.email "actions@users.noreply.github.com"
-          git add deployment-status.json
+          git add deployment-diagnostics.json
           if git diff --cached --quiet; then
             exit 0
           fi
-          git commit -m "Record GitHub Pages publication evidence"
+          git commit -m "Record Pages origin diagnostics"
           git push origin HEAD:agent/portfolio-audit-improvements
