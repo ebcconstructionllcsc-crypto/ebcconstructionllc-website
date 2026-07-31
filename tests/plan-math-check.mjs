@@ -7,6 +7,7 @@ const {
   polygonPerimeter,
   materialTakeoff,
   snapToIncrement,
+  formatFeetInches,
   PlanHistory
 } = globalThis.EbcPlanMath;
 
@@ -44,6 +45,9 @@ assert.ok(Math.abs(takeoff.baseYards - 8.1481481481) < 1e-9);
 assert.equal(snapToIncrement(10.13, 0.25), 10.25);
 assert.equal(snapToIncrement(10.13, 0.5), 10);
 assert.equal(snapToIncrement(10.6, 1), 11);
+assert.equal(snapToIncrement(18.58, 0.25), 18.5);
+assert.equal(formatFeetInches(18.5), `18' 6"`);
+assert.equal(formatFeetInches(0.25), `3"`);
 
 const history = new PlanHistory({ points: [], closed: false }, 2);
 history.commit({ points: [{ x: 1, y: 1 }], closed: false });
@@ -66,5 +70,19 @@ assert.deepEqual(history.redo(), {
 });
 history.commit({ points: [{ x: 9, y: 9 }], closed: false });
 assert.equal(history.canRedo, false);
+
+const preserved = new PlanHistory({ points: [], closed: false }, 50);
+preserved.commit({ points: [{ x: 0.25, y: 0.5 }], closed: false });
+preserved.commit({ points: [{ x: 0.25, y: 0.5 }, { x: 18.5, y: 7.25 }], closed: false });
+preserved.sync({ points: [{ x: 0.25, y: 0.5 }, { x: 18.5, y: 7.25 }], closed: true });
+assert.equal(preserved.canUndo, true);
+assert.deepEqual(preserved.undo(), {
+  points: [],
+  closed: false
+});
+assert.deepEqual(preserved.redo(), {
+  points: [{ x: 0.25, y: 0.5 }, { x: 18.5, y: 7.25 }],
+  closed: true
+});
 
 console.log('Plan math checks passed.');
