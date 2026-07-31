@@ -64,3 +64,5 @@ jobs:
           git add deployment-status.json
           git commit -m "Record public release verification"
           git push origin HEAD:agent/portfolio-audit-improvements
+
+# Updated to trigger the existing verification workflow.
