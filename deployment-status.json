@@ -1,7 +1,30 @@
 {
   "status": "stale",
-  "generatedAt": "2026-07-31T14:35:05Z",
-  "attempts": 20,
-  "expectedMainSha": "6d4e7b9a58a7365b2bf783907be30c8cd610ddf7",
-  "url": "https://ebcconstructionllc.com/projects.html"
+  "generatedAt": "2026-07-31T14:48:29Z",
+  "attempts": 30,
+  "expectedMainSha": "1d226064a2fc80d365faab807a1f03c37cffd4a5",
+  "url": "https://ebcconstructionllc.com/projects.html",
+  "pagesStatus": "built",
+  "pagesSite": {
+    "status": "built",
+    "cname": "ebcconstructionllc.com",
+    "htmlUrl": "https://ebcconstructionllc.com/",
+    "buildType": "legacy",
+    "source": {
+      "branch": "main",
+      "path": "/"
+    },
+    "httpsEnforced": true
+  },
+  "latestBuild": {
+    "status": "built",
+    "commit": "1d226064a2fc80d365faab807a1f03c37cffd4a5",
+    "createdAt": "2026-07-31T14:41:19Z",
+    "updatedAt": "2026-07-31T14:41:44Z",
+    "error": null
+  },
+  "buildRequest": {
+    "status": "queued",
+    "url": "https://api.github.com/repositories/1314558433/pages/builds/latest"
+  }
 }
