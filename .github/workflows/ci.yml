@@ -40,7 +40,7 @@ jobs:
       - name: Download immutable project-story package
         run: |
           set -euo pipefail
-          python3 -m gdown --quiet --fuzzy "https://drive.google.com/file/d/11-ZDQSkh2d5QOhgVvD8t0EVx_ZdiDD9J/view" -O project-stories.zip
+          python3 -m gdown --quiet "11-ZDQSkh2d5QOhgVvD8t0EVx_ZdiDD9J" -O project-stories.zip
           echo "df5b897f8ed94ee393d95298ed6cffe32875a94b81d820a3fe035a6db28dfd14  project-stories.zip" | sha256sum -c -
 
       - name: Validate and install package
