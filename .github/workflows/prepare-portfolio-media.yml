@@ -1,245 +1,113 @@
-name: Prepare EBC portfolio media
+name: Install audited EBC portfolio
 
 on:
-  push:
+  pull_request:
     branches:
-      - agent/portfolio-audit-improvements
-    paths:
-      - .github/workflows/prepare-portfolio-media.yml
+      - main
+    types: [opened, synchronize, reopened]
 
 permissions:
   contents: write
 
+concurrency:
+  group: ebc-portfolio-install-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
 jobs:
-  prepare-media:
+  install-and-verify:
+    if: github.head_ref == 'agent/portfolio-audit-improvements'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
       - name: Check out portfolio branch
         uses: actions/checkout@v4
         with:
-          ref: agent/portfolio-audit-improvements
+          ref: ${{ github.head_ref }}
           fetch-depth: 0
+          persist-credentials: true
 
-      - name: Install media tooling
+      - name: Download the immutable audited package
+        env:
+          PACKAGE_FILE_ID: 1gEfyzEu6Rq1jmiszHSmyzCVLqDtNoPDx
+          PACKAGE_SHA256: 3373a7adadb40986c627a31b3767a26bdd96415ce69495a617f0c8f662f9d5e1
+        run: |
+          set -euo pipefail
+          python3 -m pip install --disable-pip-version-check 'gdown==5.2.0'
+          python3 -m gdown --quiet --fuzzy \
+            "https://drive.google.com/file/d/${PACKAGE_FILE_ID}/view" \
+            -O /tmp/ebc-portfolio-audit-payload.zip
+          echo "${PACKAGE_SHA256}  /tmp/ebc-portfolio-audit-payload.zip" | sha256sum --check --strict
+
+      - name: Validate and install the package
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import PurePosixPath
+          from zipfile import ZipFile
+
+          archive = '/tmp/ebc-portfolio-audit-payload.zip'
+          required = {
+              'projects.html',
+              'package.json',
+              'assets/portfolio-audit.css',
+              'assets/portfolio.js',
+              'tests/portfolio-audit-check.mjs',
+              'assets/media/portfolio-manifest.json',
+          }
+          with ZipFile(archive) as bundle:
+              entries = bundle.infolist()
+              names = {entry.filename for entry in entries}
+              if len(entries) > 100:
+                  raise SystemExit('Portfolio package contains too many entries.')
+              if sum(entry.file_size for entry in entries) > 50 * 1024 * 1024:
+                  raise SystemExit('Portfolio package is unexpectedly large.')
+              missing = sorted(required - names)
+              if missing:
+                  raise SystemExit(f'Missing required package files: {missing}')
+              for entry in entries:
+                  path = PurePosixPath(entry.filename)
+                  if path.is_absolute() or '..' in path.parts:
+                      raise SystemExit(f'Unsafe archive path: {entry.filename}')
+                  if ((entry.external_attr >> 16) & 0o170000) == 0o120000:
+                      raise SystemExit(f'Symlink entries are not allowed: {entry.filename}')
+              bundle.extractall('.')
+          PY
+          test -s projects.html
+          test -s assets/portfolio-audit.css
+          test -s assets/portfolio.js
+          test -s assets/media/portfolio-manifest.json
+
+      - name: Verify silent H.264 portfolio video
         run: |
           set -euo pipefail
           sudo apt-get update
-          sudo apt-get install -y ffmpeg libheif-examples
-          python3 -m pip install --disable-pip-version-check gdown pillow
+          sudo apt-get install -y ffmpeg
+          while IFS= read -r video; do
+            test -z "$(ffprobe -v error -select_streams a -show_entries stream=index -of csv=p=0 "$video")"
+            test "$(ffprobe -v error -select_streams v:0 -show_entries stream=codec_name -of csv=p=0 "$video")" = "h264"
+            test "$(stat -c %s "$video")" -lt 26214400
+          done < <(find assets/video/portfolio -type f -name '*.mp4' -print | sort)
 
-      - name: Download EBC source media from Drive
+      - name: Run the complete site test and production build
         run: |
           set -euo pipefail
-          mkdir -p .media-src
+          npm ci
+          npm test
+          npx vite build
+          git diff --check
 
-          download() {
-            local id="$1"
-            local output="$2"
-            python3 -m gdown --quiet --fuzzy "https://drive.google.com/file/d/${id}/view" -O ".media-src/${output}"
-            test -s ".media-src/${output}"
-          }
-
-          download "1qM-2Xll3UZn7pl2iBf9Z0QFxPU3MaNIZ" "IMG_0050.HEIC"
-          download "1G5QjxxrCI3VHfogjdhqAkh3WrW84iGx0" "IMG_1363.JPG"
-          download "1s_s7HNCZfiMjTtv1aTB9l6JCScdNaUUD" "IMG_5040.HEIC"
-          download "1X6jKQhvzCFHlB6E5RJQG-KSVy66PIH8j" "IMG_0517.JPG"
-          download "1IelU4DYO1ujGOJJQam44aBJgX9Y1nmne" "IMG_1058.JPG"
-          download "1MxUA6wF30pXk9vDGF6CXfDZrDrNBdy9t" "IMG_0084.HEIC"
-          download "1xre2ZqssNBes-1aiMx0Bnw6ohY5uJjeN" "F97585ED.jpg"
-          download "1aKKBl7s9WwbDPbsUlQDddV7PxCQFAnan" "IMG_1446.JPG"
-          download "16O-2eZ8qgzso3WlkKgXd9uKjkhIs5b9D" "IMG_1267.JPG"
-          download "1repxsUmJbJ3Vlk8vuOiXovmomzBwYEy6" "IMG_1654.JPG"
-          download "11sphtESZCGj9dEBTbeC9g_Ls_2r4t3Y2" "IMG_1431.JPG"
-          download "1gtr5LxEBcaT05RL1xhjTA3Frkf4vY8u0" "IMG_1653.JPG"
-          download "1qJxbK234Ok7_TwUQlRz9seafiKzUfOmB" "IMG_1650.JPG"
-          download "1nJhYI-IkleJiCsAuL_Yo6PZcUIYcnVwx" "IMG_1540.JPG"
-          download "1zkLwh-PNJrQg11ZMpC2ofSefWbQou7So" "IMG_0998.JPG"
-          download "1mAUMEdvEsrH0N-og08e8r10e21KuysbD" "IMG_0297.HEIC"
-
-          download "1EleEOlVhG2n-H8nf_FcWSPVvAclzmS7r" "IMG_0417.mov"
-          download "1J3vL3MURWFdCpfexQ5oqx_WGpa9AVyZz" "IMG_1423.MOV"
-          download "1CkahOY2S8wmE8NNfKCv__FAwJ3s9_Z8n" "IMG_1067.MOV"
-          download "1BlLdaN5u1ETVd6cxgj1GkAGuHvslZ9-K" "IMG_1004.MOV"
-          download "1_wPat0uo1BADe29jcM9UI6cn8RDnMnEL" "IMG_0736.MOV"
-          download "1T34Es4XzGaOWUB5_o_af6IR3ri0MiTuk" "IMG_1643.MOV"
-
-      - name: Optimize portfolio photographs
+      - name: Commit the verified portfolio
+        env:
+          HEAD_BRANCH: ${{ github.head_ref }}
         run: |
           set -euo pipefail
-          mkdir -p .media-work
-          heif-convert -q 95 .media-src/IMG_0050.HEIC .media-work/IMG_0050.jpg >/dev/null
-          heif-convert -q 95 .media-src/IMG_5040.HEIC .media-work/IMG_5040.jpg >/dev/null
-          heif-convert -q 95 .media-src/IMG_0084.HEIC .media-work/IMG_0084.jpg >/dev/null
-          heif-convert -q 95 .media-src/IMG_0297.HEIC .media-work/IMG_0297.jpg >/dev/null
-
-          cat > .media-work/optimize_photos.py <<'PY'
-          from pathlib import Path
-          from PIL import Image, ImageDraw, ImageFont, ImageOps
-          import json
-
-          ROOT = Path.cwd()
-          SRC = ROOT / '.media-src'
-          WORK = ROOT / '.media-work'
-          OUT = ROOT / 'assets/images/portfolio'
-
-          items = [
-              ('IMG_0050.jpg', 'acabado', 'entrada-curva-01', '1qM-2Xll3UZn7pl2iBf9Z0QFxPU3MaNIZ'),
-              ('IMG_1363.JPG', 'preparacion', 'base-residencial-01', '1G5QjxxrCI3VHfogjdhqAkh3WrW84iGx0'),
-              ('IMG_5040.jpg', 'acabado', 'losa-grande-01', '1s_s7HNCZfiMjTtv1aTB9l6JCScdNaUUD'),
-              ('IMG_0517.JPG', 'acabado', 'acceso-largo-01', '1X6jKQhvzCFHlB6E5RJQG-KSVy66PIH8j'),
-              ('IMG_1058.JPG', 'demolicion', 'retiro-concreto-01', '1IelU4DYO1ujGOJJQam44aBJgX9Y1nmne'),
-              ('IMG_0084.jpg', 'acabado', 'losa-residencial-01', '1MxUA6wF30pXk9vDGF6CXfDZrDrNBdy9t'),
-              ('F97585ED.jpg', 'acabado', 'escalones-01', '1xre2ZqssNBes-1aiMx0Bnw6ohY5uJjeN'),
-              ('IMG_1446.JPG', 'preparacion', 'base-piedra-01', '1aKKBl7s9WwbDPbsUlQDddV7PxCQFAnan'),
-              ('IMG_1267.JPG', 'acabado', 'pasillo-lateral-01', '16O-2eZ8qgzso3WlkKgXd9uKjkhIs5b9D'),
-              ('IMG_1654.JPG', 'concreto', 'seccion-fresca-01', '1repxsUmJbJ3Vlk8vuOiXovmomzBwYEy6'),
-              ('IMG_1431.JPG', 'nivelacion', 'terreno-compactado-01', '11sphtESZCGj9dEBTbeC9g_Ls_2r4t3Y2'),
-              ('IMG_1653.JPG', 'acabado', 'acceso-lateral-01', '1gtr5LxEBcaT05RL1xhjTA3Frkf4vY8u0'),
-              ('IMG_1650.JPG', 'acabado', 'reemplazo-seccion-01', '1qJxbK234Ok7_TwUQlRz9seafiKzUfOmB'),
-              ('IMG_1540.JPG', 'preparacion', 'formaletas-01', '1nJhYI-IkleJiCsAuL_Yo6PZcUIYcnVwx'),
-              ('IMG_0998.JPG', 'excavacion', 'corte-lateral-01', '1zkLwh-PNJrQg11ZMpC2ofSefWbQou7So'),
-              ('IMG_0297.jpg', 'concreto', 'colocacion-01', '1mAUMEdvEsrH0N-og08e8r10e21KuysbD'),
-          ]
-
-          manifest = {'photos': [], 'videos': []}
-          for source_name, category, slug, drive_id in items:
-              source = WORK / source_name if source_name.lower().endswith('.jpg') and (WORK / source_name).exists() else SRC / source_name
-              with Image.open(source) as original:
-                  image = ImageOps.exif_transpose(original).convert('RGB')
-                  category_dir = OUT / category
-                  category_dir.mkdir(parents=True, exist_ok=True)
-                  outputs = []
-                  for max_width in (640, 1400):
-                      candidate = image.copy()
-                      if candidate.width > max_width:
-                          height = round(candidate.height * max_width / candidate.width)
-                          candidate = candidate.resize((max_width, height), Image.Resampling.LANCZOS)
-                      output = category_dir / f'{slug}-{max_width}.webp'
-                      candidate.save(output, 'WEBP', quality=82, method=6)
-                      outputs.append({
-                          'path': output.relative_to(ROOT).as_posix(),
-                          'width': candidate.width,
-                          'height': candidate.height,
-                          'bytes': output.stat().st_size,
-                      })
-                  manifest['photos'].append({
-                      'source': source_name,
-                      'driveId': drive_id,
-                      'category': category,
-                      'slug': slug,
-                      'outputs': outputs,
-                  })
-
-          fallback = Image.new('RGB', (1200, 900), '#ded8cc')
-          draw = ImageDraw.Draw(fallback)
-          try:
-              title_font = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf', 96)
-              copy_font = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf', 34)
-          except OSError:
-              title_font = ImageFont.load_default()
-              copy_font = ImageFont.load_default()
-          draw.text((600, 370), 'EBC', anchor='mm', fill='#17150f', font=title_font)
-          draw.text((600, 490), 'Project image temporarily unavailable', anchor='mm', fill='#4c4841', font=copy_font)
-          fallback_path = ROOT / 'assets/images/image-fallback.webp'
-          fallback_path.parent.mkdir(parents=True, exist_ok=True)
-          fallback.save(fallback_path, 'WEBP', quality=82, method=6)
-
-          manifest_path = ROOT / 'assets/media/portfolio-manifest.json'
-          manifest_path.parent.mkdir(parents=True, exist_ok=True)
-          manifest_path.write_text(json.dumps(manifest, indent=2) + '\n', encoding='utf-8')
-          PY
-
-          python3 .media-work/optimize_photos.py
-
-      - name: Export silent web video and posters
-        run: |
-          set -euo pipefail
-          mkdir -p assets/video/portfolio assets/images/posters
-
-          encode_video() {
-            local source="$1"
-            local output="$2"
-            local start="$3"
-            local duration="$4"
-            local poster_time="$5"
-            local poster="$6"
-
-            ffmpeg -hide_banner -loglevel error -y \
-              -ss "$start" -i ".media-src/${source}" -t "$duration" \
-              -map 0:v:0 -an -sn -dn \
-              -vf "scale=1280:1280:force_original_aspect_ratio=decrease,fps=30" \
-              -c:v libx264 -preset medium -crf 26 -pix_fmt yuv420p \
-              -movflags +faststart "assets/video/portfolio/${output}"
-
-            ffmpeg -hide_banner -loglevel error -y \
-              -ss "$poster_time" -i "assets/video/portfolio/${output}" \
-              -frames:v 1 -vf "scale=1200:1200:force_original_aspect_ratio=decrease" \
-              -c:v libwebp -quality 84 "assets/images/posters/${poster}"
-          }
-
-          encode_video "IMG_0417.mov" "preparacion-base-nocturna.mp4" 2 16 6 "preparacion-base-nocturna.webp"
-          encode_video "IMG_0736.MOV" "acabado-allanadora.mp4" 11 17 8 "acabado-allanadora.webp"
-          encode_video "IMG_1004.MOV" "acabado-losa-terminada.mp4" 0 18 5 "acabado-losa-terminada.webp"
-          encode_video "IMG_1067.MOV" "excavacion-raices.mp4" 10 20 11 "excavacion-raices.webp"
-          encode_video "IMG_1423.MOV" "excavacion-corte-terreno.mp4" 0 11 4 "excavacion-corte-terreno.webp"
-          encode_video "IMG_1643.MOV" "acabado-limpieza-final.mp4" 0 9 3 "acabado-limpieza-final.webp"
-
-          python3 - <<'PY'
-          from pathlib import Path
-          import json
-          import subprocess
-
-          root = Path.cwd()
-          manifest_path = root / 'assets/media/portfolio-manifest.json'
-          manifest = json.loads(manifest_path.read_text(encoding='utf-8'))
-          mapping = [
-              ('IMG_0417.mov', '1EleEOlVhG2n-H8nf_FcWSPVvAclzmS7r', 'preparacion', 'preparacion-base-nocturna.mp4', 'preparacion-base-nocturna.webp'),
-              ('IMG_0736.MOV', '1_wPat0uo1BADe29jcM9UI6cn8RDnMnEL', 'acabado', 'acabado-allanadora.mp4', 'acabado-allanadora.webp'),
-              ('IMG_1004.MOV', '1BlLdaN5u1ETVd6cxgj1GkAGuHvslZ9-K', 'acabado', 'acabado-losa-terminada.mp4', 'acabado-losa-terminada.webp'),
-              ('IMG_1067.MOV', '1CkahOY2S8wmE8NNfKCv__FAwJ3s9_Z8n', 'excavacion', 'excavacion-raices.mp4', 'excavacion-raices.webp'),
-              ('IMG_1423.MOV', '1J3vL3MURWFdCpfexQ5oqx_WGpa9AVyZz', 'excavacion', 'excavacion-corte-terreno.mp4', 'excavacion-corte-terreno.webp'),
-              ('IMG_1643.MOV', '1T34Es4XzGaOWUB5_o_af6IR3ri0MiTuk', 'acabado', 'acabado-limpieza-final.mp4', 'acabado-limpieza-final.webp'),
-          ]
-          for source, drive_id, category, filename, poster in mapping:
-              video_path = root / 'assets/video/portfolio' / filename
-              audio_probe = subprocess.run(
-                  ['ffprobe', '-v', 'error', '-select_streams', 'a', '-show_entries', 'stream=index', '-of', 'csv=p=0', str(video_path)],
-                  check=True,
-                  capture_output=True,
-                  text=True,
-              )
-              if audio_probe.stdout.strip():
-                  raise SystemExit(f'Audio stream remains in {filename}')
-              if video_path.stat().st_size > 25 * 1024 * 1024:
-                  raise SystemExit(f'{filename} exceeds the 25 MB portfolio limit')
-              duration = subprocess.run(
-                  ['ffprobe', '-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', str(video_path)],
-                  check=True,
-                  capture_output=True,
-                  text=True,
-              ).stdout.strip()
-              manifest['videos'].append({
-                  'source': source,
-                  'driveId': drive_id,
-                  'category': category,
-                  'path': f'assets/video/portfolio/{filename}',
-                  'poster': f'assets/images/posters/{poster}',
-                  'bytes': video_path.stat().st_size,
-                  'durationSeconds': round(float(duration), 2),
-                  'audio': False,
-                  'codec': 'H.264',
-              })
-          manifest_path.write_text(json.dumps(manifest, indent=2) + '\n', encoding='utf-8')
-          PY
-
-      - name: Commit optimized local media
-        run: |
-          set -euo pipefail
-          rm -rf .media-src .media-work
           rm -f .github/workflows/prepare-portfolio-media.yml
-          git config user.name "EBC Portfolio Media Bot"
-          git config user.email "actions@users.noreply.github.com"
+          git config user.name 'EBC Portfolio Automation'
+          git config user.email 'actions@users.noreply.github.com'
           git add -A
-          git commit -m "Add optimized local portfolio media"
-          git push origin HEAD:agent/portfolio-audit-improvements
+          if git diff --cached --quiet; then
+            echo 'No portfolio changes to commit.'
+            exit 0
+          fi
+          git commit -m 'Rebuild portfolio with audited local media'
+          git push origin "HEAD:${HEAD_BRANCH}"
