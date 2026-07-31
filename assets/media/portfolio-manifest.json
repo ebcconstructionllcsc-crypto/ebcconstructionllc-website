@@ -1,0 +1,371 @@
+{
+  "photos": [
+    {
+      "source": "IMG_1363.JPG",
+      "category": "preparation",
+      "slug": "base-preparation",
+      "title_en": "Base preparation and grading",
+      "title_es": "Preparación y conformación de base",
+      "alt_en": "Bobcat shaping the soil base inside concrete forms beside a home",
+      "alt_es": "Bobcat conformando la base de suelo dentro de formaletas junto a una vivienda",
+      "outputs": [
+        {
+          "path": "assets/images/portfolio/preparation/base-preparation-720.webp",
+          "width": 720,
+          "height": 540,
+          "bytes": 100540
+        },
+        {
+          "path": "assets/images/portfolio/preparation/base-preparation-1440.webp",
+          "width": 1440,
+          "height": 1080,
+          "bytes": 422824
+        }
+      ]
+    },
+    {
+      "source": "IMG_1446.JPG",
+      "category": "preparation",
+      "slug": "stone-base",
+      "title_en": "Stone base preparation",
+      "title_es": "Preparación de base de piedra",
+      "alt_en": "Crew and compact equipment spreading stone base inside concrete forms",
+      "alt_es": "Cuadrilla y equipo compacto distribuyendo base de piedra dentro de formaletas",
+      "outputs": [
+        {
+          "path": "assets/images/portfolio/preparation/stone-base-720.webp",
+          "width": 720,
+          "height": 960,
+          "bytes": 231408
+        },
+        {
+          "path": "assets/images/portfolio/preparation/stone-base-1440.webp",
+          "width": 1440,
+          "height": 1920,
+          "bytes": 796050
+        }
+      ]
+    },
+    {
+      "source": "IMG_1540.JPG",
+      "category": "preparation",
+      "slug": "site-layout",
+      "title_en": "Site layout and access preparation",
+      "title_es": "Trazado y preparación del acceso",
+      "alt_en": "Residential access area opened and prepared beside an existing sidewalk",
+      "alt_es": "Área de acceso residencial abierta y preparada junto a una acera existente",
+      "outputs": [
+        {
+          "path": "assets/images/portfolio/preparation/site-layout-720.webp",
+          "width": 720,
+          "height": 960,
+          "bytes": 193928
+        },
+        {
+          "path": "assets/images/portfolio/preparation/site-layout-1440.webp",
+          "width": 1440,
+          "height": 1920,
+          "bytes": 797390
+        }
+      ]
+    },
+    {
+      "source": "IMG_1058.JPG",
+      "category": "demolition",
+      "slug": "concrete-removal",
+      "title_en": "Concrete demolition and removal",
+      "title_es": "Demolición y retiro de concreto",
+      "alt_en": "Broken concrete sections and debris removed from a residential work area",
+      "alt_es": "Secciones de concreto quebrado y escombros retirados de un área residencial",
+      "outputs": [
+        {
+          "path": "assets/images/portfolio/demolition/concrete-removal-720.webp",
+          "width": 720,
+          "height": 540,
+          "bytes": 132376
+        },
+        {
+          "path": "assets/images/portfolio/demolition/concrete-removal-1440.webp",
+          "width": 1440,
+          "height": 1080,
+          "bytes": 592536
+        }
+      ]
+    },
+    {
+      "source": "IMG_0998.JPG",
+      "category": "excavation",
+      "slug": "access-excavation",
+      "title_en": "Excavated access base",
+      "title_es": "Excavación de base para acceso",
+      "alt_en": "Narrow residential access excavated and tracked in preparation for a new base",
+      "alt_es": "Acceso residencial angosto excavado y marcado para preparar una nueva base",
+      "outputs": [
+        {
+          "path": "assets/images/portfolio/excavation/access-excavation-720.webp",
+          "width": 720,
+          "height": 960,
+          "bytes": 205314
+        },
+        {
+          "path": "assets/images/portfolio/excavation/access-excavation-1440.webp",
+          "width": 1440,
+          "height": 1920,
+          "bytes": 734696
+        }
+      ]
+    },
+    {
+      "source": "IMG_1431.JPG",
+      "category": "grading",
+      "slug": "yard-grading",
+      "title_en": "Ground shaping and grading",
+      "title_es": "Conformación y nivelación del terreno",
+      "alt_en": "Residential yard shaped with compact equipment tracks across the soil",
+      "alt_es": "Terreno residencial conformado con huellas de equipo compacto sobre el suelo",
+      "outputs": [
+        {
+          "path": "assets/images/portfolio/grading/yard-grading-720.webp",
+          "width": 720,
+          "height": 540,
+          "bytes": 117350
+        },
+        {
+          "path": "assets/images/portfolio/grading/yard-grading-1440.webp",
+          "width": 1440,
+          "height": 1080,
+          "bytes": 427448
+        }
+      ]
+    },
+    {
+      "source": "IMG_0297.heic",
+      "category": "concrete",
+      "slug": "concrete-placement",
+      "title_en": "Concrete placement in progress",
+      "title_es": "Colocación de concreto en progreso",
+      "alt_en": "Crew placing and distributing fresh concrete inside prepared forms",
+      "alt_es": "Cuadrilla colocando y distribuyendo concreto fresco dentro de formaletas preparadas",
+      "outputs": [
+        {
+          "path": "assets/images/portfolio/concrete/concrete-placement-720.webp",
+          "width": 720,
+          "height": 960,
+          "bytes": 159782
+        },
+        {
+          "path": "assets/images/portfolio/concrete/concrete-placement-1440.webp",
+          "width": 1440,
+          "height": 1920,
+          "bytes": 546194
+        }
+      ]
+    },
+    {
+      "source": "IMG_0050.HEIC",
+      "category": "finish",
+      "slug": "curved-driveway-finish",
+      "title_en": "Curved driveway finish",
+      "title_es": "Acabado de entrada curva",
+      "alt_en": "Large finished concrete driveway curving around a residential property",
+      "alt_es": "Entrada grande de concreto terminada que rodea una propiedad residencial",
+      "outputs": [
+        {
+          "path": "assets/images/portfolio/finish/curved-driveway-finish-720.webp",
+          "width": 720,
+          "height": 540,
+          "bytes": 118056
+        },
+        {
+          "path": "assets/images/portfolio/finish/curved-driveway-finish-1440.webp",
+          "width": 1440,
+          "height": 1080,
+          "bytes": 450870
+        }
+      ]
+    },
+    {
+      "source": "IMG_0084.HEIC",
+      "category": "finish",
+      "slug": "residential-driveway-finish",
+      "title_en": "Finished residential driveway",
+      "title_es": "Entrada residencial terminada",
+      "alt_en": "Wide finished concrete driveway with curved edges in front of a home",
+      "alt_es": "Entrada ancha de concreto terminada con bordes curvos frente a una vivienda",
+      "outputs": [
+        {
+          "path": "assets/images/portfolio/finish/residential-driveway-finish-720.webp",
+          "width": 720,
+          "height": 540,
+          "bytes": 114000
+        },
+        {
+          "path": "assets/images/portfolio/finish/residential-driveway-finish-1440.webp",
+          "width": 1440,
+          "height": 1080,
+          "bytes": 440868
+        }
+      ]
+    },
+    {
+      "source": "IMG_0517.JPG",
+      "category": "finish",
+      "slug": "long-concrete-access",
+      "title_en": "Long concrete access",
+      "title_es": "Acceso largo de concreto",
+      "alt_en": "Long finished concrete access extending through a residential property",
+      "alt_es": "Acceso largo de concreto terminado que atraviesa una propiedad residencial",
+      "outputs": [
+        {
+          "path": "assets/images/portfolio/finish/long-concrete-access-720.webp",
+          "width": 720,
+          "height": 540,
+          "bytes": 88568
+        },
+        {
+          "path": "assets/images/portfolio/finish/long-concrete-access-1440.webp",
+          "width": 1440,
+          "height": 1080,
+          "bytes": 365356
+        }
+      ]
+    },
+    {
+      "source": "F97585ED-D196-47D4-BE3D-1203FD0217CD.jpg",
+      "category": "finish",
+      "slug": "concrete-steps",
+      "title_en": "Finished concrete steps",
+      "title_es": "Escalones de concreto terminados",
+      "alt_en": "Three newly finished concrete steps with protected work area around them",
+      "alt_es": "Tres escalones de concreto recién terminados con el área de trabajo protegida",
+      "outputs": [
+        {
+          "path": "assets/images/portfolio/finish/concrete-steps-720.webp",
+          "width": 720,
+          "height": 405,
+          "bytes": 94266
+        },
+        {
+          "path": "assets/images/portfolio/finish/concrete-steps-1440.webp",
+          "width": 1440,
+          "height": 810,
+          "bytes": 393022
+        }
+      ]
+    },
+    {
+      "source": "IMG_1267.JPG",
+      "category": "finish",
+      "slug": "side-walkway",
+      "title_en": "Finished side walkway",
+      "title_es": "Pasillo lateral terminado",
+      "alt_en": "Finished concrete walkway beside a home and metal gate",
+      "alt_es": "Pasillo de concreto terminado junto a una vivienda y portón metálico",
+      "outputs": [
+        {
+          "path": "assets/images/portfolio/finish/side-walkway-720.webp",
+          "width": 720,
+          "height": 960,
+          "bytes": 130544
+        },
+        {
+          "path": "assets/images/portfolio/finish/side-walkway-1440.webp",
+          "width": 1440,
+          "height": 1920,
+          "bytes": 477782
+        }
+      ]
+    },
+    {
+      "source": "IMG_5040.HEIC",
+      "category": "finish",
+      "slug": "large-slab-finishing",
+      "title_en": "Large slab finishing",
+      "title_es": "Acabado de losa grande",
+      "alt_en": "Large concrete slab being finished with a power trowel",
+      "alt_es": "Losa grande de concreto siendo acabada con allanadora mecánica",
+      "outputs": [
+        {
+          "path": "assets/images/portfolio/finish/large-slab-finishing-720.webp",
+          "width": 720,
+          "height": 405,
+          "bytes": 75970
+        },
+        {
+          "path": "assets/images/portfolio/finish/large-slab-finishing-1440.webp",
+          "width": 1440,
+          "height": 810,
+          "bytes": 306722
+        }
+      ]
+    }
+  ],
+  "videos": [
+    {
+      "source": "IMG_0417.mov",
+      "category": "preparation",
+      "path": "assets/video/portfolio/preparation-base.mp4",
+      "poster": "assets/images/posters/preparation-base.webp",
+      "title_en": "Base preparation with compact equipment",
+      "title_es": "Preparación de base con equipo compacto",
+      "duration_seconds": 18.0,
+      "bytes": 750485,
+      "audio": false,
+      "codec": "h264,"
+    },
+    {
+      "source": "IMG_1067.MOV",
+      "category": "excavation",
+      "path": "assets/video/portfolio/excavation-roots.mp4",
+      "poster": "assets/images/posters/excavation-roots.webp",
+      "title_en": "Root removal during excavation",
+      "title_es": "Retiro de raíces durante la excavación",
+      "duration_seconds": 15.0,
+      "bytes": 3641305,
+      "audio": false,
+      "codec": "h264"
+    },
+    {
+      "source": "IMG_0736.MOV",
+      "category": "finish",
+      "path": "assets/video/portfolio/finish-power-trowel.mp4",
+      "poster": "assets/images/posters/finish-power-trowel.webp",
+      "title_en": "Power-trowel finishing in progress",
+      "title_es": "Acabado con allanadora mecánica",
+      "duration_seconds": 11.0,
+      "bytes": 2712685,
+      "audio": false,
+      "codec": "h264"
+    },
+    {
+      "source": "IMG_1004.MOV",
+      "category": "finish",
+      "path": "assets/video/portfolio/finish-large-slab.mp4",
+      "poster": "assets/images/posters/finish-large-slab.webp",
+      "title_en": "Finishing a large concrete placement",
+      "title_es": "Acabado de una colocación grande",
+      "duration_seconds": 11.75,
+      "bytes": 1401389,
+      "audio": false,
+      "codec": "h264"
+    },
+    {
+      "source": "IMG_1643.MOV",
+      "category": "finish",
+      "path": "assets/video/portfolio/finish-cleanup.mp4",
+      "poster": "assets/images/posters/finish-cleanup.webp",
+      "title_en": "Final surface cleaning",
+      "title_es": "Limpieza final de la superficie",
+      "duration_seconds": 9.0,
+      "bytes": 822388,
+      "audio": false,
+      "codec": "h264"
+    }
+  ],
+  "fallback": {
+    "path": "assets/images/image-fallback.webp",
+    "width": 1200,
+    "height": 900,
+    "bytes": 6658
+  }
+}
