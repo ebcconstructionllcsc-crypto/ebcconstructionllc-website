@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ebc-manager-v9';
+const CACHE_NAME = 'ebc-manager-v10';
 const APP_SHELL = [
   './',
   './index.html',
@@ -19,6 +19,7 @@ const APP_SHELL = [
   './render-core.js',
   './render.js',
   './plan-math.js',
+  './plan-enhancements.js',
   './plan.js',
   './manifest.webmanifest',
   '../assets/images/logo.png'
