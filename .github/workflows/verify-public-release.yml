@@ -1,4 +1,4 @@
-name: Diagnose EBC Pages origin
+name: Verify live EBC portfolio release
 
 on:
   pull_request:
@@ -12,14 +12,14 @@ permissions:
   pages: read
 
 jobs:
-  diagnose-pages-origin:
+  verify-live-release:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
       API_ROOT: https://api.github.com/repos/ebcconstructionllcsc-crypto/ebcconstructionllc-website
-      PUBLIC_URL: https://ebcconstructionllc.com/projects.html
-      DEFAULT_URL: https://ebcconstructionllcsc-crypto.github.io/ebcconstructionllc-website/projects.html
-      RAW_URL: https://raw.githubusercontent.com/ebcconstructionllcsc-crypto/ebcconstructionllc-website/main/projects.html
+      SITE_ROOT: https://ebcconstructionllc.com
+      RAW_ROOT: https://raw.githubusercontent.com/ebcconstructionllcsc-crypto/ebcconstructionllc-website/main
+      EXPECTED_MAIN_SHA: 1d226064a2fc80d365faab807a1f03c37cffd4a5
     steps:
       - name: Check out verification branch
         uses: actions/checkout@v4
@@ -27,61 +27,87 @@ jobs:
           ref: agent/portfolio-audit-improvements
           fetch-depth: 0
 
-      - name: Compare repository, Pages origin and custom domain
+      - name: Verify HTML, JavaScript and public media
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          mkdir -p .release-diagnostics
+          cache_key="${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          mkdir -p .release-verification
 
           curl -fsSL \
-            -H 'Accept: application/vnd.github+json' \
-            -H "Authorization: Bearer ${GH_TOKEN}" \
-            -H 'X-GitHub-Api-Version: 2022-11-28' \
-            "${API_ROOT}/pages" > .release-diagnostics/pages-site.json
-
-          curl -fsSL \
-            -H 'Accept: application/vnd.github+json' \
-            -H "Authorization: Bearer ${GH_TOKEN}" \
-            -H 'X-GitHub-Api-Version: 2022-11-28' \
-            "${API_ROOT}/pages/builds/latest" > .release-diagnostics/latest-build.json
-
-          curl -fsSL -D .release-diagnostics/public-headers.txt \
             -H 'Cache-Control: no-cache' \
             -H 'Pragma: no-cache' \
-            "${PUBLIC_URL}?diagnostic=${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" \
-            -o .release-diagnostics/public.html
+            "${SITE_ROOT}/projects.html?release=${cache_key}" \
+            -o .release-verification/public-projects.html
 
-          curl -sS -D .release-diagnostics/default-headers.txt \
-            -o .release-diagnostics/default.html \
-            "${DEFAULT_URL}?diagnostic=${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" || true
+          curl -fsSL "${RAW_ROOT}/projects.html?release=${cache_key}" \
+            -o .release-verification/raw-projects.html
 
-          curl -fsSL "${RAW_URL}?diagnostic=${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" \
-            -o .release-diagnostics/raw-main.html
+          public_html_sha="$(sha256sum .release-verification/public-projects.html | awk '{print $1}')"
+          raw_html_sha="$(sha256sum .release-verification/raw-projects.html | awk '{print $1}')"
+          test "$public_html_sha" = "$raw_html_sha"
 
-          : > .release-diagnostics/origins.jsonl
-          for ip in 185.199.108.153 185.199.109.153 185.199.110.153 185.199.111.153; do
-            body=".release-diagnostics/origin-${ip}.html"
-            headers=".release-diagnostics/origin-${ip}-headers.txt"
-            if curl -fsSL --resolve "ebcconstructionllc.com:443:${ip}" \
-              -D "$headers" \
+          grep -q 'Visualize your project before work begins' .release-verification/public-projects.html
+          grep -q 'assets/portfolio-audit.css' .release-verification/public-projects.html
+          grep -q 'assets/portfolio.js' .release-verification/public-projects.html
+          grep -q 'data-phase="preparation"' .release-verification/public-projects.html
+          grep -q 'data-phase="finish"' .release-verification/public-projects.html
+          ! grep -q 'drive.google.com/thumbnail' .release-verification/public-projects.html
+
+          curl -fsSL \
+            -H 'Cache-Control: no-cache' \
+            "${SITE_ROOT}/assets/portfolio.js?release=${cache_key}" \
+            -o .release-verification/portfolio.js
+          grep -q 'project-stories' .release-verification/portfolio.js
+          grep -q 'data-project-story="true"' .release-verification/portfolio.js
+          grep -q 'data-audio="on"' .release-verification/portfolio.js
+
+          cat > .release-verification/video-paths.txt <<'VIDEOS'
+          assets/video/portfolio/preparation-base.mp4
+          assets/video/portfolio/excavation-roots.mp4
+          assets/video/portfolio/finish-power-trowel.mp4
+          assets/video/portfolio/finish-large-slab.mp4
+          assets/video/portfolio/finish-cleanup.mp4
+          assets/video/portfolio/stories/ebc-project-story-horizontal-with-audio.mp4
+          assets/video/portfolio/stories/ebc-project-story-vertical-with-audio.mp4
+          VIDEOS
+
+          : > .release-verification/videos.jsonl
+          while IFS= read -r path; do
+            [ -n "$path" ] || continue
+            output="$(curl -fsSL -o /dev/null \
+              -w '%{http_code}|%{size_download}|%{content_type}' \
               -H 'Cache-Control: no-cache' \
-              -H 'Pragma: no-cache' \
-              "${PUBLIC_URL}?diagnostic=${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${ip}" \
-              -o "$body"; then
-              marker="old"
-              grep -q 'project-stories' "$body" && marker="new"
-              jq -cn \
-                --arg ip "$ip" \
-                --arg marker "$marker" \
-                --arg sha "$(sha256sum "$body" | awk '{print $1}')" \
-                '{ip:$ip, marker:$marker, sha256:$sha}' >> .release-diagnostics/origins.jsonl
-            else
-              jq -cn --arg ip "$ip" '{ip:$ip, marker:"unreachable", sha256:null}' >> .release-diagnostics/origins.jsonl
-            fi
-          done
+              "${SITE_ROOT}/${path}?release=${cache_key}")"
+            code="${output%%|*}"
+            remainder="${output#*|}"
+            size="${remainder%%|*}"
+            content_type="${remainder#*|}"
+            test "$code" = "200"
+            awk -v bytes="$size" 'BEGIN { exit !(bytes > 0) }'
+            jq -cn \
+              --arg path "$path" \
+              --arg contentType "$content_type" \
+              --argjson bytes "${size%.*}" \
+              '{path:$path,httpStatus:200,bytes:$bytes,contentType:$contentType}' \
+              >> .release-verification/videos.jsonl
+          done < .release-verification/video-paths.txt
 
-          getent ahostsv4 ebcconstructionllc.com | awk '{print $1}' | sort -u > .release-diagnostics/resolved-ipv4.txt || true
+          pages="$(curl -fsSL \
+            -H 'Accept: application/vnd.github+json' \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H 'X-GitHub-Api-Version: 2022-11-28' \
+            "${API_ROOT}/pages")"
+          build="$(curl -fsSL \
+            -H 'Accept: application/vnd.github+json' \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H 'X-GitHub-Api-Version: 2022-11-28' \
+            "${API_ROOT}/pages/builds/latest")"
+          build_status="$(jq -r '.status' <<<"$build")"
+          build_commit="$(jq -r '.commit' <<<"$build")"
+          test "$build_status" = "built"
+          test "$build_commit" = "$EXPECTED_MAIN_SHA"
 
           python3 - <<'PY'
           from pathlib import Path
@@ -89,78 +115,46 @@ jobs:
           import json
           from datetime import datetime, timezone
 
-          root = Path('.release-diagnostics')
-
-          def read(name):
-              path = root / name
-              return path.read_text(encoding='utf-8', errors='replace') if path.exists() else ''
-
-          def load(name):
-              text = read(name)
-              return json.loads(text) if text else {}
-
-          def file_info(name):
-              path = root / name
-              if not path.exists():
-                  return {'marker': 'missing', 'sha256': None, 'bytes': 0}
-              data = path.read_bytes()
-              text = data.decode('utf-8', errors='replace')
-              marker = 'new' if 'project-stories' in text and 'assets/portfolio.js' in text else 'old'
-              return {
-                  'marker': marker,
-                  'sha256': hashlib.sha256(data).hexdigest(),
-                  'bytes': len(data),
-              }
-
-          origins = []
-          for line in read('origins.jsonl').splitlines():
-              if line.strip():
-                  origins.append(json.loads(line))
-
-          pages = load('pages-site.json')
-          build = load('latest-build.json')
+          root = Path('.release-verification')
+          videos = [json.loads(line) for line in (root / 'videos.jsonl').read_text().splitlines() if line.strip()]
+          public = (root / 'public-projects.html').read_bytes()
+          controller = (root / 'portfolio.js').read_bytes()
           result = {
+              'status': 'live',
               'generatedAt': datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'),
-              'pages': {
-                  'status': pages.get('status'),
-                  'cname': pages.get('cname'),
-                  'htmlUrl': pages.get('html_url'),
-                  'buildType': pages.get('build_type'),
-                  'source': pages.get('source'),
-                  'httpsEnforced': pages.get('https_enforced'),
+              'url': 'https://ebcconstructionllc.com/projects.html',
+              'expectedMainSha': '1d226064a2fc80d365faab807a1f03c37cffd4a5',
+              'pagesStatus': 'built',
+              'html': {
+                  'matchesMain': True,
+                  'sha256': hashlib.sha256(public).hexdigest(),
+                  'bytes': len(public),
+                  'usesLocalMedia': True,
               },
-              'latestBuild': {
-                  'status': build.get('status'),
-                  'commit': build.get('commit'),
-                  'createdAt': build.get('created_at'),
-                  'updatedAt': build.get('updated_at'),
-                  'error': (build.get('error') or {}).get('message'),
+              'portfolioController': {
+                  'loaded': True,
+                  'sha256': hashlib.sha256(controller).hexdigest(),
+                  'bytes': len(controller),
+                  'editedStoriesWithAudio': 2,
               },
-              'publicDomain': file_info('public.html'),
-              'defaultGithubIo': file_info('default.html'),
-              'rawMain': file_info('raw-main.html'),
-              'directGithubPagesOrigins': origins,
-              'resolvedIpv4': read('resolved-ipv4.txt').splitlines(),
-              'publicHeaders': read('public-headers.txt'),
-              'defaultHeaders': read('default-headers.txt'),
+              'videos': videos,
+              'videoCount': len(videos),
           }
-          Path('deployment-diagnostics.json').write_text(
-              json.dumps(result, indent=2) + '\n',
-              encoding='utf-8',
-          )
+          Path('deployment-status.json').write_text(json.dumps(result, indent=2) + '\n')
           PY
 
-          cat deployment-diagnostics.json
+          test "$(jq -r '.videoCount' deployment-status.json)" = "7"
+          cat deployment-status.json
 
-      - name: Record diagnostics
+      - name: Record live-release evidence
         run: |
           set -euo pipefail
-          rm -rf .release-diagnostics
+          rm -rf .release-verification deployment-diagnostics.json
           git config user.name "EBC Release Verification"
           git config user.email "actions@users.noreply.github.com"
-          git add deployment-diagnostics.json
+          git add -A deployment-status.json deployment-diagnostics.json
           if git diff --cached --quiet; then
             exit 0
           fi
-          git commit -m "Record Pages origin diagnostics"
+          git commit -m "Record verified live portfolio release"
           git push origin HEAD:agent/portfolio-audit-improvements
