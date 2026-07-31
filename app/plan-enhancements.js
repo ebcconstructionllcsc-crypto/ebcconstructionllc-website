@@ -7,13 +7,19 @@
   const undoButton = document.querySelector('#undo-plan-point');
   const closeButton = document.querySelector('#close-plan-shape');
   const resetButton = document.querySelector('#reset-plan-shape');
+  const shape = document.querySelector('#plan-shape');
+  const gridSize = document.querySelector('#plan-grid-size');
+  const view2d = document.querySelector('#view-2d');
 
   if (!math?.PlanHistory || !canvas || !storedPoints || !storedClosed || !tools || !undoButton) return;
 
   const STORAGE_KEY = 'ebc-manager-plan-precision';
   const DEFAULT_INCREMENT = 0.25;
+  const GRID_PIXELS = 50;
+  const GRID_PADDING = 50;
   let syncing = false;
   let pointerStart = null;
+  let draggingIndex = null;
 
   function readState() {
     let points = [];
@@ -106,6 +112,52 @@
     updateButtons();
   }
 
+  function drawingEnabled() {
+    return shape?.value === 'freeform' && view2d?.classList.contains('active');
+  }
+
+  function pixelsPerFoot() {
+    return GRID_PIXELS / (Math.max(0.01, Number(gridSize?.value) || 5));
+  }
+
+  function eventPosition(event) {
+    const rect = canvas.getBoundingClientRect();
+    return {
+      x: (event.clientX - rect.left) * (canvas.width / Math.max(rect.width, 1)),
+      y: (event.clientY - rect.top) * (canvas.height / Math.max(rect.height, 1))
+    };
+  }
+
+  function worldToCanvas(point) {
+    const scale = pixelsPerFoot();
+    return { x: GRID_PADDING + point.x * scale, y: GRID_PADDING + point.y * scale };
+  }
+
+  function canvasToWorld(event) {
+    const point = eventPosition(event);
+    const scale = pixelsPerFoot();
+    const maxX = (canvas.width - GRID_PADDING * 2) / scale;
+    const maxY = (canvas.height - GRID_PADDING * 2) / scale;
+    return {
+      x: math.snapToIncrement(Math.min(maxX, Math.max(0, (point.x - GRID_PADDING) / scale)), increment()),
+      y: math.snapToIncrement(Math.min(maxY, Math.max(0, (point.y - GRID_PADDING) / scale)), increment())
+    };
+  }
+
+  function closestPointIndex(event, state) {
+    const pointer = eventPosition(event);
+    let closest = -1;
+    let bestDistance = 24;
+    state.points.map(worldToCanvas).forEach((point, index) => {
+      const candidate = Math.hypot(point.x - pointer.x, point.y - pointer.y);
+      if (candidate < bestDistance) {
+        bestDistance = candidate;
+        closest = index;
+      }
+    });
+    return closest;
+  }
+
   undoButton.addEventListener('click', event => {
     event.preventDefault();
     event.stopImmediatePropagation();
@@ -117,18 +169,58 @@
     restore(history.redo());
   });
 
-  canvas.addEventListener('pointerdown', () => {
+  canvas.addEventListener('pointerdown', event => {
+    if (!drawingEnabled()) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
     pointerStart = readState();
+    const state = math.clonePlanState(pointerStart);
+    const existingIndex = closestPointIndex(event, state);
+
+    if (!state.closed && existingIndex === 0 && state.points.length >= 3) {
+      state.closed = true;
+      writeState(state);
+      commitCurrent(pointerStart);
+      pointerStart = null;
+      return;
+    }
+
+    if (existingIndex >= 0) {
+      draggingIndex = existingIndex;
+    } else if (!state.closed) {
+      state.points.push(canvasToWorld(event));
+      draggingIndex = state.points.length - 1;
+      writeState(state);
+    } else {
+      pointerStart = null;
+      return;
+    }
+    canvas.setPointerCapture?.(event.pointerId);
   }, true);
 
-  function finishPointerInteraction() {
-    if (!pointerStart) return;
+  canvas.addEventListener('pointermove', event => {
+    if (draggingIndex == null || !drawingEnabled()) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    const state = readState();
+    state.points[draggingIndex] = canvasToWorld(event);
+    writeState(state);
+  }, true);
+
+  function finishPointerInteraction(event) {
+    if (draggingIndex == null || !pointerStart) return;
+    event?.preventDefault?.();
+    event?.stopImmediatePropagation?.();
+    draggingIndex = null;
+    if (event?.pointerId != null && canvas.hasPointerCapture?.(event.pointerId)) {
+      canvas.releasePointerCapture(event.pointerId);
+    }
     commitCurrent(pointerStart);
     pointerStart = null;
   }
 
-  canvas.addEventListener('pointerup', finishPointerInteraction);
-  canvas.addEventListener('pointercancel', finishPointerInteraction);
+  canvas.addEventListener('pointerup', finishPointerInteraction, true);
+  canvas.addEventListener('pointercancel', finishPointerInteraction, true);
 
   closeButton?.addEventListener('click', () => {
     const before = readState();
