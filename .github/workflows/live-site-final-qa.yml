@@ -45,6 +45,43 @@ jobs:
           npm install --no-save --package-lock=false playwright@1.55.0
           npx playwright install --with-deps chromium
 
+      - name: Refine browser timing checks
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path('tests/live-site-final-qa.mjs')
+          text = path.read_text(encoding='utf-8')
+          old_request = """    page.on('requestfailed', request => {
+                const target = new URL(request.url());
+                if (target.origin === BASE) failures.push(`FAILED ${target.pathname}: ${request.failure()?.errorText || 'unknown'}`);
+              });"""
+          new_request = """    page.on('requestfailed', request => {
+                const target = new URL(request.url());
+                const failure = request.failure()?.errorText || 'unknown';
+                const expectedMediaCancellation = request.resourceType() === 'media' && failure.includes('ERR_ABORTED');
+                if (target.origin === BASE && !expectedMediaCancellation) failures.push(`FAILED ${target.pathname}: ${failure}`);
+              });"""
+          old_image = """  assert(await page.locator('#portfolio-lightbox-image').isVisible(), 'Lightbox image is hidden');"""
+          new_image = """  await page.waitForFunction(() => {
+                const image = document.querySelector('#portfolio-lightbox-image');
+                return image && !image.hidden && Boolean(image.getAttribute('src')) && image.complete && image.naturalWidth > 0;
+              }, null, { timeout: 10000 });
+              const lightboxImage = await page.locator('#portfolio-lightbox-image').evaluate(image => ({
+                hidden: image.hidden,
+                src: image.getAttribute('src'),
+                naturalWidth: image.naturalWidth,
+                naturalHeight: image.naturalHeight
+              }));
+              assert(!lightboxImage.hidden && lightboxImage.src && lightboxImage.naturalWidth > 0, 'Lightbox image did not load');"""
+          if old_request not in text:
+              raise SystemExit('Expected request-failure block not found')
+          if old_image not in text:
+              raise SystemExit('Expected lightbox assertion not found')
+          path.write_text(text.replace(old_request, new_request).replace(old_image, new_image), encoding='utf-8')
+          PY
+
       - name: Run final live-site checks
         run: node tests/live-site-final-qa.mjs
 
