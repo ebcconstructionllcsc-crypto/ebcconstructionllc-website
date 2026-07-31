@@ -34,6 +34,24 @@ for (const reference of localReferences) {
   if (!fs.existsSync(path.join(root, clean))) fail(`projects.html references missing local file ${reference}`);
 }
 
+const audioStoryFiles = [
+  'assets/video/portfolio/stories/ebc-project-story-horizontal-with-audio.mp4',
+  'assets/video/portfolio/stories/ebc-project-story-vertical-with-audio.mp4',
+  'assets/images/posters/stories/ebc-project-story-horizontal.webp',
+  'assets/images/posters/stories/ebc-project-story-vertical.webp'
+];
+for (const relative of audioStoryFiles) {
+  const file = path.join(root, relative);
+  if (!fs.existsSync(file)) fail(`project story asset is missing: ${relative}`);
+  if (relative.endsWith('.mp4') && fs.existsSync(file) && fs.statSync(file).size > 25 * 1024 * 1024) {
+    fail(`project story video exceeds 25 MB: ${relative}`);
+  }
+}
+if ((script.match(/data-project-story="true"/g) || []).length !== 2) fail('portfolio must expose exactly two edited project stories');
+if ((script.match(/data-audio="on"/g) || []).length !== 2) fail('edited project stories must explicitly preserve audio');
+if (!/dialogVideo\.muted = card\.dataset\.audio !== 'on'/.test(script)) fail('portfolio modal does not distinguish silent process clips from project stories with sound');
+if (!/Sound begins only after you choose a video and press play/.test(script)) fail('portfolio is missing the project-story sound disclosure');
+
 for (const photo of manifest.photos) {
   for (const output of photo.outputs) {
     const file = path.join(root, output.path);
