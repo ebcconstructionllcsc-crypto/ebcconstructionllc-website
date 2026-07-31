@@ -19,6 +19,9 @@
 .field-action:disabled { cursor: wait; opacity: .6; }
 .address-status { color: var(--muted); }
 
+.contact-grid-wide > * { min-width: 0; }
+.contact-list a { max-width: 100%; overflow-wrap: anywhere; word-break: break-word; }
+
 .form .file-input-native { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); clip-path: inset(50%); white-space: nowrap; border: 0; }
 .photo-picker { display: grid; place-items: center; min-height: 132px; padding: 24px; border: 2px dashed rgba(16,16,15,.24); border-radius: 18px; background: #fbfaf7; text-align: center; cursor: pointer; transition: border-color .2s ease, background .2s ease, transform .2s ease; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
 .photo-picker:hover,.photo-picker.has-files { border-color: var(--accent); background: #fbf5e9; }
