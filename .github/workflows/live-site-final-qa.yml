@@ -1,0 +1,133 @@
+name: Final EBC production QA
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - .github/workflows/live-site-final-qa.yml
+      - tests/live-site-final-qa.mjs
+
+permissions:
+  contents: read
+  pages: write
+
+jobs:
+  final-production-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Check out QA branch
+        uses: actions/checkout@v4
+
+      - name: Request current main GitHub Pages build
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          curl -fsSL -X POST \
+            -H 'Accept: application/vnd.github+json' \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H 'X-GitHub-Api-Version: 2022-11-28' \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/pages/builds" \
+            > pages-build-request.json
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install temporary browser tooling
+        run: |
+          set -euo pipefail
+          npm ci
+          npm install --no-save --package-lock=false playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Run final live-site checks
+        run: node tests/live-site-final-qa.mjs
+
+      - name: Verify downloaded video streams and audio policy
+        run: |
+          set -euo pipefail
+          command -v ffprobe >/dev/null 2>&1 || {
+            sudo apt-get update
+            sudo apt-get install -y ffmpeg
+          }
+          mkdir -p final-qa-artifacts/video-probes final-qa-artifacts/video-files
+          base="https://ebcconstructionllc.com"
+          process_videos=(
+            "assets/video/portfolio/preparation-base.mp4"
+            "assets/video/portfolio/excavation-roots.mp4"
+            "assets/video/portfolio/finish-power-trowel.mp4"
+            "assets/video/portfolio/finish-large-slab.mp4"
+            "assets/video/portfolio/finish-cleanup.mp4"
+          )
+          story_videos=(
+            "assets/video/portfolio/stories/ebc-project-story-horizontal-with-audio.mp4"
+            "assets/video/portfolio/stories/ebc-project-story-vertical-with-audio.mp4"
+          )
+          for relative in "${process_videos[@]}" "${story_videos[@]}"; do
+            name="$(basename "$relative")"
+            curl -fsSL --retry 3 --connect-timeout 20 --max-time 180 \
+              -H 'Cache-Control: no-cache' \
+              "$base/$relative?finalqa=${GITHUB_RUN_ID}" \
+              -o "final-qa-artifacts/video-files/$name"
+            ffprobe -v error -show_streams -show_format -of json \
+              "final-qa-artifacts/video-files/$name" \
+              > "final-qa-artifacts/video-probes/$name.json"
+          done
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+
+          process_names = {
+              'preparation-base.mp4',
+              'excavation-roots.mp4',
+              'finish-power-trowel.mp4',
+              'finish-large-slab.mp4',
+              'finish-cleanup.mp4',
+          }
+          story_names = {
+              'ebc-project-story-horizontal-with-audio.mp4',
+              'ebc-project-story-vertical-with-audio.mp4',
+          }
+          output = []
+          for path in sorted(Path('final-qa-artifacts/video-probes').glob('*.json')):
+              data = json.loads(path.read_text())
+              streams = data.get('streams', [])
+              video = [stream for stream in streams if stream.get('codec_type') == 'video']
+              audio = [stream for stream in streams if stream.get('codec_type') == 'audio']
+              assert len(video) == 1, f'{path.stem}: expected one video stream'
+              assert video[0].get('codec_name') == 'h264', f'{path.stem}: expected H.264'
+              if path.stem in process_names:
+                  assert not audio, f'{path.stem}: process video unexpectedly contains audio'
+              elif path.stem in story_names:
+                  assert audio, f'{path.stem}: edited story has no audio'
+                  assert audio[0].get('codec_name') == 'aac', f'{path.stem}: expected AAC audio'
+              else:
+                  raise AssertionError(f'Unexpected file {path.stem}')
+              output.append({
+                  'file': path.stem,
+                  'videoCodec': video[0].get('codec_name'),
+                  'audioCodec': audio[0].get('codec_name') if audio else None,
+                  'duration': data.get('format', {}).get('duration'),
+                  'bytes': int(data.get('format', {}).get('size') or 0),
+              })
+          assert len(output) == 7, f'Expected seven videos, found {len(output)}'
+          Path('final-qa-artifacts/video-stream-summary.json').write_text(
+              json.dumps(output, indent=2) + '\n',
+              encoding='utf-8',
+          )
+          PY
+          rm -rf final-qa-artifacts/video-files
+
+      - name: Upload final QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ebc-final-production-qa-${{ github.run_number }}
+          path: final-qa-artifacts
+          if-no-files-found: error
+          retention-days: 30
