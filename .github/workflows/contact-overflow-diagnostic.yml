@@ -1,0 +1,35 @@
+name: Diagnose EBC contact overflow
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - .github/workflows/contact-overflow-diagnostic.yml
+      - tests/contact-overflow-diagnostic.mjs
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose-contact:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: |
+          npm install --no-save --package-lock=false playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - run: node tests/contact-overflow-diagnostic.mjs
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ebc-contact-overflow-${{ github.run_number }}
+          path: qa-overflow-artifacts
+          if-no-files-found: error
+          retention-days: 14
