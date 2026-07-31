@@ -1,16 +1,28 @@
 (() => {
-  const button = document.querySelector('#create-proposal-btn');
   const editor = document.querySelector('#quote-app .editor');
   const items = document.querySelector('#items');
+  const actions = editor?.querySelector('.actions');
 
-  if (!button || !editor || !items) return;
+  if (!editor || !items || !actions) return;
 
   const TRANSFER_KEY = 'ebc-proposal-from-quote';
+  let button = document.querySelector('#create-proposal-btn');
+
+  if (!button) {
+    button = document.createElement('button');
+    button.id = 'create-proposal-btn';
+    button.type = 'button';
+    button.className = 'secondary';
+    button.textContent = 'Generar propuesta profesional';
+    const invoiceButton = document.querySelector('#create-invoice-btn');
+    if (invoiceButton) invoiceButton.insertAdjacentElement('beforebegin', button);
+    else actions.prepend(button);
+  }
 
   function readFields() {
     return Object.fromEntries(
       [...editor.querySelectorAll('input[id], select[id], textarea[id]')]
-        .filter(element => element.id !== 'saved-quotes')
+        .filter(element => !['saved-quotes', 'payment-link', 'payment-instructions'].includes(element.id))
         .map(element => [
           element.id,
           element.type === 'checkbox' ? element.checked : element.value
@@ -48,11 +60,16 @@
     };
   }
 
+  function storeTransfer() {
+    const transfer = createTransfer();
+    sessionStorage.setItem(TRANSFER_KEY, JSON.stringify(transfer));
+    return transfer;
+  }
+
   button.addEventListener('click', () => {
     try {
-      const transfer = createTransfer();
-      sessionStorage.setItem(TRANSFER_KEY, JSON.stringify(transfer));
-      window.location.href = 'proposal.html';
+      storeTransfer();
+      window.location.assign('proposal.html');
     } catch (error) {
       console.error('Professional proposal transfer:', error);
       window.alert('No se pudo preparar la propuesta profesional. Guarda la cotización e inténtalo nuevamente.');
@@ -61,6 +78,7 @@
 
   window.EbcProposalTransfer = {
     key: TRANSFER_KEY,
-    createTransfer
+    createTransfer,
+    storeTransfer
   };
 })();
