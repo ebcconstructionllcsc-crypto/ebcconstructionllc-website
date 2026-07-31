@@ -16,7 +16,9 @@ window.HTMLCanvasElement.prototype.getContext = () => ({
   lineTo() {}, moveTo() {}, arc() {}, stroke() {}
 });
 window.print = () => {};
-window.localStorage.setItem('ebc-quote-draft', JSON.stringify({
+window.sessionStorage.setItem('ebc-proposal-from-quote', JSON.stringify({
+  transferVersion: 1,
+  transferredAt: '2026-07-31T01:00:00.000Z',
   fields: {
     'quote-number': 'EBC-PRO-001',
     'quote-date': '2026-07-30',
@@ -40,7 +42,10 @@ window.localStorage.setItem('ebc-quote-draft', JSON.stringify({
   items: [
     { description: 'Reinforced floor slab', qty: 1, unit: 'lump sum', rate: 13500 },
     { description: 'Concrete entrance', qty: 1, unit: 'lump sum', rate: 17500 }
-  ]
+  ],
+  quoteRender: {
+    image: 'data:image/png;base64,proposal-render'
+  }
 }));
 
 for (const script of ['proposal-core.js', 'proposal.js']) {
@@ -59,5 +64,7 @@ assert.match(window.document.querySelector('#proposal-area').textContent, /720\.
 assert.match(window.document.querySelector('#proposal-acceptance').textContent, /separate construction agreement/i);
 assert.ok(window.document.querySelector('#included-list').children.length >= 4);
 assert.ok(window.document.querySelector('#exclusions-list').children.length >= 4);
+assert.equal(window.document.querySelector('#render-page').hidden, false);
+assert.match(window.document.querySelector('#proposal-render').src, /^data:image\/png/);
 
 console.log('Professional proposal view checks passed.');
