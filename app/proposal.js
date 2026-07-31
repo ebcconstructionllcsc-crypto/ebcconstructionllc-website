@@ -1,7 +1,8 @@
 (() => {
   const $ = selector => document.querySelector(selector);
   const money = value => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(value) || 0);
-  const draftPayload = localStorage.getItem('ebc-quote-draft');
+  const TRANSFER_KEY = 'ebc-proposal-from-quote';
+  const transferPayload = sessionStorage.getItem(TRANSFER_KEY);
 
   function setText(selector, value) {
     const element = $(selector);
@@ -109,9 +110,9 @@
     $('#proposal-payments').innerHTML = model.paymentRows.map(row => `
       <tr><td>${escapeHtml(row.label)}</td><td>${row.percentage.toFixed(2).replace(/\.00$/, '')}%</td><td>${money(row.amount)}</td></tr>`).join('');
 
-    const render = raw?.render || raw?.quoteRender || null;
-    if (render?.image) {
-      $('#proposal-render').src = render.image;
+    const proposalRender = raw?.quoteRender || raw?.render || null;
+    if (proposalRender?.image) {
+      $('#proposal-render').src = proposalRender.image;
       $('#render-page').hidden = false;
     }
     drawPlan(model);
@@ -124,13 +125,16 @@
 
   $('#print-proposal').addEventListener('click', () => window.print());
 
-  if (!draftPayload) {
+  if (!transferPayload) {
     $('#proposal-empty').hidden = false;
     return;
   }
 
   try {
-    const raw = JSON.parse(draftPayload);
+    const raw = JSON.parse(transferPayload);
+    if (raw.transferVersion !== 1 || !raw.fields || !Array.isArray(raw.items)) {
+      throw new Error('Unsupported professional proposal transfer.');
+    }
     const model = window.EbcProposalCore.buildProposalModel(raw);
     render(model, raw);
   } catch (error) {
