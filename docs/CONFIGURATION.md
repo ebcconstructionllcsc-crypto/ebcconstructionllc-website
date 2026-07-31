@@ -15,7 +15,7 @@ The publishable Supabase key is not a secret. Security must come from row-level 
 
 Current browser clients are initialized in:
 
-- `assets/app.js` for the public website and estimate intake;
+- `assets/app.js` for the public website and device-local estimate sharing;
 - `app/app.js` for EBC Manager;
 - `app/quote.js` for quotes.
 
@@ -36,7 +36,13 @@ Private values belong in Supabase Edge Function secrets or GitHub Actions secret
 
 ## Public estimate intake
 
-Anonymous visitors do not insert arbitrary rows into `public.leads`. The website calls `public.submit_estimate_request`, a security-definer function that validates field lengths, service values, and an idempotent `submission_token` before creating a lead.
+`contact.html` is currently set to `data-submission-mode="local-share"`. Request details and selected photos remain in page memory until the visitor explicitly opens the device share sheet, a prepared text message, or a prepared email. The browser does not load Supabase, upload files, retain request details, or report an unsent request as received.
+
+On compatible phones, the Web Share API can pass both details and selected photo files to the visitor's chosen app. Text and email links include the project details and instruct the visitor to attach photos if the receiving app does not include them automatically.
+
+Do not connect the public form to production until a recoverable backup exists, RLS is corrected, an active administrator is verified, the required functions and private bucket are present, positive and negative intake tests pass, and Edgar expressly authorizes live intake.
+
+In the future gated live path, anonymous visitors must not insert arbitrary rows into `public.leads`. The website may call `public.submit_estimate_request`, a security-definer function that validates field lengths, service values, and an idempotent `submission_token` before creating a lead.
 
 The same token is reused when a browser retries an interrupted request, so the server returns the existing lead rather than creating a duplicate. This is duplicate prevention, not full abuse prevention. Production should add a server-verified challenge or rate-limited Edge Function before high-volume advertising campaigns.
 
@@ -93,4 +99,4 @@ Review policies whenever a new table, storage path, role, document type, or cust
 
 ## Deployment rule
 
-No deployment should proceed when `npm test` fails. The verification suite checks every public page, JavaScript syntax, authentication guards, obvious credential exposure, validated intake, approved-staff policies, audit requirements, quote versioning, and critical Supabase storage assumptions.
+No deployment should proceed when `npm test` fails. The verification suite checks every public page, the device-local intake privacy boundary, JavaScript syntax, authentication guards, obvious credential exposure, future validated-intake migrations, approved-staff policies, audit requirements, quote versioning, and critical Supabase storage assumptions.

@@ -3,9 +3,7 @@
   const results = document.querySelector('#address-results');
   const addressStatus = document.querySelector('#address-status');
   const locateButton = document.querySelector('#use-location');
-  const photosInput = document.querySelector('#photos');
-  const photoPicker = document.querySelector('.photo-picker');
-  const photoSelection = document.querySelector('#photo-selection');
+  const serviceSelect = document.querySelector('#service');
 
   const language = () => document.documentElement.lang === 'es' ? 'es' : 'en';
   const message = (en, es) => language() === 'es' ? es : en;
@@ -16,6 +14,17 @@
   let activeIndex = -1;
   let items = [];
 
+  const requestedService = new URLSearchParams(window.location.search).get('service');
+  const serviceValues = {
+    concrete: 'Concrete / Concreto',
+    grading: 'Grading & Excavation / Nivelación y Excavación',
+    excavation: 'Grading & Excavation / Nivelación y Excavación',
+    sitework: 'Grading & Excavation / Nivelación y Excavación'
+  };
+  if (serviceSelect && requestedService && serviceValues[requestedService]) {
+    serviceSelect.value = serviceValues[requestedService];
+  }
+
   function closeResults() {
     if (!results || !addressInput) return;
     results.hidden = true;
@@ -23,6 +32,13 @@
     items = [];
     activeIndex = -1;
     addressInput.setAttribute('aria-expanded', 'false');
+  }
+
+  function stopSearch() {
+    clearTimeout(timer);
+    controller?.abort();
+    controller = undefined;
+    closeResults();
   }
 
   function choose(item) {
@@ -107,10 +123,9 @@
   }
 
   addressInput?.addEventListener('input', () => {
-    clearTimeout(timer);
+    stopSearch();
     const query = addressInput.value.trim();
     if (query.length < 5) {
-      closeResults();
       setStatus('Type the street number and name.', 'Escribe el número y el nombre de la calle.');
       return;
     }
@@ -118,17 +133,21 @@
   });
 
   addressInput?.addEventListener('keydown', event => {
+    if (event.key === 'Escape') {
+      stopSearch();
+      return;
+    }
     if (!items.length || !results) return;
     const buttons = [...results.querySelectorAll('.address-result')];
     if (event.key === 'ArrowDown') { event.preventDefault(); activeIndex = (activeIndex + 1) % buttons.length; }
     else if (event.key === 'ArrowUp') { event.preventDefault(); activeIndex = (activeIndex - 1 + buttons.length) % buttons.length; }
     else if (event.key === 'Enter' && activeIndex >= 0) { event.preventDefault(); choose(items[activeIndex]); return; }
-    else if (event.key === 'Escape') { closeResults(); return; }
     else return;
     buttons.forEach((button, index) => button.classList.toggle('active', index === activeIndex));
   });
 
-  document.addEventListener('click', event => { if (!event.target.closest('.address-field')) closeResults(); });
+  document.addEventListener('click', event => { if (!event.target.closest('.address-field')) stopSearch(); });
+  document.querySelector('#estimate-form')?.addEventListener('submit', stopSearch);
 
   locateButton?.addEventListener('click', () => {
     if (!navigator.geolocation) return setStatus('Location is unavailable on this device.', 'La ubicación no está disponible en este dispositivo.');
@@ -155,16 +174,4 @@
     }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 });
   });
 
-  function updatePhotoSelection() {
-    if (!photosInput || !photoSelection || !photoPicker) return;
-    const count = photosInput.files?.length || 0;
-    photoPicker.classList.toggle('has-files', count > 0);
-    photoSelection.textContent = count
-      ? message(`${count} photo${count === 1 ? '' : 's'} selected`, `${count} foto${count === 1 ? '' : 's'} seleccionada${count === 1 ? '' : 's'}`)
-      : message('No photos selected yet.', 'Aún no has seleccionado fotos.');
-  }
-
-  photosInput?.addEventListener('change', updatePhotoSelection);
-  document.querySelector('#estimate-form')?.addEventListener('reset', () => setTimeout(updatePhotoSelection));
-  updatePhotoSelection();
 })();
