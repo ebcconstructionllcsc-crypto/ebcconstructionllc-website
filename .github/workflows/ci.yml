@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: ebc-ci-${{ github.workflow }}-${{ github.ref }}
@@ -16,10 +16,13 @@ concurrency:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 30
     steps:
-      - name: Check out repository
+      - name: Check out portfolio branch
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
 
       - name: Use Node.js 22
         uses: actions/setup-node@v4
@@ -27,8 +30,130 @@ jobs:
           node-version: 22
           cache: npm
 
+      - name: Install media tooling
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+          python3 -m pip install --disable-pip-version-check gdown
+
+      - name: Download immutable project-story package
+        run: |
+          set -euo pipefail
+          python3 -m gdown --quiet --fuzzy "https://drive.google.com/file/d/11-ZDQSkh2d5QOhgVvD8t0EVx_ZdiDD9J/view" -O project-stories.zip
+          echo "df5b897f8ed94ee393d95298ed6cffe32875a94b81d820a3fe035a6db28dfd14  project-stories.zip" | sha256sum -c -
+
+      - name: Validate and install package
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path, PurePosixPath
+          import stat
+          import zipfile
+
+          archive = Path('project-stories.zip')
+          target = Path('.project-stories-package')
+          required = {
+              'ebc-project-stories-package/install.py',
+              'ebc-project-stories-package/media/assets/video/portfolio/stories/ebc-project-story-horizontal-with-audio.mp4',
+              'ebc-project-stories-package/media/assets/video/portfolio/stories/ebc-project-story-vertical-with-audio.mp4',
+              'ebc-project-stories-package/media/assets/images/posters/stories/ebc-project-story-horizontal.webp',
+              'ebc-project-stories-package/media/assets/images/posters/stories/ebc-project-story-vertical.webp',
+          }
+
+          with zipfile.ZipFile(archive) as bundle:
+              infos = bundle.infolist()
+              if len(infos) > 30:
+                  raise SystemExit('Unexpected archive entry count')
+              if sum(info.file_size for info in infos) > 50 * 1024 * 1024:
+                  raise SystemExit('Expanded archive exceeds 50 MB')
+              names = set()
+              for info in infos:
+                  path = PurePosixPath(info.filename)
+                  if path.is_absolute() or '..' in path.parts:
+                      raise SystemExit(f'Unsafe archive path: {info.filename}')
+                  mode = info.external_attr >> 16
+                  if stat.S_ISLNK(mode):
+                      raise SystemExit(f'Symlink not allowed: {info.filename}')
+                  names.add(info.filename.rstrip('/'))
+              missing = required - names
+              if missing:
+                  raise SystemExit(f'Missing required package files: {sorted(missing)}')
+              bundle.extractall(target)
+          PY
+          python3 .project-stories-package/ebc-project-stories-package/install.py
+
+      - name: Verify audio-enabled web media
+        run: |
+          set -euo pipefail
+          for file in \
+            assets/video/portfolio/stories/ebc-project-story-horizontal-with-audio.mp4 \
+            assets/video/portfolio/stories/ebc-project-story-vertical-with-audio.mp4
+          do
+            test -s "$file"
+            test "$(ffprobe -v error -select_streams v:0 -show_entries stream=codec_name -of csv=p=0 "$file")" = "h264"
+            test "$(ffprobe -v error -select_streams a:0 -show_entries stream=codec_name -of csv=p=0 "$file")" = "aac"
+            test -n "$(ffprobe -v error -select_streams a -show_entries stream=index -of csv=p=0 "$file")"
+            test "$(stat -c %s "$file")" -lt "$((25 * 1024 * 1024))"
+          done
+          test -s assets/images/posters/stories/ebc-project-story-horizontal.webp
+          test -s assets/images/posters/stories/ebc-project-story-vertical.webp
+          grep -q 'data-project-story="true"' assets/portfolio.js
+          grep -q 'data-audio="on"' assets/portfolio.js
+
       - name: Install development dependencies
         run: npm ci
 
-      - name: Run full verification
-        run: npm test
+      - name: Run complete verification
+        run: |
+          set -euo pipefail
+          npm test
+          npx vite build
+          git diff --check
+
+      - name: Commit verified project stories
+        run: |
+          set -euo pipefail
+          rm -rf project-stories.zip .project-stories-package dist
+          rm -f .github/workflows/install-project-stories.yml
+          cat > .github/workflows/ci.yml <<'YAML'
+          name: Verify EBC website and manager
+
+          on:
+            push:
+              branches: [main]
+            pull_request:
+              branches: [main]
+
+          permissions:
+            contents: read
+
+          concurrency:
+            group: ebc-ci-${{ github.workflow }}-${{ github.ref }}
+            cancel-in-progress: true
+
+          jobs:
+            verify:
+              runs-on: ubuntu-latest
+              timeout-minutes: 10
+              steps:
+                - name: Check out repository
+                  uses: actions/checkout@v4
+
+                - name: Use Node.js 22
+                  uses: actions/setup-node@v4
+                  with:
+                    node-version: 22
+                    cache: npm
+
+                - name: Install development dependencies
+                  run: npm ci
+
+                - name: Run full verification
+                  run: npm test
+          YAML
+          git config user.name "EBC Portfolio Media Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          git commit -m "Add edited project stories with audio"
+          git push origin HEAD:agent/portfolio-audit-improvements
