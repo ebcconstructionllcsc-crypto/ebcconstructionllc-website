@@ -43,4 +43,14 @@
     polygonPerimeter,
     materialTakeoff
   };
+
+  if (typeof document !== 'undefined' && !navigator.userAgent.includes('jsdom')) {
+    const source = document.currentScript?.src || '';
+    if (source && !document.querySelector('script[data-ebc-proposal-link]')) {
+      const proposalLink = document.createElement('script');
+      proposalLink.src = new URL('./proposal-link.js', source).href;
+      proposalLink.dataset.ebcProposalLink = 'true';
+      document.head.appendChild(proposalLink);
+    }
+  }
 })(typeof window === 'undefined' ? globalThis : window);
