@@ -42,7 +42,7 @@ jobs:
         run: |
           set -euo pipefail
           npm test
-          npm run build
+          npx vite build
           git diff --check
 
       - name: Install Chromium QA tooling
