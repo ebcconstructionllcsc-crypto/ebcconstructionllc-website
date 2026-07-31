@@ -13,7 +13,7 @@
   const STORAGE_KEY = 'ebc-manager-plan-precision';
   const DEFAULT_INCREMENT = 0.25;
   let syncing = false;
-  let interactionStart = null;
+  let pointerStart = null;
 
   function readState() {
     let points = [];
@@ -23,10 +23,7 @@
     } catch {
       points = [];
     }
-    return math.clonePlanState({
-      points,
-      closed: storedClosed.value === 'true'
-    });
+    return math.clonePlanState({ points, closed: storedClosed.value === 'true' });
   }
 
   const history = new math.PlanHistory(readState(), 50);
@@ -74,8 +71,19 @@
         x: Math.max(0, math.snapToIncrement(point.x, step)),
         y: Math.max(0, math.snapToIncrement(point.y, step))
       })),
-      closed: state.closed
+      closed: Boolean(state.closed)
     };
+  }
+
+  function writeState(state) {
+    const normalized = snapState(state);
+    syncing = true;
+    storedPoints.value = JSON.stringify(normalized.points);
+    storedClosed.value = String(normalized.closed && normalized.points.length >= 3);
+    storedPoints.dispatchEvent(new Event('input', { bubbles: true }));
+    storedClosed.dispatchEvent(new Event('input', { bubbles: true }));
+    syncing = false;
+    return normalized;
   }
 
   function updateButtons() {
@@ -85,28 +93,16 @@
     redoButton.setAttribute('aria-label', history.canRedo ? 'Rehacer cambio del plano' : 'No hay cambios para rehacer');
   }
 
-  function applyState(state, { commit = false } = {}) {
-    if (syncing) return;
-    syncing = true;
-    const normalized = snapState(state);
-    storedPoints.value = JSON.stringify(normalized.points);
-    storedClosed.value = String(normalized.closed && normalized.points.length >= 3);
-    storedPoints.dispatchEvent(new Event('input', { bubbles: true }));
-    storedClosed.dispatchEvent(new Event('input', { bubbles: true }));
-    if (commit) history.commit(normalized);
-    syncing = false;
-    updateButtons();
-  }
-
-  function commitCurrent() {
-    const snapped = snapState(readState());
-    applyState(snapped);
-    history.commit(snapped);
+  function commitCurrent(previousState = history.value()) {
+    const next = snapState(readState());
+    history.sync(previousState);
+    history.commit(next);
+    writeState(next);
     updateButtons();
   }
 
   function restore(state) {
-    applyState(state);
+    writeState(state);
     updateButtons();
   }
 
@@ -122,43 +118,42 @@
   });
 
   canvas.addEventListener('pointerdown', () => {
-    interactionStart = readState();
+    pointerStart = readState();
   }, true);
 
-  canvas.addEventListener('pointermove', event => {
-    if (!canvas.hasPointerCapture?.(event.pointerId)) return;
-    applyState(readState());
-  });
-
-  function finishInteraction() {
-    if (!interactionStart) return;
-    const current = snapState(readState());
-    history.replace(interactionStart);
-    history.commit(current);
-    applyState(current);
-    interactionStart = null;
-    updateButtons();
+  function finishPointerInteraction() {
+    if (!pointerStart) return;
+    commitCurrent(pointerStart);
+    pointerStart = null;
   }
 
-  canvas.addEventListener('pointerup', finishInteraction);
-  canvas.addEventListener('pointercancel', finishInteraction);
+  canvas.addEventListener('pointerup', finishPointerInteraction);
+  canvas.addEventListener('pointercancel', finishPointerInteraction);
 
-  closeButton?.addEventListener('click', () => queueMicrotask(commitCurrent));
-  resetButton?.addEventListener('click', () => queueMicrotask(commitCurrent));
+  closeButton?.addEventListener('click', () => {
+    const before = readState();
+    queueMicrotask(() => commitCurrent(before));
+  }, true);
+
+  resetButton?.addEventListener('click', () => {
+    const before = readState();
+    queueMicrotask(() => commitCurrent(before));
+  }, true);
 
   precisionSelect.addEventListener('change', () => {
+    const before = readState();
     localStorage.setItem(STORAGE_KEY, precisionSelect.value);
-    commitCurrent();
+    commitCurrent(before);
   });
 
   storedPoints.addEventListener('input', () => {
-    if (!syncing && !interactionStart) {
-      history.replace(snapState(readState()));
-      updateButtons();
-    }
+    if (!syncing && !pointerStart) history.sync(snapState(readState()));
+  });
+  storedClosed.addEventListener('input', () => {
+    if (!syncing && !pointerStart) history.sync(snapState(readState()));
   });
 
-  applyState(readState());
-  history.replace(readState());
+  const initial = writeState(readState());
+  history.replace(initial);
   updateButtons();
 })();
