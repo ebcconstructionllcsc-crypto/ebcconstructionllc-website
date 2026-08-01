@@ -47,7 +47,7 @@ for (const relative of audioStoryFiles) {
     fail(`project story video exceeds 25 MB: ${relative}`);
   }
 }
-if ((script.match(/data-project-story="true"/g) || []).length !== 2) fail('portfolio must expose exactly two edited project stories');
+if ((script.match(/data-visualization-story="/g) || []).length !== 2) fail('visualization section must expose exactly two edited project stories');
 if ((script.match(/data-audio="on"/g) || []).length !== 2) fail('edited project stories must explicitly preserve audio');
 if (!/dialogVideo\.muted = card\.dataset\.audio !== 'on'/.test(script)) fail('portfolio modal does not distinguish silent process clips from project stories with sound');
 if (!/Sound begins only after you choose a video and press play/.test(script)) fail('portfolio is missing the project-story sound disclosure');
