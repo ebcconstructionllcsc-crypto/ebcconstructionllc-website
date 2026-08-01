@@ -8,7 +8,7 @@
     "dev": "vite",
     "test": "npm run test:static && npm run test:portfolio && npm run test:public-intake && npm run test:security && npm run test:quotes && npm run test:features && npm run test:syntax",
     "test:static": "node tests/static-app-check.mjs",
-    "test:portfolio": "node tests/portfolio-audit-check.mjs",
+    "test:portfolio": "node tests/portfolio-audit-check.mjs && node tests/backyard-transformation-check.mjs",
     "test:public-intake": "node tests/public-intake-share-flow.mjs",
     "test:security": "node tests/security-check.mjs && node tests/invoice-security-check.mjs && node tests/render-security-check.mjs",
     "test:quotes": "node tests/quotes-center-check.mjs",
