@@ -16,6 +16,12 @@
     return;
   }
 
+  const viewportScale = () => {
+    if (window.innerWidth <= 620) return 0.6;
+    if (window.innerWidth <= 920) return 0.78;
+    return 1;
+  };
+
   const updateComparison = () => {
     const value = Number(slider.value);
     after.style.clipPath = `inset(0 ${100 - value}% 0 0)`;
@@ -24,7 +30,8 @@
   };
 
   const updateWorld = () => {
-    world.style.transform = `rotateX(${tilt.value}deg) rotateZ(${rotation.value}deg) scale(${Number(zoom.value) / 100})`;
+    const effectiveZoom = (Number(zoom.value) / 100) * viewportScale();
+    world.style.transform = `rotateX(${tilt.value}deg) rotateZ(${rotation.value}deg) scale(${effectiveZoom})`;
     rotationOutput.textContent = `${rotation.value}°`;
     tiltOutput.textContent = `${tilt.value}°`;
     zoomOutput.textContent = `${zoom.value}%`;
@@ -41,6 +48,7 @@
 
   slider.addEventListener('input', updateComparison);
   [rotation, tilt, zoom].forEach((control) => control.addEventListener('input', updateWorld));
+  window.addEventListener('resize', updateWorld, { passive: true });
   connectLayerToggle('show-slab', 'slab-layer');
   connectLayerToggle('show-rebar', 'rebar-layer');
   connectLayerToggle('show-base', 'base-layer');
