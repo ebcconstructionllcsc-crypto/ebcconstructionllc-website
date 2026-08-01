@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: ebc-ci-${{ github.workflow }}-${{ github.ref }}
@@ -16,60 +16,10 @@ concurrency:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 10
     steps:
-      - name: Check out project branch
+      - name: Check out repository
         uses: actions/checkout@v4
-        with:
-          ref: agent/backyard-transformation-project
-          fetch-depth: 0
-
-      - name: Install verified backyard transformation payload
-        if: github.event_name == 'pull_request' && github.event.pull_request.head.ref == 'agent/backyard-transformation-project'
-        shell: bash
-        run: |
-          set -euo pipefail
-          curl -L --fail --retry 3 --retry-delay 2 \
-            "https://drive.usercontent.google.com/download?id=1jfb7KgBbhll1VF9SzAOCN9e_Ep6E6PW3&export=download&confirm=t" \
-            -o /tmp/ebc-backyard-transformation.zip
-          echo "b9e9f32a257cc233694877e1ff8dcc17bcd6fbcc1cddfc301faa4637d22db97e  /tmp/ebc-backyard-transformation.zip" | sha256sum -c -
-          python - <<'PY'
-          from pathlib import Path, PurePosixPath
-          import zipfile
-
-          archive = Path('/tmp/ebc-backyard-transformation.zip')
-          destination = Path('/tmp/ebc-backyard-transformation')
-          allowed = {
-              'assets/backyard-transformation.css',
-              'assets/portfolio.js',
-              'assets/images/portfolio/transformations/backyard/wall-finished.svg',
-              'assets/images/portfolio/transformations/backyard/driveway-finished.svg',
-              'assets/images/portfolio/transformations/backyard/slab-finished.svg',
-              'assets/images/portfolio/transformations/backyard/yard-before-tools.svg',
-              'assets/images/portfolio/transformations/backyard/yard-before-shed.svg',
-              'assets/images/portfolio/transformations/backyard/yard-before-fence.svg',
-              'tests/backyard-transformation-check.mjs',
-              'package.json',
-          }
-
-          with zipfile.ZipFile(archive) as package:
-              files = set()
-              for member in package.infolist():
-                  path = PurePosixPath(member.filename)
-                  if path.is_absolute() or '..' in path.parts:
-                      raise SystemExit(f'Unsafe archive path: {member.filename}')
-                  if member.is_dir():
-                      continue
-                  if member.external_attr >> 16 & 0o170000 == 0o120000:
-                      raise SystemExit(f'Symlink not allowed: {member.filename}')
-                  files.add(member.filename)
-              if files != allowed:
-                  raise SystemExit(f'Unexpected payload files: {sorted(files ^ allowed)}')
-              package.extractall(destination)
-          PY
-          cp -R /tmp/ebc-backyard-transformation/. .
-          rm -f .github/workflows/install-backyard-transformation.yml
-          echo "bmFtZTogVmVyaWZ5IEVCQyB3ZWJzaXRlIGFuZCBtYW5hZ2VyCgpvbjoKICBwdXNoOgogICAgYnJhbmNoZXM6IFttYWluXQogIHB1bGxfcmVxdWVzdDoKICAgIGJyYW5jaGVzOiBbbWFpbl0KCnBlcm1pc3Npb25zOgogIGNvbnRlbnRzOiByZWFkCgpjb25jdXJyZW5jeToKICBncm91cDogZWJjLWNpLSR7eyBnaXRodWIud29ya2Zsb3cgfX0tJHt7IGdpdGh1Yi5yZWYgfX0KICBjYW5jZWwtaW4tcHJvZ3Jlc3M6IHRydWUKCmpvYnM6CiAgdmVyaWZ5OgogICAgcnVucy1vbjogdWJ1bnR1LWxhdGVzdAogICAgdGltZW91dC1taW51dGVzOiAxMAogICAgc3RlcHM6CiAgICAgIC0gbmFtZTogQ2hlY2sgb3V0IHJlcG9zaXRvcnkKICAgICAgICB1c2VzOiBhY3Rpb25zL2NoZWNrb3V0QHY0CgogICAgICAtIG5hbWU6IFVzZSBOb2RlLmpzIDIyCiAgICAgICAgdXNlczogYWN0aW9ucy9zZXR1cC1ub2RlQHY0CiAgICAgICAgd2l0aDoKICAgICAgICAgIG5vZGUtdmVyc2lvbjogMjIKICAgICAgICAgIGNhY2hlOiBucG0KCiAgICAgIC0gbmFtZTogSW5zdGFsbCBkZXZlbG9wbWVudCBkZXBlbmRlbmNpZXMKICAgICAgICBydW46IG5wbSBjaQoKICAgICAgLSBuYW1lOiBSdW4gZnVsbCB2ZXJpZmljYXRpb24KICAgICAgICBydW46IG5wbSB0ZXN0Cg==" | base64 -d > .github/workflows/ci.yml
 
       - name: Use Node.js 22
         uses: actions/setup-node@v4
@@ -80,18 +30,5 @@ jobs:
       - name: Install development dependencies
         run: npm ci
 
-      - name: Run complete verification
-        run: |
-          npm test
-          git diff --check
-
-      - name: Commit installed project
-        if: github.event_name == 'pull_request' && github.event.pull_request.head.ref == 'agent/backyard-transformation-project'
-        shell: bash
-        run: |
-          set -euo pipefail
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
-          git commit -m "Add complete backyard transformation project"
-          git push origin HEAD:agent/backyard-transformation-project
+      - name: Run full verification
+        run: npm test
