@@ -1,0 +1,37 @@
+name: Apply visualization gallery
+
+on:
+  push:
+    branches:
+      - agent/backyard-transformation-project
+    paths:
+      - .github/workflows/apply-visualization-gallery.yml
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out branch
+        uses: actions/checkout@v4
+        with:
+          ref: agent/backyard-transformation-project
+          fetch-depth: 0
+
+      - name: Apply static gallery replacement
+        run: node scripts/patch-visualize-gallery.mjs
+
+      - name: Remove one-time patch files
+        run: |
+          rm scripts/patch-visualize-gallery.mjs
+          rm .github/workflows/apply-visualization-gallery.yml
+
+      - name: Commit static gallery
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add projects.html scripts/patch-visualize-gallery.mjs .github/workflows/apply-visualization-gallery.yml
+          git commit -m "Replace planning mockup with static visualization gallery"
+          git push origin HEAD:agent/backyard-transformation-project
