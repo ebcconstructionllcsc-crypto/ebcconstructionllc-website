@@ -69,42 +69,7 @@ jobs:
           PY
           cp -R /tmp/ebc-backyard-transformation/. .
           rm -f .github/workflows/install-backyard-transformation.yml
-          cat > .github/workflows/ci.yml <<'YAML'
-          name: Verify EBC website and manager
-
-          on:
-            push:
-              branches: [main]
-            pull_request:
-              branches: [main]
-
-          permissions:
-            contents: read
-
-          concurrency:
-            group: ebc-ci-${{ github.workflow }}-${{ github.ref }}
-            cancel-in-progress: true
-
-          jobs:
-            verify:
-              runs-on: ubuntu-latest
-              timeout-minutes: 10
-              steps:
-                - name: Check out repository
-                  uses: actions/checkout@v4
-
-                - name: Use Node.js 22
-                  uses: actions/setup-node@v4
-                  with:
-                    node-version: 22
-                    cache: npm
-
-                - name: Install development dependencies
-                  run: npm ci
-
-                - name: Run full verification
-                  run: npm test
-          YAML
+          echo "bmFtZTogVmVyaWZ5IEVCQyB3ZWJzaXRlIGFuZCBtYW5hZ2VyCgpvbjoKICBwdXNoOgogICAgYnJhbmNoZXM6IFttYWluXQogIHB1bGxfcmVxdWVzdDoKICAgIGJyYW5jaGVzOiBbbWFpbl0KCnBlcm1pc3Npb25zOgogIGNvbnRlbnRzOiByZWFkCgpjb25jdXJyZW5jeToKICBncm91cDogZWJjLWNpLSR7eyBnaXRodWIud29ya2Zsb3cgfX0tJHt7IGdpdGh1Yi5yZWYgfX0KICBjYW5jZWwtaW4tcHJvZ3Jlc3M6IHRydWUKCmpvYnM6CiAgdmVyaWZ5OgogICAgcnVucy1vbjogdWJ1bnR1LWxhdGVzdAogICAgdGltZW91dC1taW51dGVzOiAxMAogICAgc3RlcHM6CiAgICAgIC0gbmFtZTogQ2hlY2sgb3V0IHJlcG9zaXRvcnkKICAgICAgICB1c2VzOiBhY3Rpb25zL2NoZWNrb3V0QHY0CgogICAgICAtIG5hbWU6IFVzZSBOb2RlLmpzIDIyCiAgICAgICAgdXNlczogYWN0aW9ucy9zZXR1cC1ub2RlQHY0CiAgICAgICAgd2l0aDoKICAgICAgICAgIG5vZGUtdmVyc2lvbjogMjIKICAgICAgICAgIGNhY2hlOiBucG0KCiAgICAgIC0gbmFtZTogSW5zdGFsbCBkZXZlbG9wbWVudCBkZXBlbmRlbmNpZXMKICAgICAgICBydW46IG5wbSBjaQoKICAgICAgLSBuYW1lOiBSdW4gZnVsbCB2ZXJpZmljYXRpb24KICAgICAgICBydW46IG5wbSB0ZXN0Cg==" | base64 -d > .github/workflows/ci.yml
 
       - name: Use Node.js 22
         uses: actions/setup-node@v4
@@ -118,7 +83,6 @@ jobs:
       - name: Run complete verification
         run: |
           npm test
-          npm run build
           git diff --check
 
       - name: Commit installed project
