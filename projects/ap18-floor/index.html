@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#11100d">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="description" content="Visualización conceptual interactiva de un piso de concreto de 24 por 40 pies preparado por EBC Construction LLC.">
+  <meta property="og:title" content="EBC Project Viewer | Piso de concreto 24 x 40">
+  <meta property="og:description" content="Revisa el antes y después, las medidas, las capas constructivas y el calendario de pagos del proyecto.">
+  <meta property="og:image" content="https://ebcconstructionllc.com/assets/images/hero-poster.webp">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://ebcconstructionllc.com/projects/ap18-floor/">
+  <title>EBC Project Viewer | Piso de concreto 24 x 40</title>
+  <link rel="canonical" href="https://ebcconstructionllc.com/projects/ap18-floor/">
+  <link rel="icon" href="https://ebcconstructionllc.com/assets/images/logo.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip" href="#main">Saltar al contenido</a>
+  <header class="topbar">
+    <div class="nav">
+      <a class="brand" href="https://ebcconstructionllc.com/" aria-label="Sitio principal de EBC Construction LLC">
+        <img src="https://ebcconstructionllc.com/assets/images/logo.png" alt="EBC Construction LLC">
+        <span><strong>EBC Construction LLC</strong><small>Project Viewer · Propuesta conceptual</small></span>
+      </a>
+      <div class="actions">
+        <a class="button secondary" href="https://ebcconstructionllc.com/contact.html?service=concrete&project=AP18-floor">Solicitar cambios</a>
+        <a class="button primary" href="tel:+18644502954">Llamar a EBC</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" aria-labelledby="project-title">
+      <article class="card hero-copy">
+        <p class="eyebrow">AP18 · Greenville, South Carolina</p>
+        <h1 id="project-title">Piso de concreto de 24 × 40 pies.</h1>
+        <p class="lead">Visualización conceptual para revisar el alcance antes de construir. Explora el antes y después, las capas constructivas, medidas, especificaciones y pagos.</p>
+        <div class="chips" aria-label="Características principales">
+          <span class="chip">960 ft²</span><span class="chip">3,500 PSI</span><span class="chip">Acabado broom</span><span class="chip">Refuerzo incluido</span>
+        </div>
+        <div class="price-wrap">
+          <div class="price-label">Precio final cotizado</div>
+          <div class="price">$12,568.50</div>
+          <div class="discount">Incluye descuento de $931.50 por contratación conjunta.</div>
+        </div>
+      </article>
+
+      <div class="card compare">
+        <img src="https://ebcconstructionllc.com/assets/images/portfolio/transformations/backyard/yard-before-shed.svg" alt="Condición general existente del área antes del trabajo">
+        <img class="after" id="after-image" src="https://ebcconstructionllc.com/assets/images/portfolio/transformations/backyard/slab-finished.svg" alt="Propuesta visual conceptual del piso de concreto terminado">
+        <div class="shade" aria-hidden="true"></div>
+        <span class="compare-label before">Estado actual</span><span class="compare-label proposed">Propuesta conceptual</span>
+        <div class="divider" id="divider" aria-hidden="true"></div><div class="handle" id="handle" aria-hidden="true">↔</div>
+        <p class="compare-caption">Desliza para comparar. La imagen final es una referencia conceptual; el resultado real depende de mediciones, nivelación, drenaje y condiciones del terreno.</p>
+        <input id="comparison-slider" type="range" min="0" max="100" value="50" aria-label="Comparar la condición actual con la propuesta conceptual">
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="model-title">
+      <div class="section-head"><div><h2 id="model-title">Modelo técnico interactivo</h2><p>Gira, inclina y revisa las capas del piso.</p></div></div>
+      <div class="card viewer">
+        <div class="stage" aria-label="Modelo conceptual tridimensional del piso de concreto">
+          <div class="world" id="world">
+            <div class="ground"></div><div class="base" id="base-layer"></div><div class="rebar" id="rebar-layer"></div><div class="slab" id="slab-layer"></div>
+            <div class="dimension width">40'-0"</div><div class="dimension depth">24'-0"</div>
+          </div>
+        </div>
+        <aside class="controls" aria-label="Controles del modelo">
+          <div class="control"><label for="rotation"><span>Giro</span><output id="rotation-output">-28°</output></label><input id="rotation" type="range" min="-70" max="25" value="-28"></div>
+          <div class="control"><label for="tilt"><span>Inclinación</span><output id="tilt-output">58°</output></label><input id="tilt" type="range" min="30" max="75" value="58"></div>
+          <div class="control"><label for="zoom"><span>Zoom</span><output id="zoom-output">82%</output></label><input id="zoom" type="range" min="45" max="115" value="82"></div>
+          <div class="toggles">
+            <label class="toggle"><span>Concreto terminado</span><input id="show-slab" type="checkbox" checked></label>
+            <label class="toggle"><span>Malla / refuerzo</span><input id="show-rebar" type="checkbox" checked></label>
+            <label class="toggle"><span>Base compactada</span><input id="show-base" type="checkbox" checked></label>
+          </div>
+          <p class="notice"><strong>Representación conceptual:</strong> pendientes, elevaciones, juntas, espesor final y drenaje se verifican en campo antes de construir.</p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="spec-title">
+      <div class="section-head"><div><h2 id="spec-title">Especificaciones principales</h2><p>Resumen técnico de la propuesta.</p></div></div>
+      <div class="spec-grid">
+        <article class="spec"><small>Dimensiones</small><strong>24 × 40 ft</strong></article>
+        <article class="spec"><small>Área aproximada</small><strong>960 ft²</strong></article>
+        <article class="spec"><small>Concreto</small><strong>3,500 PSI</strong></article>
+        <article class="spec"><small>Acabado</small><strong>Broom finish</strong></article>
+      </div>
+    </section>
+
+    <section class="section details" aria-label="Alcance y pagos">
+      <article class="card detail-card">
+        <h3>Alcance incluido</h3>
+        <ul class="clean-list">
+          <li>Trazado y verificación del área de 24 × 40 pies.</li><li>Excavación, nivelación y preparación.</li><li>Base compactada y formas perimetrales.</li>
+          <li>Refuerzo con malla o varilla según condiciones.</li><li>Concreto de 3,500 PSI.</li><li>Acabado escobillado, juntas y limpieza normal.</li>
+        </ul>
+      </article>
+      <article class="card detail-card">
+        <h3>Calendario de pagos</h3>
+        <div class="payment"><span class="payment-badge">35%</span><strong>Firma y reservación<small>Programación y materiales iniciales.</small></strong><strong>$4,398.98</strong></div>
+        <div class="payment"><span class="payment-badge">45%</span><strong>Inicio y colocación<small>Preparación, refuerzo y concreto.</small></strong><strong>$5,655.83</strong></div>
+        <div class="payment"><span class="payment-badge">20%</span><strong>Terminación<small>Revisión final y limpieza.</small></strong><strong>$2,513.69</strong></div>
+      </article>
+    </section>
+
+    <section class="section card cta">
+      <div><h2>¿Listo para continuar?</h2><p>Solicita un cambio o comunícate directamente con EBC Construction LLC.</p></div>
+      <div class="actions"><a class="button" href="https://ebcconstructionllc.com/contact.html?service=concrete&project=AP18-floor">Solicitar cambios</a><a class="button" href="sms:+18644502954">Enviar mensaje</a></div>
+    </section>
+  </main>
+
+  <footer>© 2026 EBC Construction LLC · (864) 450-2954 · ebcconstructionllcsc@gmail.com<br>Esta página es una herramienta visual y no sustituye ingeniería, survey, permisos ni contrato firmado.</footer>
+  <script src="app.js"></script>
+</body>
+</html>

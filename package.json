@@ -7,13 +7,13 @@
   "scripts": {
     "dev": "vite",
     "test": "npm run test:static && npm run test:portfolio && npm run test:public-intake && npm run test:security && npm run test:quotes && npm run test:features && npm run test:syntax",
-    "test:static": "node tests/static-app-check.mjs",
+    "test:static": "node tests/static-app-check.mjs && node tests/project-viewer-ap18-floor-check.mjs",
     "test:portfolio": "node tests/portfolio-audit-check.mjs && node tests/backyard-transformation-check.mjs",
     "test:public-intake": "node tests/public-intake-share-flow.mjs",
     "test:security": "node tests/security-check.mjs && node tests/invoice-security-check.mjs && node tests/render-security-check.mjs",
     "test:quotes": "node tests/quotes-center-check.mjs",
     "test:features": "node tests/plan-math-check.mjs && node tests/quote-takeoff-flow.mjs && node tests/quote-invoice-flow.mjs && node tests/invoice-core-check.mjs && node tests/invoice-flow.mjs && node tests/invoice-cloud-flow.mjs && node tests/render-core-check.mjs && node --experimental-strip-types tests/render-server-core-check.mjs && node tests/render-ui-flow.mjs && node tests/quote-render-flow.mjs",
-    "test:syntax": "node --check assets/app.js && node --check assets/portfolio.js && node --check app/app.js && node --check app/quotes-center.js && node --check app/quote.js && node --check app/invoice-core.js && node --check app/invoice.js && node --check app/plan-math.js && node --check app/plan.js && node --check app/render-core.js && node --check app/render.js && node --check app/sw.js && node --experimental-strip-types --check supabase/functions/generate-render/render-core.ts && node --experimental-strip-types --check supabase/functions/generate-render/index.ts"
+    "test:syntax": "node --check assets/app.js && node --check assets/portfolio.js && node --check app/app.js && node --check app/quotes-center.js && node --check app/quote.js && node --check app/invoice-core.js && node --check app/invoice.js && node --check app/plan-math.js && node --check app/plan.js && node --check app/render-core.js && node --check app/render.js && node --check app/sw.js && node --check projects/ap18-floor/app.js && node --experimental-strip-types --check supabase/functions/generate-render/render-core.ts && node --experimental-strip-types --check supabase/functions/generate-render/index.ts"
   },
   "engines": {
     "node": ">=20"
