@@ -175,3 +175,163 @@
   });
 
 })();
+
+(() => {
+  const form = document.querySelector('#estimate-form');
+  const review = form?.querySelector('#estimate-review');
+  const actions = review?.querySelector('.estimate-review-actions');
+  const transferNote = review?.querySelector('.transfer-note');
+  const shareButton = form?.querySelector('#share-request');
+  const textLink = form?.querySelector('#text-request');
+  const emailLink = form?.querySelector('#email-request');
+  const copyButton = form?.querySelector('#copy-request');
+  const photosInput = form?.querySelector('#photos');
+
+  if (!form || !review || !actions || !transferNote) return;
+
+  const isSpanish = () => document.documentElement.lang === 'es';
+  const copy = (english, spanish) => isSpanish() ? spanish : english;
+
+  const instruction = document.createElement('p');
+  instruction.className = 'estimate-transfer-instruction';
+  instruction.dataset.en = 'Nothing has been sent yet. Tap one option below, choose the destination, and press Send in the app that opens.';
+  instruction.dataset.es = 'Todavía no se ha enviado nada. Toca una opción, elige el destino y presiona Enviar en la aplicación que se abra.';
+  instruction.textContent = copy(instruction.dataset.en, instruction.dataset.es);
+  Object.assign(instruction.style, {
+    margin: '0',
+    padding: '14px 16px',
+    borderLeft: '4px solid #d4a64e',
+    background: 'rgba(212,166,78,.12)',
+    color: 'rgba(255,255,255,.88)',
+    fontWeight: '750',
+    lineHeight: '1.5'
+  });
+  actions.before(instruction);
+
+  const transferStatus = document.createElement('p');
+  transferStatus.id = 'estimate-transfer-status';
+  transferStatus.className = 'estimate-transfer-status';
+  transferStatus.setAttribute('role', 'status');
+  transferStatus.setAttribute('aria-live', 'polite');
+  transferStatus.setAttribute('aria-atomic', 'true');
+  Object.assign(transferStatus.style, {
+    margin: '0',
+    padding: '14px 16px',
+    border: '1px solid rgba(212,166,78,.55)',
+    borderRadius: '12px',
+    background: 'rgba(0,0,0,.22)',
+    color: '#fff',
+    fontWeight: '800',
+    lineHeight: '1.5'
+  });
+  transferNote.before(transferStatus);
+
+  function setTransferStatus(english, spanish, state = 'ready') {
+    transferStatus.textContent = copy(english, spanish);
+    transferStatus.dataset.state = state;
+    transferStatus.style.borderColor = state === 'error'
+      ? 'rgba(255,120,120,.8)'
+      : state === 'success'
+        ? 'rgba(131,214,157,.8)'
+        : 'rgba(212,166,78,.55)';
+  }
+
+  function setDefaultStatus() {
+    setTransferStatus(
+      'Choose how to send it. EBC receives the request only after you press Send in Messages, WhatsApp, Mail, or another app.',
+      'Elige cómo enviarlo. EBC recibe la solicitud únicamente después de que presiones Enviar en Mensajes, WhatsApp, Correo u otra aplicación.'
+    );
+  }
+
+  function syncShareLabel() {
+    if (!shareButton) return;
+    const hasPhotos = (photosInput?.files?.length || 0) > 0;
+    shareButton.dataset.en = hasPhotos ? 'Open send options + photos' : 'Open send options';
+    shareButton.dataset.es = hasPhotos ? 'Abrir opciones para enviar + fotos' : 'Abrir opciones para enviar';
+    shareButton.textContent = copy(shareButton.dataset.en, shareButton.dataset.es);
+  }
+
+  function syncReviewState() {
+    instruction.textContent = copy(instruction.dataset.en, instruction.dataset.es);
+    syncShareLabel();
+    if (!review.hidden) setDefaultStatus();
+  }
+
+  const nativeShare = typeof navigator.share === 'function'
+    ? navigator.share.bind(navigator)
+    : null;
+
+  if (nativeShare) {
+    try {
+      Object.defineProperty(navigator, 'share', {
+        configurable: true,
+        value: async payload => {
+          setTransferStatus(
+            'Opening your phone’s send options…',
+            'Abriendo las opciones de envío de tu teléfono…'
+          );
+          try {
+            const result = await nativeShare(payload);
+            setTransferStatus(
+              'The share window closed. Confirm that you pressed Send in the selected app; EBC receives it only after that step.',
+              'La ventana de compartir se cerró. Confirma que presionaste Enviar en la aplicación elegida; EBC lo recibe únicamente después de ese paso.',
+              'success'
+            );
+            return result;
+          } catch (error) {
+            if (error?.name === 'AbortError') {
+              setTransferStatus(
+                'Sharing was cancelled. Nothing was sent. Choose Text or Email below to try again.',
+                'Se canceló el envío. No se envió nada. Elige Texto o Correo abajo para intentarlo de nuevo.'
+              );
+            } else {
+              setTransferStatus(
+                'The share menu could not open. Use Text or Email below and attach the selected photos before sending.',
+                'No se pudo abrir el menú para compartir. Usa Texto o Correo abajo y adjunta las fotos seleccionadas antes de enviar.',
+                'error'
+              );
+            }
+            throw error;
+          }
+        }
+      });
+    } catch {
+      // Some browsers expose navigator.share as read-only. The click guidance below still applies.
+    }
+  }
+
+  shareButton?.addEventListener('click', () => {
+    setTransferStatus(
+      'Opening your phone’s send options. Choose Messages, WhatsApp, Mail, or another app, then press Send.',
+      'Abriendo las opciones de envío. Elige Mensajes, WhatsApp, Correo u otra aplicación y después presiona Enviar.'
+    );
+  });
+
+  textLink?.addEventListener('click', () => {
+    setTransferStatus(
+      'Messages is opening with the details. Attach the selected photos if needed, then press Send.',
+      'Mensajes se está abriendo con los detalles. Adjunta las fotos seleccionadas si es necesario y después presiona Enviar.'
+    );
+  });
+
+  emailLink?.addEventListener('click', () => {
+    setTransferStatus(
+      'Mail is opening with the details. Attach the selected photos if needed, then send the email.',
+      'Correo se está abriendo con los detalles. Adjunta las fotos seleccionadas si es necesario y después envía el correo.'
+    );
+  });
+
+  copyButton?.addEventListener('click', () => {
+    setTransferStatus(
+      'The details are being copied. Paste them into your preferred app and press Send.',
+      'Se están copiando los detalles. Pégalos en la aplicación que prefieras y presiona Enviar.'
+    );
+  });
+
+  const observer = new MutationObserver(syncReviewState);
+  observer.observe(review, { attributes: true, attributeFilter: ['hidden'] });
+  form.addEventListener('submit', () => window.setTimeout(syncReviewState, 0));
+  window.addEventListener('ebc:languagechange', () => window.setTimeout(syncReviewState, 0));
+
+  syncReviewState();
+})();
