@@ -108,8 +108,10 @@ async function flush() {
   setFiles(photos, [photo]);
   photos.dispatchEvent(new window.Event('change', { bubbles: true }));
   submit(window, form);
+  await flush();
 
   const review = document.querySelector('#estimate-review');
+  const transferStatus = document.querySelector('#estimate-transfer-status');
   assert.equal(review.hidden, false, 'valid details should reveal the local review');
   assert.match(review.textContent, /Edgar Sample/);
   assert.match(review.textContent, /Concrete driveway/);
@@ -119,6 +121,9 @@ async function flush() {
   assert.match(decodeURIComponent(document.querySelector('#text-request').href), /Edgar Sample/);
   assert.match(document.querySelector('#email-request').href, /^mailto:ebcconstructionllcsc@gmail\.com/);
   assert.equal(document.querySelector('#share-request').hidden, false);
+  assert.match(document.querySelector('#share-request').textContent, /Open send options \+ photos/i);
+  assert.ok(transferStatus, 'the review must show a local transfer status');
+  assert.match(transferStatus.textContent, /only after you press Send/i);
 
   document.querySelector('#share-request').click();
   await flush();
@@ -126,6 +131,7 @@ async function flush() {
   assert.equal(sharedPayloads[0].files.length, 1);
   assert.equal(sharedPayloads[0].files[0].name, 'driveway-before.jpg');
   assert.match(sharedPayloads[0].text, /1,200 square feet/);
+  assert.match(transferStatus.textContent, /EBC receives it only after that step/i);
 
   document.querySelector('#copy-request').click();
   await flush();
@@ -165,10 +171,13 @@ async function flush() {
   fillRequiredFields(document);
   setFiles(document.querySelector('#photos'), []);
   submit(window, form);
+  await flush();
 
   assert.equal(document.documentElement.lang, 'es');
   assert.match(document.querySelector('#estimate-review-title').textContent, /todavía no se ha enviado/i);
   assert.match(document.querySelector('.form-status').textContent, /todavía no se ha enviado/i);
+  assert.match(document.querySelector('#estimate-transfer-status').textContent, /presiones Enviar/i);
+  assert.match(document.querySelector('#share-request').textContent, /Abrir opciones para enviar/i);
 }
 
 {
