@@ -1,0 +1,54 @@
+.estimate-direct-instruction {
+  margin: 0;
+  padding: 16px 18px;
+  border-left: 4px solid var(--accent);
+  background: rgba(212, 166, 78, .12);
+  color: rgba(255, 255, 255, .9);
+  font-weight: 750;
+  line-height: 1.55;
+}
+
+#direct-estimate-status {
+  margin: 0;
+  padding: 15px 17px;
+  border: 1px solid rgba(212, 166, 78, .58);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, .24);
+  color: #fff;
+  font-weight: 800;
+  line-height: 1.55;
+}
+
+#direct-estimate-status[data-state="sending"] {
+  border-color: rgba(227, 187, 107, .88);
+}
+
+#direct-estimate-status[data-state="success"] {
+  border-color: rgba(125, 213, 151, .9);
+  background: rgba(38, 111, 62, .22);
+}
+
+#direct-estimate-status[data-state="error"] {
+  border-color: rgba(255, 128, 128, .9);
+  background: rgba(132, 36, 36, .2);
+}
+
+#direct-estimate-submit {
+  min-height: 58px;
+}
+
+#direct-estimate-submit:disabled {
+  cursor: wait;
+  opacity: .72;
+}
+
+.estimate-review[data-submission-complete="true"] {
+  border-color: rgba(125, 213, 151, .75);
+}
+
+@media (max-width: 680px) {
+  .estimate-direct-instruction,
+  #direct-estimate-status {
+    padding: 15px;
+  }
+}
