@@ -6,7 +6,7 @@
   background:
     linear-gradient(90deg, rgba(8,8,7,.9) 0%, rgba(8,8,7,.62) 48%, rgba(8,8,7,.2) 78%),
     linear-gradient(to top, rgba(8,8,7,.72), transparent 55%),
-    url("https://drive.google.com/thumbnail?id=1IKbBA7U_gXpmeCuYqwlGYQmH5Or16jRo&sz=w2000") center 42% / cover no-repeat;
+    url("https://drive.google.com/thumbnail?id=1IKbBA7U_gXpmeCuYqwlGYQmH5Or16jRo&sz=w2000&v=20260812-1909") center 42% / cover no-repeat;
 }
 .about-hero .shell { position: relative; z-index: 1; }
 .about-hero .hero-copy { max-width: 760px; }
