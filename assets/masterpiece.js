@@ -12,6 +12,10 @@
     });
   });
 
+  // Defensive cleanup: an earlier cached script could have inserted this block.
+  // Reviews now live only on reviews.html.
+  document.querySelector('#customer-reviews')?.remove();
+
   const dialog = document.querySelector('#media-lightbox');
   const dialogImage = dialog?.querySelector('[data-dialog-image]');
   const dialogVideo = dialog?.querySelector('[data-dialog-video]');
