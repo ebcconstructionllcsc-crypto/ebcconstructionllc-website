@@ -73,6 +73,8 @@ function fillRequiredFields(document) {
   document.querySelector('#service').value = 'Concrete / Concreto';
   document.querySelector('#timeline').value = 'Next month';
   document.querySelector('#project').value = 'Concrete driveway, approximately 1,200 square feet.';
+  const consent = document.querySelector('#consent');
+  if (consent) consent.checked = true;
 }
 
 function setFiles(input, files) {
