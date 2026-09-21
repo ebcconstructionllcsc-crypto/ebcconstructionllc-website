@@ -6,9 +6,9 @@ Official public website and private operations application for EBC Construction 
 
 The repository contains the bilingual marketing site for EBC's concrete, grading, and excavation services. Public pages are designed for GitHub Pages and use original EBC project media.
 
-The public estimate form uses a device-local sharing flow while production Supabase intake remains uncertified. Visitors can validate and review their request, share details and selected photos through a compatible phone, or open prepared text and email messages. The site does not upload, retain, or claim to have received those details.
+The public estimate form reviews the request on-device first, then delivers the approved details and selected photos directly to the active EBC OS intake. The website posts only to the secured `submit-website-lead` Edge Function for the official domain. Leads are stored in the private EBC OS database, uploaded photos use the private `website-leads` bucket, and the browser never receives a service-role key.
 
-The repository retains the hardened Supabase intake migration for a future controlled release. Do not reconnect the public form until the production backup, RLS, administrator, storage, function, and positive/negative test gates are complete.
+The direct intake requires explicit consent to contact, validates required fields and image limits, restricts allowed origins, and returns an EBC confirmation reference after a successful save.
 
 Project media must use original EBC photographs and videos. Do not replace source media, apply filters, overwrite originals, or introduce AI-styled edits.
 
@@ -89,7 +89,7 @@ Run:
 
 The quote builder keeps a local recovery copy, but Supabase is the authoritative source after a quote is saved. Each meaningful cloud update creates a numbered immutable snapshot in `quote_versions`.
 
-After migration, verify anonymous estimate submission, duplicate-request retry behavior, partial attachment failure, approved staff access, rejected non-staff access, private-file signed URLs, website media visibility, quote create/update/history behavior, quote-center status changes, and audit-log creation before production use. Keep `contact.html` in `data-submission-mode="local-share"` until those checks pass and Edgar expressly authorizes live intake.
+For production intake changes, verify the official-domain origin restriction, required contact consent, successful website lead creation, attachment metadata, private storage behavior, staff access, and the confirmation response before publication.
 
 ## Activate the private render service
 
