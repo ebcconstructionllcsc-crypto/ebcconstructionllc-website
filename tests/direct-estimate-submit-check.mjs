@@ -26,7 +26,7 @@ if (enhancementsIndex < 0 || directIndex < enhancementsIndex) {
 }
 
 const requiredScriptPatterns = [
-  ['official Edge Function endpoint', /https:\/\/agczzdjxnytjzgprvcxq\.supabase\.co\/functions\/v1\/submit-estimate/],
+  ['official Edge Function endpoint', /https:\/\/tcjtodjxxszhhmsvqtge\.supabase\.co\/functions\/v1\/submit-website-lead/],
   ['direct delivery mode', /submissionMode\s*=\s*'direct'/],
   ['multipart payload', /new FormData\(\)/],
   ['direct POST request', /fetch\(ENDPOINT,[\s\S]*method:\s*'POST'/],
@@ -41,7 +41,7 @@ for (const [label, pattern] of requiredScriptPatterns) {
   if (!pattern.test(script)) fail(`direct estimate controller is missing ${label}`);
 }
 
-for (const field of ['name', 'phone', 'email', 'address', 'service', 'preferred_timing', 'project', 'locale', 'photos']) {
+for (const field of ['name', 'phone', 'email', 'address', 'service', 'preferred_timing', 'project', 'locale', 'consent_to_contact', 'photos']) {
   if (!script.includes(`'${field}'`)) fail(`direct estimate payload is missing ${field}`);
 }
 
