@@ -12,7 +12,7 @@
 
   if (!form || !review || !actions || !transferNote || !editButton || !photosInput) return;
 
-  const ENDPOINT = 'https://agczzdjxnytjzgprvcxq.supabase.co/functions/v1/submit-estimate';
+  const ENDPOINT = 'https://tcjtodjxxszhhmsvqtge.supabase.co/functions/v1/submit-website-lead';
   const REQUEST_TIMEOUT_MS = 90000;
 
   let sending = false;
@@ -144,6 +144,18 @@
         'Review the required fields and try again.',
         'Revisa los campos obligatorios e inténtalo de nuevo.'
       ],
+      missing_required_fields: [
+        'Review the required fields and try again.',
+        'Revisa los campos obligatorios e inténtalo de nuevo.'
+      ],
+      contact_consent_required: [
+        'Please confirm that EBC may contact you about this estimate request.',
+        'Confirma que EBC puede contactarte sobre esta solicitud de estimado.'
+      ],
+      submission_failed: [
+        'The request could not be saved. Please try again or call EBC.',
+        'No se pudo guardar la solicitud. Inténtalo de nuevo o llama a EBC.'
+      ],
       invalid_email: [
         'Review the email address and try again.',
         'Revisa el correo electrónico e inténtalo de nuevo.'
@@ -153,7 +165,8 @@
         'Esta solicitud debe enviarse desde el sitio oficial de EBC.'
       ]
     };
-    return errors[code] || [
+    const normalizedCode = String(code || '').toLowerCase();
+    return errors[normalizedCode] || [
       'The request could not be delivered. Check your connection and try again.',
       'No se pudo entregar la solicitud. Revisa tu conexión e inténtalo de nuevo.'
     ];
@@ -169,6 +182,7 @@
     body.append('preferred_timing', form.querySelector('#timeline')?.value.trim() || '');
     body.append('project', form.querySelector('#project')?.value.trim() || '');
     body.append('locale', document.documentElement.lang || 'en');
+    body.append('consent_to_contact', form.querySelector('#consent')?.checked ? 'true' : 'false');
     body.append('company_website', '');
     for (const file of [...photosInput.files]) body.append('photos', file, file.name);
     return body;
@@ -219,7 +233,7 @@
 
       if (!response.ok || payload.ok !== true || !payload.reference) {
         const failure = new Error(payload.error || `http_${response.status}`);
-        failure.code = payload.error || `http_${response.status}`;
+        failure.code = String(payload.error || `http_${response.status}`).toLowerCase();
         throw failure;
       }
 
