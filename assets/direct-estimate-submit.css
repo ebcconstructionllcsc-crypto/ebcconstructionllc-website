@@ -52,3 +52,23 @@
     padding: 15px;
   }
 }
+
+.estimate-consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid rgba(17, 16, 13, .14);
+  border-radius: 12px;
+  background: rgba(212, 166, 78, .08);
+  font-size: .92rem;
+  line-height: 1.45;
+}
+
+.estimate-consent input {
+  width: 20px;
+  height: 20px;
+  margin: 1px 0 0;
+  flex: 0 0 auto;
+  accent-color: var(--accent);
+}
