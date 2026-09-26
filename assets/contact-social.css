@@ -1,6 +1,6 @@
 
 /* Contact and social profiles */
-.connect-section { background: var(--paper-deep); }
+.connect-section { background: var(--paper-deep); scroll-margin-top: 165px; }
 .connect-section .section-head { max-width: 780px; }
 .connect-section .lead { max-width: 650px; }
 .connect-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
