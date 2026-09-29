@@ -23,6 +23,8 @@ async function submit(overrides = {}, options = {}) {
         limit() { return Promise.resolve({ data: [{ id: 'test-owner' }], error: null }); },
         insert(row) {
           if (table === 'leads') {
+            // The production leads.id column is NOT NULL with no database default.
+            assert.match(row.id || '', /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i, 'Every website lead needs its own generated UUID');
             saved.push(row);
             return { select: () => ({ single: async () => ({ data: { id: leadId }, error: null }) }) };
           }
@@ -100,4 +102,3 @@ assert.equal(invalidPhoto.saved.length, 0);
 checks++;
 
 console.log('Website lead handler: ' + checks + ' contract checks passed.');
-
