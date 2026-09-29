@@ -150,6 +150,7 @@ Deno.serve(async (req) => {
     const owner = admins[0].id;
 
     const { data: lead, error: leadError } = await supabase.from("leads").insert({
+      id: crypto.randomUUID(),
       full_name: fullName, phone, email: email || null, service_type: service,
       project_address: address, project_description: description,
       preferred_timeline: timeline || null, source: "Website Lead", consent_to_contact: true,
