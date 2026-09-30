@@ -58,8 +58,8 @@ for (const page of publicPages) {
   if (!/<link rel="canonical" href="https:\/\/ebcconstructionllc\.com\//.test(html)) {
     fail(`${page.html} is missing its official canonical URL`);
   }
-  if (/Landscaping|Jardinería|selected remodeling|remodeling services/i.test(html)) {
-    fail(`${page.html} still advertises a removed service`);
+  if (/machinery rental|equipment rental|dump trailer rental|dump trailer for rent|maquinaria en renta|renta de maquinaria|renta de dump trailer/i.test(html)) {
+    fail(`${page.html} still advertises equipment or dump trailer rentals`);
   }
 }
 
