@@ -108,3 +108,7 @@ body { background: var(--modern-paper); color: var(--modern-ink); }
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
+.faq-cta { margin-top: 1.75rem; padding: clamp(1.25rem, 3vw, 2rem); border: 1px solid rgba(17,16,13,.12); border-radius: 1.25rem; background: rgba(255,255,255,.58); display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; }
+.faq-cta > p { margin: 0; color: #171613; font-size: clamp(1.1rem, 2vw, 1.4rem); font-weight: 700; }
+.faq-cta .actions { margin: 0; }
+@media (max-width: 760px) { .faq-cta { align-items: stretch; flex-direction: column; gap: 1rem; } .faq-cta .actions { flex-direction: column; } }
