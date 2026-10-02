@@ -269,3 +269,23 @@
     transition-duration: .01ms !important;
   }
 }
+
+
+/* Clearer service cards and form focus on the pages that carry the complete offering. */
+.value-card {
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: 16px;
+  transition: transform .2s ease, border-color .2s ease, background-color .2s ease;
+}
+.value-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(212, 166, 78, .58);
+}
+.form input:focus-visible, .form select:focus-visible, .form textarea:focus-visible {
+  outline: 3px solid var(--refresh-gold);
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .value-card { transition: none; }
+  .value-card:hover { transform: none; }
+}
