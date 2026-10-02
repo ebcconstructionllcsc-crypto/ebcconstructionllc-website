@@ -1,0 +1,57 @@
+/* Gallery refresh: scoped additions, existing business flows preserved. */
+.portfolio-hero { min-height: 64svh; background-image: linear-gradient(90deg,rgba(8,8,7,.9),rgba(8,8,7,.42)),url('images/gallery-20261002/backyard-patio-diagonal-joints-1920.webp'); background-position:center; }
+.portfolio-hero-inner { padding-block: 160px 64px; }
+.portfolio-hero h1 { font-size:clamp(3.5rem,9vw,8rem); line-height:.95; max-width:850px; }
+.portfolio-intro { padding-block:50px; }
+.portfolio-work { padding-top:64px; scroll-margin-top:90px; }
+.portfolio-filter { margin-bottom:24px; }
+.portfolio-grid { grid-auto-flow:row; }
+.portfolio-card { min-height:0; height:330px; }
+.portfolio-card picture, .proof-card picture { display:block; width:100%; height:100%; }
+.portfolio-card picture img { display:block; width:100%; height:100%; object-fit:cover; }
+.portfolio-card:hover img { filter:none; }
+.portfolio-caption { padding:58px 22px 22px; }
+.portfolio-caption strong { font-size:1.2rem; }
+.gallery-new-card { grid-column:span 4; }
+.gallery-contact { display:flex; gap:24px; align-items:center; justify-content:space-between; margin-bottom:40px; padding:24px; border-radius:18px; border:1px solid rgba(16,16,15,.15); }
+.gallery-contact p { margin:0; max-width:540px; font-size:1.05rem; }
+.gallery-contact .btn { flex-shrink:0; }
+.gallery-more { display:none; margin-top:24px; min-height:48px; padding:13px 24px; border:1px solid var(--ink); border-radius:999px; color:var(--ink); background:transparent; font:inherit; font-weight:800; cursor:pointer; }
+.js .gallery-more { display:inline-block; }
+.js .gallery-deferred { display:none !important; }
+.gallery-more:focus-visible { outline:3px solid var(--accent); outline-offset:4px; }
+.gallery-more[hidden] { display:none !important; }
+.portfolio-phases { gap:72px; }
+.proof-card { position:relative; }
+.proof-card picture img { width:100%; height:100%; object-fit:cover; }
+@media(max-width:980px){
+  .gallery-new-card { grid-column:span 6; }
+  .portfolio-card { height:320px; }
+  .gallery-contact { align-items:flex-start; }
+}
+@media(max-width:680px){
+  .portfolio-hero { min-height:60svh; }
+  .portfolio-hero-inner { padding-block:125px 45px; }
+  .portfolio-hero h1 { font-size:clamp(3.8rem,18vw,5.6rem); }
+  .portfolio-intro { padding-block:36px; }
+  .portfolio-work { padding-top:38px; }
+  .portfolio-card,.gallery-new-card { grid-column:auto; height:auto; aspect-ratio:4/3; min-height:260px; }
+  .gallery-photo-portrait { aspect-ratio:3/4; }
+  .portfolio-card-video { aspect-ratio:4/3; }
+  .portfolio-caption strong { font-size:1.18rem; }
+  .gallery-contact { flex-direction:column; padding:20px; gap:16px; }
+  .gallery-contact .btn { width:100%; }
+  .gallery-more { width:100%; }
+}
+/* Keep the sticky filter below the existing header and mobile navigation off-screen. */
+.portfolio-filter { top:116px; }
+@media(max-width:980px){
+  .topbar.scrolled { backdrop-filter:none; }
+  .navlinks:not(.open) { visibility:hidden; pointer-events:none; }
+  .navlinks.open { visibility:visible; pointer-events:auto; }
+  .portfolio-filter { top:112px; }
+}
+@media(max-width:680px){
+  .portfolio-filter { top:96px; }
+  .phase-heading h3 { font-size:2.6rem; line-height:1.02; }
+}

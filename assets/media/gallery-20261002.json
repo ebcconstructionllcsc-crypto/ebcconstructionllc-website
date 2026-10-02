@@ -1,0 +1,695 @@
+{
+  "version": "2026-10-02",
+  "items": [
+    {
+      "slug": "driveway-angled-joints",
+      "phase": "finish",
+      "title_en": "Driveway with angled joints",
+      "title_es": "Entrada con juntas diagonales",
+      "alt_en": "Fresh concrete driveway curving toward a home, with diagonal joints and forms along the edges.",
+      "alt_es": "Entrada de concreto hacia una vivienda, con juntas diagonales y formaletas en las orillas.",
+      "outputs": [
+        {
+          "path": "assets/images/gallery-20261002/driveway-angled-joints-480.webp",
+          "format": "webp",
+          "width": 480,
+          "height": 640,
+          "bytes": 70472
+        },
+        {
+          "path": "assets/images/gallery-20261002/driveway-angled-joints-480.avif",
+          "format": "avif",
+          "width": 480,
+          "height": 640,
+          "bytes": 55590
+        },
+        {
+          "path": "assets/images/gallery-20261002/driveway-angled-joints-720.webp",
+          "format": "webp",
+          "width": 720,
+          "height": 960,
+          "bytes": 167478
+        },
+        {
+          "path": "assets/images/gallery-20261002/driveway-angled-joints-720.avif",
+          "format": "avif",
+          "width": 720,
+          "height": 960,
+          "bytes": 137694
+        },
+        {
+          "path": "assets/images/gallery-20261002/driveway-angled-joints-1440.webp",
+          "format": "webp",
+          "width": 1440,
+          "height": 1920,
+          "bytes": 668246
+        },
+        {
+          "path": "assets/images/gallery-20261002/driveway-angled-joints-1440.avif",
+          "format": "avif",
+          "width": 1440,
+          "height": 1920,
+          "bytes": 529170
+        }
+      ]
+    },
+    {
+      "slug": "textured-concrete-joint-detail",
+      "phase": "finish",
+      "title_en": "Texture, joints and edges",
+      "title_es": "Textura, juntas y orillas",
+      "alt_en": "Close view of a textured concrete surface, joint pattern and formed edges beside a home.",
+      "alt_es": "Detalle de la textura, las juntas y las orillas de concreto junto a una vivienda.",
+      "outputs": [
+        {
+          "path": "assets/images/gallery-20261002/textured-concrete-joint-detail-480.webp",
+          "format": "webp",
+          "width": 480,
+          "height": 360,
+          "bytes": 35086
+        },
+        {
+          "path": "assets/images/gallery-20261002/textured-concrete-joint-detail-480.avif",
+          "format": "avif",
+          "width": 480,
+          "height": 360,
+          "bytes": 21448
+        },
+        {
+          "path": "assets/images/gallery-20261002/textured-concrete-joint-detail-720.webp",
+          "format": "webp",
+          "width": 720,
+          "height": 540,
+          "bytes": 89218
+        },
+        {
+          "path": "assets/images/gallery-20261002/textured-concrete-joint-detail-720.avif",
+          "format": "avif",
+          "width": 720,
+          "height": 540,
+          "bytes": 60203
+        },
+        {
+          "path": "assets/images/gallery-20261002/textured-concrete-joint-detail-1440.webp",
+          "format": "webp",
+          "width": 1440,
+          "height": 1080,
+          "bytes": 463414
+        },
+        {
+          "path": "assets/images/gallery-20261002/textured-concrete-joint-detail-1440.avif",
+          "format": "avif",
+          "width": 1440,
+          "height": 1080,
+          "bytes": 346717
+        }
+      ]
+    },
+    {
+      "slug": "side-walkway-diagonal-joints",
+      "phase": "finish",
+      "title_en": "A walkway that follows the home",
+      "title_es": "Un pasillo junto a la casa",
+      "alt_en": "Concrete walkway between a brick porch and siding, with diagonal joints and a gravel border.",
+      "alt_es": "Pasillo de concreto entre un porche de ladrillo y la vivienda, con juntas diagonales y borde de grava.",
+      "outputs": [
+        {
+          "path": "assets/images/gallery-20261002/side-walkway-diagonal-joints-480.webp",
+          "format": "webp",
+          "width": 480,
+          "height": 360,
+          "bytes": 25782
+        },
+        {
+          "path": "assets/images/gallery-20261002/side-walkway-diagonal-joints-480.avif",
+          "format": "avif",
+          "width": 480,
+          "height": 360,
+          "bytes": 17471
+        },
+        {
+          "path": "assets/images/gallery-20261002/side-walkway-diagonal-joints-720.webp",
+          "format": "webp",
+          "width": 720,
+          "height": 540,
+          "bytes": 50422
+        },
+        {
+          "path": "assets/images/gallery-20261002/side-walkway-diagonal-joints-720.avif",
+          "format": "avif",
+          "width": 720,
+          "height": 540,
+          "bytes": 33227
+        },
+        {
+          "path": "assets/images/gallery-20261002/side-walkway-diagonal-joints-1440.webp",
+          "format": "webp",
+          "width": 1440,
+          "height": 1080,
+          "bytes": 176880
+        },
+        {
+          "path": "assets/images/gallery-20261002/side-walkway-diagonal-joints-1440.avif",
+          "format": "avif",
+          "width": 1440,
+          "height": 1080,
+          "bytes": 106031
+        }
+      ]
+    },
+    {
+      "slug": "residential-concrete-access-wide",
+      "phase": "finish",
+      "title_en": "Concrete access, a wider view",
+      "title_es": "Acceso de concreto, vista amplia",
+      "alt_en": "Wide view of a newly placed residential concrete approach with diagonal joints and curved edges.",
+      "alt_es": "Vista amplia de un acceso residencial de concreto nuevo, con juntas diagonales y bordes curvos.",
+      "outputs": [
+        {
+          "path": "assets/images/gallery-20261002/residential-concrete-access-wide-480.webp",
+          "format": "webp",
+          "width": 480,
+          "height": 360,
+          "bytes": 35452
+        },
+        {
+          "path": "assets/images/gallery-20261002/residential-concrete-access-wide-480.avif",
+          "format": "avif",
+          "width": 480,
+          "height": 360,
+          "bytes": 27041
+        },
+        {
+          "path": "assets/images/gallery-20261002/residential-concrete-access-wide-720.webp",
+          "format": "webp",
+          "width": 720,
+          "height": 540,
+          "bytes": 76090
+        },
+        {
+          "path": "assets/images/gallery-20261002/residential-concrete-access-wide-720.avif",
+          "format": "avif",
+          "width": 720,
+          "height": 540,
+          "bytes": 59062
+        },
+        {
+          "path": "assets/images/gallery-20261002/residential-concrete-access-wide-1440.webp",
+          "format": "webp",
+          "width": 1440,
+          "height": 1080,
+          "bytes": 310414
+        },
+        {
+          "path": "assets/images/gallery-20261002/residential-concrete-access-wide-1440.avif",
+          "format": "avif",
+          "width": 1440,
+          "height": 1080,
+          "bytes": 229603
+        }
+      ]
+    },
+    {
+      "slug": "formed-driveway-soil-base",
+      "phase": "preparation",
+      "title_en": "The layout before concrete",
+      "title_es": "El trazado antes del concreto",
+      "alt_en": "Shaped soil base inside curved driveway forms before concrete placement.",
+      "alt_es": "Base de suelo conformada dentro de formaletas curvas antes de colocar concreto.",
+      "outputs": [
+        {
+          "path": "assets/images/gallery-20261002/formed-driveway-soil-base-480.webp",
+          "format": "webp",
+          "width": 480,
+          "height": 360,
+          "bytes": 43696
+        },
+        {
+          "path": "assets/images/gallery-20261002/formed-driveway-soil-base-480.avif",
+          "format": "avif",
+          "width": 480,
+          "height": 360,
+          "bytes": 29703
+        },
+        {
+          "path": "assets/images/gallery-20261002/formed-driveway-soil-base-720.webp",
+          "format": "webp",
+          "width": 720,
+          "height": 540,
+          "bytes": 103228
+        },
+        {
+          "path": "assets/images/gallery-20261002/formed-driveway-soil-base-720.avif",
+          "format": "avif",
+          "width": 720,
+          "height": 540,
+          "bytes": 71851
+        },
+        {
+          "path": "assets/images/gallery-20261002/formed-driveway-soil-base-1440.webp",
+          "format": "webp",
+          "width": 1440,
+          "height": 1080,
+          "bytes": 440662
+        },
+        {
+          "path": "assets/images/gallery-20261002/formed-driveway-soil-base-1440.avif",
+          "format": "avif",
+          "width": 1440,
+          "height": 1080,
+          "bytes": 311465
+        }
+      ]
+    },
+    {
+      "slug": "concrete-walkway-finishing-crew",
+      "phase": "concrete",
+      "title_en": "Walkway finishing in progress",
+      "title_es": "Acabado de pasillo en proceso",
+      "alt_en": "Fresh concrete walkway in the foreground with an EBC crew working on the connected placement.",
+      "alt_es": "Pasillo de concreto fresco al frente y equipo de trabajo terminando el area conectada.",
+      "outputs": [
+        {
+          "path": "assets/images/gallery-20261002/concrete-walkway-finishing-crew-480.webp",
+          "format": "webp",
+          "width": 480,
+          "height": 640,
+          "bytes": 59426
+        },
+        {
+          "path": "assets/images/gallery-20261002/concrete-walkway-finishing-crew-480.avif",
+          "format": "avif",
+          "width": 480,
+          "height": 640,
+          "bytes": 39900
+        },
+        {
+          "path": "assets/images/gallery-20261002/concrete-walkway-finishing-crew-720.webp",
+          "format": "webp",
+          "width": 720,
+          "height": 960,
+          "bytes": 138700
+        },
+        {
+          "path": "assets/images/gallery-20261002/concrete-walkway-finishing-crew-720.avif",
+          "format": "avif",
+          "width": 720,
+          "height": 960,
+          "bytes": 90553
+        },
+        {
+          "path": "assets/images/gallery-20261002/concrete-walkway-finishing-crew-1440.webp",
+          "format": "webp",
+          "width": 1440,
+          "height": 1920,
+          "bytes": 555454
+        },
+        {
+          "path": "assets/images/gallery-20261002/concrete-walkway-finishing-crew-1440.avif",
+          "format": "avif",
+          "width": 1440,
+          "height": 1920,
+          "bytes": 343898
+        }
+      ]
+    },
+    {
+      "slug": "compact-loader-confined-site",
+      "phase": "grading",
+      "title_en": "Compact equipment for tight spaces",
+      "title_es": "Equipo compacto para espacios reducidos",
+      "alt_en": "Compact tracked loader on aggregate beside a wooden fence in a residential work area.",
+      "alt_es": "Minicargador sobre grava junto a una cerca de madera en un area de trabajo residencial.",
+      "outputs": [
+        {
+          "path": "assets/images/gallery-20261002/compact-loader-confined-site-480.webp",
+          "format": "webp",
+          "width": 480,
+          "height": 360,
+          "bytes": 53026
+        },
+        {
+          "path": "assets/images/gallery-20261002/compact-loader-confined-site-480.avif",
+          "format": "avif",
+          "width": 480,
+          "height": 360,
+          "bytes": 38557
+        },
+        {
+          "path": "assets/images/gallery-20261002/compact-loader-confined-site-720.webp",
+          "format": "webp",
+          "width": 720,
+          "height": 540,
+          "bytes": 115000
+        },
+        {
+          "path": "assets/images/gallery-20261002/compact-loader-confined-site-720.avif",
+          "format": "avif",
+          "width": 720,
+          "height": 540,
+          "bytes": 83398
+        },
+        {
+          "path": "assets/images/gallery-20261002/compact-loader-confined-site-1440.webp",
+          "format": "webp",
+          "width": 1440,
+          "height": 1080,
+          "bytes": 409964
+        },
+        {
+          "path": "assets/images/gallery-20261002/compact-loader-confined-site-1440.avif",
+          "format": "avif",
+          "width": 1440,
+          "height": 1080,
+          "bytes": 277656
+        }
+      ]
+    },
+    {
+      "slug": "crew-screeding-concrete",
+      "phase": "concrete",
+      "title_en": "Leveling the fresh placement",
+      "title_es": "Nivelacion del concreto fresco",
+      "alt_en": "Crew spreading and screeding fresh concrete inside driveway forms.",
+      "alt_es": "Equipo de trabajo extendiendo y regleando concreto fresco dentro de las formaletas de una entrada.",
+      "outputs": [
+        {
+          "path": "assets/images/gallery-20261002/crew-screeding-concrete-480.webp",
+          "format": "webp",
+          "width": 480,
+          "height": 360,
+          "bytes": 48966
+        },
+        {
+          "path": "assets/images/gallery-20261002/crew-screeding-concrete-480.avif",
+          "format": "avif",
+          "width": 480,
+          "height": 360,
+          "bytes": 35818
+        },
+        {
+          "path": "assets/images/gallery-20261002/crew-screeding-concrete-720.webp",
+          "format": "webp",
+          "width": 720,
+          "height": 540,
+          "bytes": 110830
+        },
+        {
+          "path": "assets/images/gallery-20261002/crew-screeding-concrete-720.avif",
+          "format": "avif",
+          "width": 720,
+          "height": 540,
+          "bytes": 81401
+        },
+        {
+          "path": "assets/images/gallery-20261002/crew-screeding-concrete-1440.webp",
+          "format": "webp",
+          "width": 1440,
+          "height": 1080,
+          "bytes": 425248
+        },
+        {
+          "path": "assets/images/gallery-20261002/crew-screeding-concrete-1440.avif",
+          "format": "avif",
+          "width": 1440,
+          "height": 1080,
+          "bytes": 310600
+        }
+      ]
+    },
+    {
+      "slug": "hand-screeding-concrete-detail",
+      "phase": "concrete",
+      "title_en": "Hands-on concrete work",
+      "title_es": "Trabajo de concreto en detalle",
+      "alt_en": "Worker drawing a long screed across fresh concrete during placement.",
+      "alt_es": "Trabajador pasando una regla larga sobre concreto fresco durante el colado.",
+      "outputs": [
+        {
+          "path": "assets/images/gallery-20261002/hand-screeding-concrete-detail-480.webp",
+          "format": "webp",
+          "width": 480,
+          "height": 640,
+          "bytes": 95760
+        },
+        {
+          "path": "assets/images/gallery-20261002/hand-screeding-concrete-detail-480.avif",
+          "format": "avif",
+          "width": 480,
+          "height": 640,
+          "bytes": 70865
+        },
+        {
+          "path": "assets/images/gallery-20261002/hand-screeding-concrete-detail-720.webp",
+          "format": "webp",
+          "width": 720,
+          "height": 960,
+          "bytes": 216806
+        },
+        {
+          "path": "assets/images/gallery-20261002/hand-screeding-concrete-detail-720.avif",
+          "format": "avif",
+          "width": 720,
+          "height": 960,
+          "bytes": 161615
+        },
+        {
+          "path": "assets/images/gallery-20261002/hand-screeding-concrete-detail-1440.webp",
+          "format": "webp",
+          "width": 1440,
+          "height": 1920,
+          "bytes": 789204
+        },
+        {
+          "path": "assets/images/gallery-20261002/hand-screeding-concrete-detail-1440.avif",
+          "format": "avif",
+          "width": 1440,
+          "height": 1920,
+          "bytes": 559021
+        }
+      ]
+    },
+    {
+      "slug": "ebc-site-trailer",
+      "phase": "preparation",
+      "title_en": "EBC equipment on site",
+      "title_es": "Equipo EBC en obra",
+      "alt_en": "EBC Construction branded dump trailer beside a prepared residential work site.",
+      "alt_es": "Remolque con marca EBC Construction junto a un area residencial en preparacion.",
+      "outputs": [
+        {
+          "path": "assets/images/gallery-20261002/ebc-site-trailer-480.webp",
+          "format": "webp",
+          "width": 480,
+          "height": 640,
+          "bytes": 73834
+        },
+        {
+          "path": "assets/images/gallery-20261002/ebc-site-trailer-480.avif",
+          "format": "avif",
+          "width": 480,
+          "height": 640,
+          "bytes": 53701
+        },
+        {
+          "path": "assets/images/gallery-20261002/ebc-site-trailer-720.webp",
+          "format": "webp",
+          "width": 720,
+          "height": 960,
+          "bytes": 162462
+        },
+        {
+          "path": "assets/images/gallery-20261002/ebc-site-trailer-720.avif",
+          "format": "avif",
+          "width": 720,
+          "height": 960,
+          "bytes": 115767
+        },
+        {
+          "path": "assets/images/gallery-20261002/ebc-site-trailer-1440.webp",
+          "format": "webp",
+          "width": 1440,
+          "height": 1920,
+          "bytes": 549398
+        },
+        {
+          "path": "assets/images/gallery-20261002/ebc-site-trailer-1440.avif",
+          "format": "avif",
+          "width": 1440,
+          "height": 1920,
+          "bytes": 340008
+        }
+      ]
+    },
+    {
+      "slug": "curved-driveway-forms",
+      "phase": "preparation",
+      "title_en": "Curves defined on site",
+      "title_es": "Curvas definidas en el sitio",
+      "alt_en": "Curved driveway forms and tracked soil base leading toward a home before a pour.",
+      "alt_es": "Formaletas curvas y base de suelo hacia una vivienda antes del colado.",
+      "outputs": [
+        {
+          "path": "assets/images/gallery-20261002/curved-driveway-forms-480.webp",
+          "format": "webp",
+          "width": 480,
+          "height": 640,
+          "bytes": 77584
+        },
+        {
+          "path": "assets/images/gallery-20261002/curved-driveway-forms-480.avif",
+          "format": "avif",
+          "width": 480,
+          "height": 640,
+          "bytes": 54563
+        },
+        {
+          "path": "assets/images/gallery-20261002/curved-driveway-forms-720.webp",
+          "format": "webp",
+          "width": 720,
+          "height": 960,
+          "bytes": 167498
+        },
+        {
+          "path": "assets/images/gallery-20261002/curved-driveway-forms-720.avif",
+          "format": "avif",
+          "width": 720,
+          "height": 960,
+          "bytes": 115408
+        },
+        {
+          "path": "assets/images/gallery-20261002/curved-driveway-forms-1440.webp",
+          "format": "webp",
+          "width": 1440,
+          "height": 1920,
+          "bytes": 488388
+        },
+        {
+          "path": "assets/images/gallery-20261002/curved-driveway-forms-1440.avif",
+          "format": "avif",
+          "width": 1440,
+          "height": 1920,
+          "bytes": 303527
+        }
+      ]
+    },
+    {
+      "slug": "concrete-entry-walkway",
+      "phase": "finish",
+      "title_en": "Concrete entry and walkway",
+      "title_es": "Acceso y pasillo de concreto",
+      "alt_en": "Finished concrete walkway widening at the street beside an existing driveway and porch.",
+      "alt_es": "Pasillo de concreto terminado que se ensancha junto a la calle, al lado de una entrada y un porche existentes.",
+      "outputs": [
+        {
+          "path": "assets/images/gallery-20261002/concrete-entry-walkway-480.webp",
+          "format": "webp",
+          "width": 480,
+          "height": 640,
+          "bytes": 61000
+        },
+        {
+          "path": "assets/images/gallery-20261002/concrete-entry-walkway-480.avif",
+          "format": "avif",
+          "width": 480,
+          "height": 640,
+          "bytes": 39633
+        },
+        {
+          "path": "assets/images/gallery-20261002/concrete-entry-walkway-720.webp",
+          "format": "webp",
+          "width": 720,
+          "height": 960,
+          "bytes": 145728
+        },
+        {
+          "path": "assets/images/gallery-20261002/concrete-entry-walkway-720.avif",
+          "format": "avif",
+          "width": 720,
+          "height": 960,
+          "bytes": 97978
+        },
+        {
+          "path": "assets/images/gallery-20261002/concrete-entry-walkway-1440.webp",
+          "format": "webp",
+          "width": 1440,
+          "height": 1920,
+          "bytes": 523474
+        },
+        {
+          "path": "assets/images/gallery-20261002/concrete-entry-walkway-1440.avif",
+          "format": "avif",
+          "width": 1440,
+          "height": 1920,
+          "bytes": 330096
+        }
+      ]
+    },
+    {
+      "slug": "backyard-patio-diagonal-joints",
+      "phase": "finish",
+      "title_en": "A patio built around the home",
+      "title_es": "Un patio integrado a la casa",
+      "alt_en": "Wide concrete patio with diagonal joints beside a home, brick steps and an existing wooden deck.",
+      "alt_es": "Patio amplio de concreto con juntas diagonales junto a la vivienda, escalones de ladrillo y un deck existente.",
+      "outputs": [
+        {
+          "path": "assets/images/gallery-20261002/backyard-patio-diagonal-joints-480.webp",
+          "format": "webp",
+          "width": 480,
+          "height": 360,
+          "bytes": 19182
+        },
+        {
+          "path": "assets/images/gallery-20261002/backyard-patio-diagonal-joints-480.avif",
+          "format": "avif",
+          "width": 480,
+          "height": 360,
+          "bytes": 10181
+        },
+        {
+          "path": "assets/images/gallery-20261002/backyard-patio-diagonal-joints-720.webp",
+          "format": "webp",
+          "width": 720,
+          "height": 540,
+          "bytes": 40652
+        },
+        {
+          "path": "assets/images/gallery-20261002/backyard-patio-diagonal-joints-720.avif",
+          "format": "avif",
+          "width": 720,
+          "height": 540,
+          "bytes": 21302
+        },
+        {
+          "path": "assets/images/gallery-20261002/backyard-patio-diagonal-joints-1440.webp",
+          "format": "webp",
+          "width": 1440,
+          "height": 1080,
+          "bytes": 146764
+        },
+        {
+          "path": "assets/images/gallery-20261002/backyard-patio-diagonal-joints-1440.avif",
+          "format": "avif",
+          "width": 1440,
+          "height": 1080,
+          "bytes": 74981
+        },
+        {
+          "path": "assets/images/gallery-20261002/backyard-patio-diagonal-joints-1920.webp",
+          "format": "webp",
+          "width": 1920,
+          "height": 1440,
+          "bytes": 244748
+        },
+        {
+          "path": "assets/images/gallery-20261002/backyard-patio-diagonal-joints-1920.avif",
+          "format": "avif",
+          "width": 1920,
+          "height": 1440,
+          "bytes": 123588
+        }
+      ]
+    }
+  ]
+}
