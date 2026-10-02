@@ -1,4 +1,4 @@
-name: Review gallery package without deployment
+name: Stage verified EBC gallery without deployment
 
 on:
   push:
@@ -6,28 +6,27 @@ on:
     paths: [.github/workflows/gallery-stage-review.yml]
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  verify-gallery:
+  stage-gallery:
+    if: github.ref == 'refs/heads/feat/gallery-reviewed-20261002'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-        with:
-          persist-credentials: false
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
-      - name: Download owner-provided public gallery package
+      - name: Download exact verified public gallery payload
         run: |
           curl --fail --location --max-time 90 'https://drive.usercontent.google.com/download?id=1-B_cwE1VTZE4ae1hk_GPHi7P0X7xWDio&export=download&confirm=t' -o /tmp/gallery.zip
           echo 'a868c92e0eb058c6dc919039b5f6889df942865821d7a12ce730144f5be7aa83  /tmp/gallery.zip' | sha256sum --check --strict
-      - name: Verify exact scope and integrate into review workspace only
+      - name: Apply only verified gallery paths
         run: |
           python - <<'PY'
-          import hashlib,json,pathlib,stat,zipfile
+          import hashlib,json,pathlib,stat,subprocess,zipfile
           root=pathlib.Path.cwd()
           with zipfile.ZipFile('/tmp/gallery.zip') as z:
               manifest=json.loads(z.read('_gallery-stage.json'))
@@ -36,45 +35,38 @@ jobs:
               assert len(files)==85
               assert set(z.namelist())==set(files)|{'_gallery-stage.json'}
               assert all(p in allowed or p.startswith('assets/images/gallery-20261002/') for p in files)
-              for path,expected in manifest['expected_originals'].items():
-                  assert path in {'index.html','projects.html'}
-                  assert hashlib.sha256((root/path).read_bytes()).hexdigest()==expected, 'Base page changed; reconcile before applying'
-              for path,expected in files.items():
-                  target=(root/path).resolve()
+              for p,expected in manifest['expected_originals'].items():
+                  assert p in {'index.html','projects.html'}
+                  assert hashlib.sha256((root/p).read_bytes()).hexdigest()==expected,'Base changed: stop and reconcile'
+              for p,expected in files.items():
+                  target=(root/p).resolve()
                   assert target.is_relative_to(root)
-                  member=z.getinfo(path)
+                  member=z.getinfo(p)
                   assert not stat.S_ISLNK(member.external_attr>>16)
                   assert member.file_size<2000000
-                  data=z.read(path)
+                  data=z.read(p)
                   assert hashlib.sha256(data).hexdigest()==expected
                   target.parent.mkdir(parents=True,exist_ok=True)
                   target.write_bytes(data)
-          print('Verified 85 review files; production untouched.')
+              subprocess.run(['git','add','--',*sorted(files)],check=True)
+              staged=subprocess.check_output(['git','diff','--cached','--name-only','-z']).decode().split('\0')
+              assert {p for p in staged if p}==set(files)
+          print('85 gallery paths validated; no contact, app, database, domain or production changes.')
           PY
-      - name: Install test dependencies
-        run: npm ci
-      - name: Run full existing verification and gallery syntax check
+      - name: Test the integrated site
         run: |
+          npm ci
           npm test
           node --check assets/gallery-refresh.js
-      - name: Package reviewed public website without private review metadata
+      - name: Commit only to the isolated review branch
+        env:
+          EXPECTED_HEAD: ${{ github.sha }}
         run: |
-          mkdir -p /tmp/gallery-reviewed
-          git ls-files -z | tar --null -T - -cf /tmp/gallery-reviewed/baseline-repository.tar
-          python - <<'PY'
-          import pathlib,zipfile
-          root=pathlib.Path.cwd()
-          with zipfile.ZipFile('/tmp/gallery-reviewed/website-gallery-ready.zip','w',zipfile.ZIP_DEFLATED) as z:
-              for name in ['index.html','projects.html','services.html','about.html','reviews.html','contact.html','robots.txt','sitemap.xml','CNAME','.nojekyll']:
-                  z.write(root/name,name)
-              for folder in ['assets','app']:
-                  for path in (root/folder).rglob('*'):
-                      if path.is_file(): z.write(path,path.relative_to(root))
-          pathlib.Path('/tmp/gallery-reviewed/STATUS.txt').write_text('REVIEW ONLY. No deployment executed. Merge or production publication requires separate approval.\n')
-          PY
-      - name: Save verified review artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: ebc-gallery-reviewed-no-deploy
-          path: /tmp/gallery-reviewed/
-          retention-days: 7
+          test "$GITHUB_REF" = 'refs/heads/feat/gallery-reviewed-20261002'
+          REMOTE_HEAD=$(git ls-remote origin refs/heads/feat/gallery-reviewed-20261002 | cut -f1)
+          test "$REMOTE_HEAD" = "$EXPECTED_HEAD"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'Integrate 13 reviewed EBC photos and responsive gallery; no production deployment'
+          git push origin HEAD:refs/heads/feat/gallery-reviewed-20261002
+          git rev-parse HEAD
