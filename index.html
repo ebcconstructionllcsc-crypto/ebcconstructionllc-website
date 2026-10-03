@@ -57,8 +57,31 @@
       ]
     }
   </script>
-  <link rel="stylesheet" href="assets/modern-site.css">\n</head>
+  <link rel="stylesheet" href="assets/modern-site.css">\n  <script>
+    try {
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && !sessionStorage.getItem('ebc-intro-played')) {
+        document.documentElement.classList.add('site-intro-active');
+      }
+    } catch {}
+  </script>
+</head>
 <body>
+  <div class="site-intro" aria-hidden="true"><img src="assets/images/logo.png" alt=""></div>
+  <script>
+    (() => {
+      const intro = document.querySelector('.site-intro');
+      if (!intro || !document.documentElement.classList.contains('site-intro-active')) {
+        intro?.remove();
+        return;
+      }
+      try { sessionStorage.setItem('ebc-intro-played', '1'); } catch {}
+      window.setTimeout(() => intro.classList.add('is-out'), 1850);
+      window.setTimeout(() => {
+        intro.remove();
+        document.documentElement.classList.remove('site-intro-active');
+      }, 2450);
+    })();
+  </script>
   <a class="skip-link" href="#main" data-en="Skip to content" data-es="Saltar al contenido">Skip to content</a>
   <header class="topbar">
     <div class="shell nav">
