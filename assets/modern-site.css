@@ -112,3 +112,20 @@ body { background: var(--modern-paper); color: var(--modern-ink); }
 .faq-cta > p { margin: 0; color: #171613; font-size: clamp(1.1rem, 2vw, 1.4rem); font-weight: 700; }
 .faq-cta .actions { margin: 0; }
 @media (max-width: 760px) { .faq-cta { align-items: stretch; flex-direction: column; gap: 1rem; } .faq-cta .actions { flex-direction: column; } }
+
+/* Homepage brand intro: once per tab session; reduced-motion visitors skip it. */
+.site-intro { position: fixed; inset: 0; z-index: 10000; display: grid; place-items: center; background: radial-gradient(circle at 50% 45%, #292315 0%, #12110e 52%, #080807 100%); opacity: 1; visibility: visible; transition: opacity .6s ease, visibility .6s ease; }
+html:not(.site-intro-active) .site-intro { display: none; }
+.site-intro img { display: block; width: min(440px, 72vw); max-height: 48vh; object-fit: contain; filter: drop-shadow(0 18px 48px rgba(212,166,78,.16)); animation: ebc-logo-intro 1.85s cubic-bezier(.2,.7,.25,1) forwards; }
+.site-intro.is-out { opacity: 0; visibility: hidden; pointer-events: none; }
+@keyframes ebc-logo-intro { 0% { opacity: 0; transform: scale(.82); } 18% { opacity: 1; transform: scale(1); } 48% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(.32); } }
+.about-hero { min-height: clamp(420px, 56svh, 620px); padding: 150px 0 58px; }
+.founder-photo.portrait { min-height: 620px; }
+@media (max-width: 760px) {
+  .about-hero { min-height: auto; padding: 126px 0 42px; }
+  .founder-photo.portrait { min-height: 480px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .site-intro { display: none !important; transition: none; }
+  .site-intro img { animation: none; }
+}
