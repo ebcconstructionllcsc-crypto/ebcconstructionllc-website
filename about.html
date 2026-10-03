@@ -11,9 +11,47 @@
   <meta property="og:url" content="https://ebcconstructionllc.com/about.html">
   <meta property="og:type" content="website">
   <link rel="canonical" href="https://ebcconstructionllc.com/about.html">
-  <link rel="stylesheet" href="assets/masterpiece.css"><link rel="stylesheet" href="assets/refinement.css"><link rel="stylesheet" href="assets/phase-two.css"><link rel="stylesheet" href="assets/modern-site.css?v=20261003"><link rel="icon" href="assets/images/logo.png">
+  <link rel="stylesheet" href="assets/masterpiece.css"><link rel="stylesheet" href="assets/refinement.css"><link rel="stylesheet" href="assets/phase-two.css"><link rel="stylesheet" href="assets/modern-site.css?v=20261003-portrait"><link rel="icon" href="assets/images/logo.png">
+
+  <link rel="preload" href="https://drive.google.com/thumbnail?id=14Ak5IKZSRNfFXhjTvBh3-GQXDWrQlBYE&amp;sz=w1600" as="image">
+  <script>
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.documentElement.classList.add('site-intro-active');
+    }
+  </script>
 </head>
 <body>
+  <div class="site-intro site-intro--portrait" aria-hidden="true">
+    <img src="https://drive.google.com/thumbnail?id=14Ak5IKZSRNfFXhjTvBh3-GQXDWrQlBYE&amp;sz=w1600" alt="" width="1086" height="1448" fetchpriority="high">
+  </div>
+  <script>
+    (() => {
+      const intro = document.querySelector('.site-intro--portrait');
+      const image = intro.querySelector('img');
+      const removeIntro = () => {
+        intro.remove();
+        document.documentElement.classList.remove('site-intro-active');
+      };
+      if (!document.documentElement.classList.contains('site-intro-active')) {
+        removeIntro();
+        return;
+      }
+      const fallback = window.setTimeout(removeIntro, 6000);
+      const playIntro = () => {
+        window.clearTimeout(fallback);
+        intro.classList.add('is-ready');
+        window.setTimeout(() => intro.classList.add('is-out'), 1850);
+        window.setTimeout(removeIntro, 2450);
+      };
+      if (image.complete) {
+        image.naturalWidth ? playIntro() : removeIntro();
+      } else {
+        image.addEventListener('load', playIntro, { once: true });
+        image.addEventListener('error', removeIntro, { once: true });
+      }
+    })();
+  </script>
+
   <a class="skip-link" href="#main" data-en="Skip to content" data-es="Saltar al contenido">Skip to content</a>
   <header class="topbar"><div class="shell nav"><a class="brand" href="index.html" aria-label="EBC Construction home"><img src="assets/images/logo.png" alt="EBC Construction LLC"></a><nav class="navlinks" aria-label="Primary navigation"><a href="index.html" data-en="Home" data-es="Inicio">Home</a><a href="services.html" data-en="Services" data-es="Servicios">Services</a><a href="projects.html" data-en="Projects" data-es="Proyectos">Projects</a><a href="about.html" data-en="About" data-es="Nosotros">About</a><a class="nav-cta" href="contact.html" data-en="Free Estimate" data-es="Estimado Gratis">Free Estimate</a><div class="lang-switch"><button type="button" data-lang-btn="en">EN</button><button type="button" data-lang-btn="es">ES</button></div></nav><button class="menu-btn" type="button" aria-label="Open menu" aria-expanded="false">☰</button></div></header>
   <main id="main">
