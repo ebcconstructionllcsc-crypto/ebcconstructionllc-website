@@ -241,6 +241,7 @@
       reference = String(payload.reference);
       emailNotified = payload.emailNotified === true;
       review.dataset.submissionComplete = 'true';
+      window.dispatchEvent(new Event('ebc:leadreceived'));
       instruction.hidden = true;
       sendButton.disabled = true;
       editButton.hidden = true;

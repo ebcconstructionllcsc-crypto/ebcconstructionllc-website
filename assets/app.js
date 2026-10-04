@@ -1,4 +1,37 @@
 const header = document.querySelector('.topbar');
+// Measure public pages only; never send request contents or URL parameters.
+(() => {
+  const pages = new Set(['/', '/index.html', '/about.html', '/services.html', '/projects.html', '/contact.html', '/reviews.html']);
+  if (!['ebcconstructionllc.com', 'www.ebcconstructionllc.com'].includes(location.hostname) || !pages.has(location.pathname)) return;
+  const measurementId = 'G-6ETD936XE7';
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function () { window.dataLayer.push(arguments); };
+  const pageLocation = location.origin + location.pathname;
+  let referrer = '';
+  try { referrer = new URL(document.referrer).origin; } catch { /* no referrer */ }
+  window.gtag('js', new Date());
+  window.gtag('config', measurementId, {
+    page_location: pageLocation,
+    page_referrer: referrer,
+    allow_google_signals: false,
+    allow_ad_personalization_signals: false
+  });
+  const tag = document.createElement('script');
+  tag.async = true;
+  tag.src = 'https://www.googletagmanager.com/gtag/js?id=' + measurementId;
+  document.head.append(tag);
+
+  function track(name) {
+    window.gtag('event', name, { send_to: measurementId, page_location: pageLocation, page_referrer: referrer });
+  }
+  document.addEventListener('click', event => {
+    const href = event.target.closest?.('a')?.getAttribute('href') || '';
+    if (href.startsWith('tel:')) track('click_to_call');
+    else if (href.startsWith('sms:')) track('click_to_text');
+    else if (href.startsWith('mailto:')) track('click_to_email');
+  });
+  window.addEventListener('ebc:leadreceived', () => track('generate_lead'));
+})();
 const menuButton = document.querySelector('.menu-btn');
 const navigation = document.querySelector('.navlinks');
 
