@@ -1,0 +1,53 @@
+/* Shared final treatment across all public pages. */
+.topbar { padding: 0; }
+.nav { min-height: 78px; }
+.navlinks { gap: 3px; letter-spacing: 0; }
+.navlinks > a { font-size: .88rem; padding: 10px; }
+section { padding-block: clamp(48px, 7vw, 88px); }
+.section-head { margin-bottom: 32px; }
+.display { font-size: clamp(2.5rem, 5.5vw, 5.2rem); line-height: 1.04; }
+.page-hero { padding: 142px 0 56px; background-image: linear-gradient(110deg,rgba(12,12,11,.91),rgba(12,12,11,.55)),url('images/portfolio/finish/wide-driveway-finish-1440.webp'); }
+.page-hero h1 { font-size: clamp(3rem,7vw,6rem); line-height: 1.04; }
+.portfolio-hero { background-image: linear-gradient(90deg,rgba(12,12,11,.9),rgba(12,12,11,.4)),url('images/gallery-20261002/driveway-angled-joints-1440.webp'); }
+.portfolio-hero-inner { padding-block: 22px; }
+.service-media-main { width: 100%; height: 530px; object-fit: cover; }
+.service-media-stack img { width: 100%; height: 256px; object-fit: cover; }
+.service-photo-strip img { width: 100%; height: 250px; object-fit: cover; }
+.proof-card img { position: absolute; inset: 0; }
+.media-wall .media-tile:nth-child(n+3) { grid-column: span 4; }
+.founder-photo.portrait { min-height: 530px; }
+.founder-photo.portrait img { object-fit: cover; object-position: center 25%; }
+.featured-project { display: grid; grid-template-columns: 1.1fr 1fr; gap: 40px; align-items: center; }
+.featured-project > img { width: 100%; max-height: 520px; object-fit: cover; border-radius: 18px; }
+.featured-project .display { font-size: clamp(2.4rem,4.5vw,4.5rem); }
+.portfolio-lightbox-navigation, .lightbox-navigation { display: flex; justify-content: center; gap: 12px; margin-top: 14px; }
+.portfolio-lightbox-navigation button, .lightbox-navigation button { min-height: 44px; padding: 10px 20px; border: 1px solid #b4a184; border-radius: 8px; background: #1b1915; color: #fff; cursor: pointer; }
+.site-intro img { animation: none; }
+.site-intro.is-ready img { animation: ebc-logo-intro 1.4s ease forwards; }
+.site-intro--photo img { width: min(550px,80vw); height: min(62svh,600px); max-height: 68svh; object-fit: cover; border-radius: 18px; }
+.site-intro-skip { position: absolute; bottom: 8svh; padding: 12px 22px; min-height: 44px; border: 1px solid #d8ad50; border-radius: 30px; background: #15130f; color: #fff; cursor: pointer; }
+html.site-intro-active { overflow: hidden; }
+@media (max-width: 980px) {
+  .nav { min-height: 70px; }
+  .menu-btn { display: block; min-width: 48px; min-height: 48px; }
+  .navlinks { position: fixed; inset: 70px 0 auto; display: flex; flex-direction: column; align-items: stretch; gap: 6px; padding: 22px; background: #171714; max-height: calc(100svh - 70px); overflow-y: auto; transform: none; visibility: hidden; pointer-events: none; }
+  .navlinks.open { visibility: visible; pointer-events: auto; }
+  .navlinks > a { font-size: 1rem; min-height: 44px; }
+  .lang-switch { padding: 8px 0; }
+  .lang-switch button { min-height: 44px; min-width: 48px; }
+  .featured-project { grid-template-columns: 1fr; gap: 24px; }
+}
+@media (max-width: 760px) {
+  .page-hero { padding-top: 112px; }
+  .hero h1 { font-size: clamp(40px,11vw,64px); }
+  .service-media-main, .service-media-stack img { height: 290px; }
+  .service-media-grid { grid-template-columns: 1fr; }
+  .service-photo-strip { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .service-photo-strip img { height: 210px; }
+  .founder-photo.portrait { min-height: 440px; }
+  .featured-project > img { max-height: 400px; }
+  .media-wall .media-tile:nth-child(n+3) { grid-column: span 1; }
+  .review-card h2 { overflow-wrap: anywhere; }
+  .mobile-actions { z-index: 110; }
+}
+@media (prefers-reduced-motion: reduce) { .site-intro { display:none !important; } }

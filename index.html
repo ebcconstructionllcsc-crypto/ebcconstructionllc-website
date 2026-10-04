@@ -57,31 +57,14 @@
       ]
     }
   </script>
-  <link rel="stylesheet" href="assets/modern-site.css?v=20261003">\n  <script>
-    try {
-      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && !sessionStorage.getItem('ebc-intro-played')) {
-        document.documentElement.classList.add('site-intro-active');
-      }
-    } catch {}
-  </script>
+
+
+  <link rel="stylesheet" href="assets/modern-site.css?v=20261004">
+  <link rel="stylesheet" href="assets/site-completion.css?v=20261004">
 </head>
 <body>
-  <div class="site-intro" aria-hidden="true"><img src="assets/images/logo.png" alt=""></div>
-  <script>
-    (() => {
-      const intro = document.querySelector('.site-intro');
-      if (!intro || !document.documentElement.classList.contains('site-intro-active')) {
-        intro?.remove();
-        return;
-      }
-      try { sessionStorage.setItem('ebc-intro-played', '1'); } catch {}
-      window.setTimeout(() => intro.classList.add('is-out'), 1850);
-      window.setTimeout(() => {
-        intro.remove();
-        document.documentElement.classList.remove('site-intro-active');
-      }, 2450);
-    })();
-  </script>
+  <script src="assets/site-intro.js?v=20261004"></script>
+
   <a class="skip-link" href="#main" data-en="Skip to content" data-es="Saltar al contenido">Skip to content</a>
   <header class="topbar">
     <div class="shell nav">
@@ -91,7 +74,7 @@
         <a href="services.html" data-en="Services" data-es="Servicios">Services</a>
         <a href="projects.html" data-en="Projects" data-es="Proyectos">Projects</a>
         <a href="about.html" data-en="About" data-es="Nosotros">About</a>
-        <a class="nav-cta" href="contact.html" data-en="Free Estimate" data-es="Estimado Gratis">Free Estimate</a>
+        <a href="reviews.html" data-en="Reviews" data-es="Reseñas">Reviews</a><a class="nav-cta" href="contact.html" data-en="Free Estimate" data-es="Estimado Gratis">Free Estimate</a>
         <div class="lang-switch" aria-label="Language"><button type="button" data-lang-btn="en">EN</button><button type="button" data-lang-btn="es">ES</button></div>
       </nav>
       <button class="menu-btn" type="button" aria-label="Open menu" aria-expanded="false">☰</button>
@@ -186,7 +169,11 @@
           <button class="media-tile" type="button" data-lightbox="assets/images/portfolio/grading/yard-grading-720.webp" data-caption="Residential grading"><img src="assets/images/portfolio/grading/yard-grading-720.webp" alt="Bobcat grading a residential site" loading="lazy"><span class="media-label" data-en="Grading · Preparation" data-es="Nivelación · Preparación">Grading · Preparation</span></button>
           <button class="media-tile" type="button" data-lightbox="assets/images/portfolio/excavation/access-excavation-720.webp" data-caption="Excavated residential construction site"><img src="assets/images/portfolio/excavation/access-excavation-720.webp" alt="Excavated residential construction site" loading="lazy"><span class="media-label" data-en="Excavation · Site work" data-es="Excavación · Terreno">Excavation · Site work</span></button>
           <button class="media-tile" type="button" data-lightbox="assets/images/portfolio/finish/side-walkway-720.webp" data-caption="Completed concrete walkway"><img src="assets/images/portfolio/finish/side-walkway-720.webp" alt="Completed concrete walkway beside a home" loading="lazy"><span class="media-label" data-en="Walkway · Concrete" data-es="Acera · Concreto">Walkway · Concrete</span></button>
-        </div>
+        <button class="media-tile" type="button" data-lightbox="assets/images/gallery-20261002/driveway-angled-joints-1440.webp" data-caption="California Style driveway"><img src="assets/images/gallery-20261002/driveway-angled-joints-720.webp" alt="California Style driveway" loading="lazy"><span class="media-label" data-en="California Style driveway" data-es="Entrada estilo California">California Style driveway</span></button>
+<button class="media-tile" type="button" data-lightbox="assets/images/gallery-20261002/crew-screeding-concrete-1440.webp" data-caption="Concrete placement"><img src="assets/images/gallery-20261002/crew-screeding-concrete-720.webp" alt="Concrete placement" loading="lazy"><span class="media-label" data-en="Concrete placement" data-es="Colocación de concreto">Concrete placement</span></button>
+<button class="media-tile" type="button" data-lightbox="assets/images/gallery-20261002/curved-driveway-forms-1440.webp" data-caption="Driveway preparation"><img src="assets/images/gallery-20261002/curved-driveway-forms-720.webp" alt="Driveway preparation" loading="lazy"><span class="media-label" data-en="Driveway preparation" data-es="Preparación de entrada">Driveway preparation</span></button>
+<button class="media-tile" type="button" data-lightbox="assets/images/gallery-20261002/backyard-patio-diagonal-joints-1440.webp" data-caption="Finished concrete patio"><img src="assets/images/gallery-20261002/backyard-patio-diagonal-joints-720.webp" alt="Finished concrete patio" loading="lazy"><span class="media-label" data-en="Finished concrete patio" data-es="Patio de concreto terminado">Finished concrete patio</span></button>
+</div>
         <div class="actions"><a class="btn" href="projects.html" data-en="Open the full portfolio" data-es="Abrir el portafolio completo">Open the full portfolio</a></div>
       </div>
     </section>
@@ -249,7 +236,7 @@
           </div>
         </div>
       </div>
-    </section>n>
+    </section>
 
 
     <section class="connect-section" id="contact-us" aria-labelledby="contact-us-title">
@@ -290,7 +277,7 @@
 
     <section style="padding-top:0">
       <div class="shell cta-panel reveal">
-        <div><div class="kicker" data-en="Your project starts here" data-es="Tu proyecto comienza aquí">Your project starts here</div><h2 class="display" data-en="Send the address. Show us the site." data-es="Envía la dirección. Muéstranos el sitio.">Send the address. Show us the site.</h2><p data-en="Prepare the project details and photos, review them, then choose the fastest way to share them with EBC Construction." data-es="Prepara los detalles y las fotos, revísalos y después elige la forma más rápida de compartirlos con EBC Construction.">Prepare the project details and photos, review them, then choose the fastest way to share them with EBC Construction.</p></div>
+        <div><div class="kicker" data-en="Your project starts here" data-es="Tu proyecto comienza aquí">Your project starts here</div><h2 class="display" data-en="Send the address. Show us the site." data-es="Envía la dirección. Muéstranos el sitio.">Send the address. Show us the site.</h2><p data-en="Tell us about your project, add photos, and send your request directly to EBC." data-es="Prepara los detalles y las fotos, revísalos y después elige la forma más rápida de compartirlos con EBC Construction.">Tell us about your project, add photos, and send your request directly to EBC.</p></div>
         <a class="btn primary" href="contact.html" data-en="Get a free estimate" data-es="Obtener estimado gratis">Get a free estimate</a>
       </div>
     </section>
@@ -309,7 +296,7 @@
   <div class="mobile-actions"><a href="tel:+18644502954" data-en="Call" data-es="Llamar">Call</a><a href="sms:+18644502954" data-en="Text" data-es="Mensaje">Text</a></div>
 
   <dialog class="lightbox" id="media-lightbox"><div class="lightbox-inner"><button class="lightbox-close" type="button" aria-label="Close">×</button><img data-dialog-image hidden alt=""><iframe data-dialog-video hidden title="EBC Construction project video" allow="autoplay; fullscreen" loading="lazy"></iframe><div class="lightbox-caption" data-dialog-caption></div></div></dialog>
-  <script src="assets/app.js" defer></script>
-  <script src="assets/masterpiece.js" defer></script>
+  <script src="assets/app.js?v=20261004" defer></script>
+  <script src="assets/masterpiece.js?v=20261004" defer></script>
 </body>
 </html>

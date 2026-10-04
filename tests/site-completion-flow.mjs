@@ -1,0 +1,45 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import { JSDOM } from 'jsdom';
+
+const pages = ['index.html','services.html','projects.html','about.html','contact.html','reviews.html'];
+for (const page of pages) {
+  const html = fs.readFileSync(page, 'utf8');
+  assert.ok(!html.includes('drive.google.com'), `${page}: unreliable Drive media`);
+  const dom = new JSDOM(html, { url: 'https://ebcconstructionllc.com/' + page, runScripts: 'outside-only' });
+  const { window } = dom;
+  const doc = window.document;
+  assert.equal(doc.querySelectorAll('script[src^="assets/site-intro.js"]').length, 1);
+  assert.ok(doc.querySelector('nav a[href="reviews.html"]'));
+  assert.ok(doc.querySelector('link[href^="assets/site-completion.css"]'));
+  for (const img of doc.querySelectorAll('img[src^="assets/"]')) assert.ok(fs.existsSync(img.getAttribute('src')), img.src);
+  window.matchMedia = () => ({ matches: false });
+  window.eval(fs.readFileSync('assets/site-intro.js','utf8'));
+  const intro = doc.querySelector('.site-intro');
+  assert.ok(intro);
+  intro.querySelector('img').dispatchEvent(new window.Event('load'));
+  assert.ok(doc.documentElement.classList.contains('site-intro-active'));
+  intro.querySelector('button').click();
+  assert.ok(!doc.querySelector('.site-intro'));
+  assert.ok(!doc.documentElement.classList.contains('site-intro-active'));
+  window.eval(fs.readFileSync('assets/site-intro.js','utf8'));
+  assert.ok(!doc.querySelector('.site-intro'), 'repeat navigation must skip entrance');
+  dom.window.close();
+}
+const dom = new JSDOM(fs.readFileSync('index.html','utf8'), { url:'https://ebcconstructionllc.com/', runScripts:'outside-only' });
+const { window } = dom;
+window.HTMLDialogElement.prototype.showModal = function () { this.open = true; };
+window.HTMLMediaElement.prototype.pause = () => {};
+window.HTMLMediaElement.prototype.load = () => {};
+window.eval(fs.readFileSync('assets/masterpiece.js','utf8'));
+const first = window.document.querySelector('[data-lightbox]');
+first.click();
+const photo = window.document.querySelector('[data-dialog-image]');
+const firstSrc = photo.src;
+window.document.querySelectorAll('.lightbox-navigation button')[1].click();
+assert.notEqual(photo.src, firstSrc, 'next photo should change the enlarged image');
+window.document.querySelector('[data-video-src]').click();
+assert.equal(window.document.querySelector('[data-dialog-video]').tagName, 'VIDEO');
+assert.ok(window.document.querySelector('[data-dialog-video]').controls);
+dom.window.close();
+console.log('Site completion: six consistent pages, local photos, skippable entrances, image navigation and native video.');

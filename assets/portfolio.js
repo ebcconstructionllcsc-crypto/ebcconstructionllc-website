@@ -244,6 +244,29 @@
   const dialogCaption = document.querySelector('#portfolio-lightbox-caption');
   const dialogClose = document.querySelector('.portfolio-lightbox-close');
   let activeTrigger = null;
+  const photoControls = document.createElement('div');
+  photoControls.className = 'portfolio-lightbox-navigation';
+  const photoButtons = [];
+  for (const [step, english, spanish] of [[-1, 'Previous photo', 'Foto anterior'], [1, 'Next photo', 'Siguiente foto']]) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.dataset.en = english;
+    button.dataset.es = spanish;
+    button.textContent = text(english, spanish);
+    button.addEventListener('click', () => movePhoto(step));
+    photoButtons.push(button);
+    photoControls.append(button);
+  }
+  dialogCaption?.after(photoControls);
+
+  function movePhoto(step) {
+    const photos = [...document.querySelectorAll('.portfolio-card[data-media-type="image"]')].filter(card => {
+      return !card.closest('[data-phase]')?.hidden && !card.classList.contains('gallery-deferred');
+    });
+    const index = photos.indexOf(activeTrigger);
+    if (index < 0 || !photos.length) return;
+    openDialog(photos[(index + step + photos.length) % photos.length]);
+  }
 
   function captionFor(card) {
     return language() === 'es' ? card.dataset.captionEs : card.dataset.captionEn;
@@ -270,6 +293,7 @@
     if (!dialog || !dialogImage || !dialogVideo || !dialogCaption) return;
     activeTrigger = card;
     const caption = captionFor(card) || '';
+    photoControls.hidden = card.dataset.mediaType === 'video';
     dialogCaption.textContent = caption;
 
     if (card.dataset.mediaType === 'video') {
@@ -287,7 +311,7 @@
       dialogImage.hidden = false;
     }
 
-    if (typeof dialog.showModal === 'function') dialog.showModal();
+    if (typeof dialog.showModal === 'function' && !dialog.open) dialog.showModal();
     else dialog.setAttribute('open', '');
     dialogClose?.focus();
   }
@@ -296,6 +320,13 @@
     card.addEventListener('click', () => openDialog(card));
   });
   dialogClose?.addEventListener('click', closeDialog);
+  dialog?.addEventListener('keydown', event => {
+    if (activeTrigger?.dataset.mediaType !== 'image') return;
+    if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+      event.preventDefault();
+      movePhoto(event.key === 'ArrowLeft' ? -1 : 1);
+    }
+  });
   dialog?.addEventListener('cancel', event => {
     event.preventDefault();
     closeDialog();
@@ -331,6 +362,7 @@
 
   function syncLocalizedAttributes() {
     syncLocalizedText();
+    photoButtons.forEach(button => { button.textContent = text(button.dataset.en, button.dataset.es); });
     document.querySelectorAll('[data-en-alt]').forEach(element => {
       element.alt = language() === 'es' ? element.dataset.esAlt : element.dataset.enAlt;
     });

@@ -1,6 +1,7 @@
 (() => {
   // Keep all media in the HTML for no-JS access. Reveal more without a new network API.
   document.querySelectorAll('[data-gallery-more]').forEach(button => {
+    if (!button.closest('[data-phase]')?.querySelector('.gallery-deferred')) button.hidden = true;
     button.addEventListener('click', () => {
       const section = button.closest('[data-phase]');
       if (!section) return;

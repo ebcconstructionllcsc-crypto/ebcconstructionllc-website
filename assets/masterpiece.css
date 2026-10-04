@@ -152,7 +152,7 @@ section { padding: 112px 0; }
 .cta-panel .display { font-size: clamp(2.8rem, 5vw, 5.3rem); }
 .cta-panel p { max-width: 700px; color: rgba(255,255,255,.7); }
 
-.page-hero { padding: 190px 0 90px; color: var(--white); background: linear-gradient(125deg, rgba(8,8,7,.92), rgba(8,8,7,.62)), url("https://drive.google.com/thumbnail?id=1sXRyVdwIy9TCx7Y78aLaLS3r4BAKn4ni&sz=w1600") center/cover; }
+.page-hero { padding: 190px 0 90px; color: var(--white); background: linear-gradient(125deg, rgba(8,8,7,.92), rgba(8,8,7,.62)), url("images/portfolio/finish/wide-driveway-finish-1440.webp") center/cover; }
 .page-hero h1 { font-size: clamp(4rem, 9vw, 8.5rem); }
 .page-hero .hero-copy { max-width: 720px; }
 
