@@ -205,6 +205,7 @@
   const filterRegion = document.querySelector('.portfolio-phases');
 
   const filterLabels = {
+    specialty: ['California-style specialty', 'nuestra especialidad estilo California'],
     driveways: ['driveways and driveway extensions', 'entradas y ampliaciones'],
     preparation: ['preparation', 'preparación'],
     demolition: ['demolition', 'demolición'],
@@ -222,8 +223,12 @@
     });
 
     phases.forEach(phase => {
-      const visible = filter === 'all' || phase.dataset.phase === filter || (filter === 'finish' && phase.dataset.phase === 'driveways');
-      phase.hidden = !visible;
+      const cards = [...phase.querySelectorAll('.portfolio-card')];
+      cards.forEach(card => {
+        const category = card.dataset.category || phase.dataset.phase;
+        card.hidden = !(filter === 'all' || (filter === 'specialty' && phase.dataset.phase === 'specialty') || category === filter || (filter === 'finish' && category === 'driveways'));
+      });
+      phase.hidden = !cards.some(card => !card.hidden);
     });
 
     if (filterRegion) {
@@ -239,6 +244,11 @@
     button.addEventListener('click', () => setFilter(button.dataset.filter || 'all'));
   });
   if (window.location.hash === '#driveways') setFilter('driveways');
+  if (window.location.hash === '#california-style') setFilter('specialty');
+  window.addEventListener('hashchange', () => {
+    if (window.location.hash === '#california-style') setFilter('specialty');
+    if (window.location.hash === '#driveways') setFilter('driveways');
+  });
 
   const dialog = document.querySelector('#portfolio-lightbox');
   const dialogImage = document.querySelector('#portfolio-lightbox-image');
@@ -262,8 +272,9 @@
   dialogCaption?.after(photoControls);
 
   function movePhoto(step) {
-    const photos = [...document.querySelectorAll('.portfolio-card[data-media-type="image"]')].filter(card => {
-      return !card.closest('[data-phase]')?.hidden && !card.classList.contains('gallery-deferred');
+    const scope = activeTrigger?.closest('.portfolio-phases') || document;
+    const photos = [...scope.querySelectorAll('.portfolio-card[data-media-type="image"]')].filter(card => {
+      return !card.hidden && !card.closest('[data-phase]')?.hidden && !card.classList.contains('gallery-deferred');
     });
     const index = photos.indexOf(activeTrigger);
     if (index < 0 || !photos.length) return;

@@ -12,7 +12,7 @@ window.HTMLMediaElement.prototype.pause = () => {};
 window.HTMLMediaElement.prototype.load = () => {};
 window.eval(fs.readFileSync('assets/portfolio.js', 'utf8'));
 const gallery = doc.querySelector('#driveways');
-assert.equal(gallery.querySelectorAll('[data-media-type="image"]').length, 29);
+assert.equal(doc.querySelectorAll('[data-category="driveways"][data-media-type="image"]').length, 29);
 assert.equal(gallery.querySelectorAll('[data-media-type="video"]').length, 2);
 assert.ok(!gallery.hidden);
 assert.ok(doc.querySelector('[data-phase="preparation"]').hidden);
