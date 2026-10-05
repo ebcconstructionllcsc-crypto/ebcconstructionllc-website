@@ -54,11 +54,11 @@ Move drafts from device-only `localStorage` into versioned quote records linked 
 
 ### Build contract, invoice, and payment records
 
-Approved quotes should create a contract workflow. Contracts should feed invoices and payment milestones while preserving the configured 30% / 45% / 25% option.
+Approved quotes should create a contract workflow. Contracts should feed invoices and payment milestones.
 
 ### Add project detail workspaces
 
-Each project needs one workspace for scope, client, address, schedule, crew, notes, files, before/process/after media, costs, payments, change orders, warranty terms, and closeout documents.
+Each project needs one workspace for scope, client, address, schedule, crew, notes, files, before/process/after media, costs, payments, change orders, and closeout documents.
 
 ### Add customer communication history
 

@@ -47,10 +47,13 @@ jobs:
       - name: Configure Pages
         uses: actions/configure-pages@v5
 
+      - name: Prepare public site artifact
+        run: node scripts/prepare-pages.mjs
+
       - name: Upload static site
         uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: .pages-site
 
       - name: Deploy to GitHub Pages
         id: deployment

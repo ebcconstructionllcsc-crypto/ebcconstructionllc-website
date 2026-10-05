@@ -24,9 +24,7 @@ The private application is served from `/app/` and uses Supabase authentication 
 - conceptual 2D/3D plan previews and touch-friendly freeform concrete takeoffs;
 - concrete, perimeter, order quantity, waste, and gravel-base calculations transferred into quote line items;
 - private AI construction renders from real jobsite photos and contractor-marked work areas;
-- selectable 50% / 50% same-day and 30% / 45% / 25% multi-stage payment schedules;
 - bilingual phase invoices with balance tracking, ACH, Chase Zelle, check, cash, and optional official Chase QuickAccept links;
-- a no-financing/no-open-credit policy without storing bank account or routing numbers;
 - private jobsite files;
 - public website photo and video management.
 

@@ -156,20 +156,20 @@
         <textarea id="notes" rows="9"></textarea>
 
         <h2>Pagos</h2>
-        <p class="section-help">Selecciona 50% / 50% para trabajos que se terminan en un día. Para proyectos de varias etapas usa 30% / 45% / 25%.</p>
+        <p class="section-help">Introduce el calendario acordado para este proyecto.</p>
         <label>Modalidad de cobro
           <select id="payment-template">
-            <option value="standard">Proyecto por etapas — 30% / 45% / 25%</option>
-            <option value="one-day">Trabajo de un día — 50% / 50%</option>
-            <option value="custom">Calendario personalizado</option>
+            <option value="custom" selected>Calendario personalizado</option>
+            <option value="standard">Calendario guardado por etapas</option>
+            <option value="one-day">Calendario guardado de dos pagos</option>
           </select>
         </label>
         <div class="totals-edit">
           <label>Descuento<input id="discount" type="number" step="0.01" value="0"></label>
           <label>Impuesto %<input id="tax" type="number" step="0.01" value="0"></label>
-          <label>Primer pago %<input id="payment-1" type="number" step="0.01" value="30"></label>
-          <label>Segundo pago %<input id="payment-2" type="number" step="0.01" value="45"></label>
-          <label>Pago final %<input id="payment-3" type="number" step="0.01" value="25"></label>
+          <label>Primer pago %<input id="payment-1" type="number" step="0.01" value="0"></label>
+          <label>Segundo pago %<input id="payment-2" type="number" step="0.01" value="0"></label>
+          <label>Pago final %<input id="payment-3" type="number" step="0.01" value="0"></label>
         </div>
         <p id="payment-warning" class="payment-warning" aria-live="polite"></p>
         <div class="payment-method-editor">
@@ -187,7 +187,7 @@
           <label>Instrucciones adicionales
             <textarea id="payment-instructions" rows="3" maxlength="500" placeholder="Ej. Para Zelle, cheque o transferencia, comuníquese con EBC."></textarea>
           </label>
-          <p>No introduzcas números de cuenta ni routing aquí. Activa QuickAccept solo si deseas aceptar las opciones que Chase muestre al cliente, incluida tarjeta. EBC no ofrece financiamiento, cuentas abiertas ni pagos aplazados.</p>
+          <p>No introduzcas números de cuenta ni routing aquí. Activa QuickAccept solo si deseas aceptar las opciones que Chase muestre al cliente, incluida tarjeta.</p>
         </div>
 
         <div class="actions">

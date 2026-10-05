@@ -28,7 +28,7 @@
     return /(?:\d[\s-]*){9,17}/.test(String(value || ''));
   }
 
-  function phasePercent(phase, schedule = [30, 45, 25], customPercent = 0) {
+  function phasePercent(phase, schedule = [0, 0, 0], customPercent = 0) {
     const indexes = { initial: 0, progress: 1, final: 2 };
     if (phase === 'custom') return Math.max(0, Number(customPercent) || 0);
     return Math.max(0, Number(schedule[indexes[phase]]) || 0);

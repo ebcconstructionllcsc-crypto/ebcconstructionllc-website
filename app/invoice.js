@@ -14,9 +14,9 @@ const copy = {
     paymentOptions: 'PAYMENT OPTIONS', notes: 'NOTES', footer: 'Thank you for choosing EBC Construction LLC.',
     phases: { initial: 'Initial payment', progress: 'Progress payment', final: 'Final payment', custom: 'Project payment' },
     methods: { ach: 'ACH / bank transfer', zelle: 'Zelle through Chase', check: 'Company check payable to EBC Construction LLC', cash: 'Cash with receipt', online: 'Official Chase invoice / QuickAccept link' },
-    noFinancing: 'EBC Construction LLC does not offer financing, open credit accounts, or deferred payment plans. Payment is due by the date shown above.',
+    noFinancing: '',
     payOnline: 'OPEN SECURE CHASE INVOICE',
-    message: ({ client, number, balance, due, methods, link }) => `Hello ${client || ''}, EBC Construction LLC invoice ${number} has a balance of ${balance}, due ${due}. Payment options: ${methods}.${link ? ` Secure payment link: ${link}` : ''} EBC does not offer financing or deferred payment plans. Thank you.`
+    message: ({ client, number, balance, due, methods, link }) => `Hello ${client || ''}, EBC Construction LLC invoice ${number} has a balance of ${balance}, due ${due}. Payment options: ${methods}.${link ? ` Secure payment link: ${link}` : ''} Thank you.`
   },
   es: {
     title: 'INVOICE', billTo: 'COBRAR A', details: 'DETALLES DEL INVOICE', date: 'Fecha', due: 'Vencimiento',
@@ -26,9 +26,9 @@ const copy = {
     paymentOptions: 'OPCIONES DE PAGO', notes: 'NOTAS', footer: 'Gracias por elegir EBC Construction LLC.',
     phases: { initial: 'Primer pago', progress: 'Segundo pago', final: 'Pago final', custom: 'Pago del proyecto' },
     methods: { ach: 'ACH / transferencia bancaria', zelle: 'Zelle por medio de Chase', check: 'Cheque a nombre de EBC Construction LLC', cash: 'Efectivo con recibo', online: 'Enlace oficial de Chase invoice / QuickAccept' },
-    noFinancing: 'EBC Construction LLC no ofrece financiamiento, cuentas de crédito abiertas ni pagos aplazados. El pago vence en la fecha indicada arriba.',
+    noFinancing: '',
     payOnline: 'ABRIR INVOICE SEGURO DE CHASE',
-    message: ({ client, number, balance, due, methods, link }) => `Hola ${client || ''}, el invoice ${number} de EBC Construction LLC tiene un saldo de ${balance}, con vencimiento el ${due}. Opciones de pago: ${methods}.${link ? ` Enlace seguro: ${link}` : ''} EBC no ofrece financiamiento ni pagos aplazados. Gracias.`
+    message: ({ client, number, balance, due, methods, link }) => `Hola ${client || ''}, el invoice ${number} de EBC Construction LLC tiene un saldo de ${balance}, con vencimiento el ${due}. Opciones de pago: ${methods}.${link ? ` Enlace seguro: ${link}` : ''} Gracias.`
   }
 };
 
@@ -38,7 +38,7 @@ const fieldIds = [
   'phase-percent','amount-due','amount-paid','description','accept-ach','accept-zelle','accept-check','accept-cash',
   'accept-online','payment-link','payment-instructions','notes'
 ];
-let schedule = [30, 45, 25];
+let schedule = [0, 0, 0];
 let amountManuallyEdited = false;
 let invoiceId = null;
 const invoiceRecords = new Map();
@@ -77,7 +77,7 @@ function phaseDescription() {
 }
 
 function isOneDaySchedule() {
-  return schedule.every((value, index) => Math.abs(Number(value) - [50, 0, 50][index]) < 0.001);
+  return Number(schedule[1]) === 0 && Number(schedule[0]) > 0 && Number(schedule[2]) > 0;
 }
 
 function syncPhaseOptions() {
@@ -175,7 +175,7 @@ function serialize() {
 
 function load(data) {
   invoiceId = data?.id || null;
-  schedule = Array.isArray(data?.schedule) && data.schedule.length === 3 ? data.schedule.map(Number) : [30,45,25];
+  schedule = Array.isArray(data?.schedule) && data.schedule.length === 3 ? data.schedule.map(Number) : [0, 0, 0];
   fieldIds.forEach(id => {
     if (data?.fields?.[id] == null) return;
     const element = $(`#${id}`);
@@ -190,16 +190,16 @@ function load(data) {
 function fresh() {
   invoiceId = null;
   const number = String(Date.now()).slice(-7);
-  schedule = [30,45,25];
+  schedule = [0, 0, 0];
   load({ schedule, fields: {
     'invoice-number': `EBC-INV-${number}`, 'quote-number': '', 'invoice-date': localDate(),
-    'due-date': plusDays(7), 'invoice-status': 'Draft', 'invoice-language': 'en',
+    'due-date': '', 'invoice-status': 'Draft', 'invoice-language': 'en',
     'client-name': '', 'client-phone': '', 'client-email': '', 'project-address': '',
-    'project-total': '0', 'payment-phase': 'initial', 'phase-percent': '30',
+    'project-total': '0', 'payment-phase': 'initial', 'phase-percent': '0',
     'amount-due': '0', 'amount-paid': '0', description: '', 'accept-ach': true,
     'accept-zelle': true, 'accept-check': true, 'accept-cash': true, 'accept-online': false, 'payment-link': '',
-    'payment-instructions': 'Contact EBC Construction LLC for Zelle, check or bank-transfer instructions. Use the official Chase invoice link only when it appears on this invoice.',
-    notes: 'Payment is due according to the written project payment schedule.'
+    'payment-instructions': '',
+    notes: ''
   }});
   amountManuallyEdited = false;
   applyPhase();
@@ -233,7 +233,7 @@ function invoiceRecord() {
 
 function loadInvoiceRecord(record) {
   const methods = Array.isArray(record.payment_methods) ? record.payment_methods : [];
-  const storedSchedule = Array.isArray(record.payment_schedule) ? record.payment_schedule.map(Number) : [30,45,25];
+  const storedSchedule = Array.isArray(record.payment_schedule) ? record.payment_schedule.map(Number) : [0, 0, 0];
   load({ id: record.id, schedule: storedSchedule, fields: {
     'invoice-number': record.invoice_number,
     'quote-number': record.quote_number || '',
@@ -329,9 +329,9 @@ async function saveInvoice() {
 
 function fromQuote(payload) {
   const methods = Array.isArray(payload.methods) ? payload.methods : ['ach','zelle','check','cash'];
-  schedule = Array.isArray(payload.schedule) && payload.schedule.length === 3 ? payload.schedule.map(Number) : [30,45,25];
+  schedule = Array.isArray(payload.schedule) && payload.schedule.length === 3 ? payload.schedule.map(Number) : [0, 0, 0];
   fresh();
-  schedule = Array.isArray(payload.schedule) && payload.schedule.length === 3 ? payload.schedule.map(Number) : [30,45,25];
+  schedule = Array.isArray(payload.schedule) && payload.schedule.length === 3 ? payload.schedule.map(Number) : [0, 0, 0];
   syncPhaseOptions();
   $('#quote-number').value = payload.quoteNumber || '';
   $('#invoice-language').value = payload.language === 'es' ? 'es' : 'en';
@@ -340,12 +340,7 @@ function fromQuote(payload) {
   $('#client-email').value = payload.clientEmail || '';
   $('#project-address').value = payload.projectAddress || '';
   $('#project-total').value = Number(payload.projectTotal || 0).toFixed(2);
-  if (isOneDaySchedule()) {
-    $('#due-date').value = localDate();
-    $('#notes').value = payload.language === 'es'
-      ? 'Para este trabajo de un día, el 50% vence al firmar el contrato y antes de programar o comenzar. El 50% restante vence inmediatamente al terminar el trabajo ese mismo día.'
-      : 'For this one-day job, 50% is due at contract signing before scheduling or work begins. The remaining 50% is due immediately upon completion the same day.';
-  }
+
   ['ach','zelle','check','cash','online'].forEach(method => { $(`#accept-${method}`).checked = methods.includes(method); });
   $('#payment-link').value = payload.paymentLink || '';
   $('#payment-instructions').value = payload.paymentInstructions || $('#payment-instructions').value;

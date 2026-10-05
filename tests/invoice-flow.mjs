@@ -43,12 +43,12 @@ assert.equal(window.document.querySelector('#p-balance').textContent, '$5,000.00
 const localToday = new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
   .toISOString()
   .slice(0, 10);
-assert.equal(window.document.querySelector('#due-date').value, localToday);
-assert.match(window.document.querySelector('#notes').value, /remaining 50% is due immediately/i);
+assert.equal(window.document.querySelector('#due-date').value, '', 'new invoices require an explicit project due date');
+assert.equal(window.document.querySelector('#notes').value, '', 'do not inject company payment terms into a new invoice');
 assert.match(window.document.querySelector('#p-payment-methods').textContent, /ACH/);
 assert.match(window.document.querySelector('#p-payment-methods').textContent, /Zelle/);
 assert.doesNotMatch(window.document.querySelector('#p-payment-methods').textContent, /Cash/);
-assert.match(window.document.querySelector('#p-no-financing').textContent, /does not offer financing/i);
+assert.equal(window.document.querySelector('#p-no-financing').textContent, '');
 
 const phase = window.document.querySelector('#payment-phase');
 phase.value = 'final';
@@ -67,6 +67,6 @@ await new Promise(resolve => setTimeout(resolve, 0));
 assert.match(copied, /EBC Construction LLC invoice/);
 assert.match(copied, /\$5,000\.00/);
 assert.match(copied, /Chase invoice|QuickAccept/i);
-assert.match(copied, /does not offer financing/i);
+assert.ok(!/does not offer financing/i.test(copied));
 
 console.log('Invoice UI flow passed.');

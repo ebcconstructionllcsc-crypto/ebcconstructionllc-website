@@ -55,14 +55,13 @@ firstRow.querySelector('.rate').value = '19250';
 firstRow.querySelector('.rate').dispatchEvent(new window.Event('input', { bubbles: true }));
 
 const paymentTemplate = window.document.querySelector('#payment-template');
-assert.equal(paymentTemplate.value, 'standard');
-paymentTemplate.value = 'one-day';
-paymentTemplate.dispatchEvent(new window.Event('change', { bubbles: true }));
-assert.equal(window.document.querySelector('#payment-1').value, '50');
-assert.equal(window.document.querySelector('#payment-2').value, '0');
-assert.equal(window.document.querySelector('#payment-3').value, '50');
-assert.match(window.document.querySelector('#p-payment-1-label').textContent, /contract signing/i);
-assert.match(window.document.querySelector('#p-payment-3-label').textContent, /same-day completion/i);
+assert.equal(paymentTemplate.value, 'custom');
+for (const [field, value] of [['payment-1', '50'], ['payment-2', '0'], ['payment-3', '50']]) {
+  const input = window.document.querySelector('#' + field);
+  assert.equal(input.value, '0', 'new drafts have no published company payment defaults');
+  input.value = value;
+  input.dispatchEvent(new window.Event('input', { bubbles: true }));
+}
 window.document.querySelector('#create-invoice-btn').click();
 
 const payload = JSON.parse(window.sessionStorage.getItem('ebc-invoice-from-quote'));
@@ -71,7 +70,7 @@ assert.equal(payload.projectAddress, '200 Project Rd');
 assert.equal(payload.projectTotal, 19250);
 assert.deepEqual(payload.schedule, [50, 0, 50]);
 assert.deepEqual(payload.methods, ['ach', 'zelle', 'check', 'cash']);
-assert.match(window.document.querySelector('#p-no-financing').textContent, /does not offer financing/i);
+assert.equal(window.document.querySelector('#p-no-financing').textContent, '');
 assert.match(window.document.querySelector('#p-payment-methods').textContent, /Zelle/);
 assert.equal(window.document.querySelector('#accept-online').checked, false);
 

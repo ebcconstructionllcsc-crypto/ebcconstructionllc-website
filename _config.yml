@@ -1,0 +1,12 @@
+# The branch-based Pages build must exclude development and server resources too.
+exclude:
+  - README.md
+  - SECURITY.md
+  - docs
+  - tests
+  - scripts
+  - supabase
+  - node_modules
+  - package.json
+  - package-lock.json
+  - .pages-site

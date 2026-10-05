@@ -137,7 +137,7 @@ const quoteHtml = fs.readFileSync(path.join(root, 'app/quote.html'), 'utf8');
 if (!/<div id="quote-app" hidden>/.test(quoteHtml)) fail('The quote builder is not hidden during authentication.');
 if (!quoteHtml.includes('id="auth-check"')) fail('The quote builder is missing its authentication status view.');
 if (!quoteHtml.includes('id="payment-template"')) fail('The quote builder is missing its payment schedule selector.');
-if (!quoteHtml.includes('value="one-day"')) fail('The quote builder is missing its one-day 50/50 schedule.');
+if (!quoteHtml.includes('value="custom"')) fail('The quote builder must support project-specific payment schedules.');
 
 const renderHtml = fs.readFileSync(path.join(root, 'app/render.html'), 'utf8');
 if (!/<div id="render-app" hidden>/.test(renderHtml)) fail('The render builder is not hidden during authentication.');

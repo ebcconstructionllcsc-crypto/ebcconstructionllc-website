@@ -21,7 +21,7 @@ create table if not exists public.invoices (
   client_email text,
   project_address text,
   project_total numeric(12,2) not null default 0 check (project_total >= 0),
-  payment_schedule numeric[] not null default array[30,45,25]::numeric[] check (cardinality(payment_schedule) = 3),
+  payment_schedule numeric[] not null default array[0, 0, 0]::numeric[] check (cardinality(payment_schedule) = 3),
   payment_phase text not null check (payment_phase in ('initial','progress','final','custom')),
   phase_percent numeric(7,2) not null default 0 check (phase_percent >= 0),
   amount_due numeric(12,2) not null default 0 check (amount_due >= 0),
@@ -38,7 +38,7 @@ create table if not exists public.invoices (
 
 alter table public.invoices
   add column if not exists payment_schedule numeric[] not null
-  default array[30,45,25]::numeric[] check (cardinality(payment_schedule) = 3);
+  default array[0, 0, 0]::numeric[] check (cardinality(payment_schedule) = 3);
 
 create index if not exists invoices_user_created_idx on public.invoices (user_id, created_at desc);
 drop trigger if exists invoices_set_updated_at on public.invoices;

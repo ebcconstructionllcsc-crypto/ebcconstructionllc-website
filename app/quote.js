@@ -33,8 +33,8 @@ const translations = {
     payment1: 'Initial payment',
     payment2: 'Progress payment',
     payment3: 'Final payment',
-    oneDayPayment1: 'Contract signing deposit — due before scheduling or work begins',
-    oneDayPayment3: 'Final payment — due immediately upon same-day completion',
+    oneDayPayment1: 'Initial payment',
+    oneDayPayment3: 'Final payment',
     paymentMethodsTitle: 'ACCEPTED PAYMENT METHODS',
     paymentMethods: {
       ach: 'ACH / bank transfer',
@@ -43,8 +43,8 @@ const translations = {
       cash: 'Cash with receipt',
       online: 'Official Chase invoice / QuickAccept link'
     },
-    noFinancing: 'EBC Construction LLC does not offer financing, open credit accounts, or deferred payment plans. Payments are due according to the written payment schedule.',
-    approval: 'Approval of this quote does not constitute the final construction contract. After approval, EBC Construction LLC will send a separate Concrete Work Agreement with the project specifications, warranty coverage and exclusions. Work will not begin until that agreement is signed and the required initial payment is received.',
+    noFinancing: '',
+    approval: '',
     signature: 'Client acknowledgment: __________________________',
     signatureDate: 'Date: __________________',
     footer: 'Thank you for the opportunity to quote your project.',
@@ -76,8 +76,8 @@ const translations = {
     payment1: 'Primer pago',
     payment2: 'Segundo pago',
     payment3: 'Pago final',
-    oneDayPayment1: 'Anticipo al firmar — vence antes de programar o comenzar',
-    oneDayPayment3: 'Pago final — vence inmediatamente al terminar el mismo día',
+    oneDayPayment1: 'Primer pago',
+    oneDayPayment3: 'Pago final',
     paymentMethodsTitle: 'MÉTODOS DE PAGO ACEPTADOS',
     paymentMethods: {
       ach: 'ACH / transferencia bancaria',
@@ -86,8 +86,8 @@ const translations = {
       cash: 'Efectivo con recibo',
       online: 'Enlace oficial de Chase invoice / QuickAccept'
     },
-    noFinancing: 'EBC Construction LLC no ofrece financiamiento, cuentas de crédito abiertas ni pagos aplazados. Los pagos vencen conforme al calendario escrito.',
-    approval: 'La aprobación de esta cotización no constituye el contrato final de construcción. Después de la aprobación, EBC Construction LLC enviará un Concrete Work Agreement separado con las especificaciones del proyecto, la cobertura de garantía y sus exclusiones. El trabajo no comenzará hasta que dicho acuerdo esté firmado y se reciba el primer pago requerido.',
+    noFinancing: '',
+    approval: '',
     signature: 'Confirmación del cliente: __________________________',
     signatureDate: 'Fecha: __________________',
     footer: 'Gracias por la oportunidad de cotizar su proyecto.',
@@ -96,10 +96,7 @@ const translations = {
   }
 };
 
-const defaultTerms = {
-  en: 'Scope and specifications will be confirmed before work begins. Price may change if site conditions, access, quantities, materials or requested changes differ from the information provided. Approval of this quote is not the final construction contract. After approval, EBC Construction LLC will send a separate Concrete Work Agreement describing the project specifications, payment terms, warranty coverage and exclusions. No work will begin until the agreement is signed and the required initial payment is received. EBC Construction LLC does not offer financing, open credit accounts or deferred payment plans. The included plan and 3D view are conceptual sales illustrations and are not engineering, architectural, permit or survey drawings.',
-  es: 'El alcance y las especificaciones se confirmarán antes de comenzar el trabajo. El precio puede cambiar si las condiciones del terreno, el acceso, las cantidades, los materiales o los cambios solicitados difieren de la información proporcionada. La aprobación de esta cotización no es el contrato final de construcción. Después de aprobarla, EBC Construction LLC enviará un Concrete Work Agreement separado con las especificaciones, los términos de pago, la cobertura de garantía y sus exclusiones. Ningún trabajo comenzará hasta que el acuerdo esté firmado y se reciba el primer pago requerido. EBC Construction LLC no ofrece financiamiento, cuentas de crédito abiertas ni pagos aplazados. El plano y la vista 3D incluidos son ilustraciones conceptuales de venta y no son planos de ingeniería, arquitectura, permisos ni levantamientos topográficos.'
-};
+const defaultTerms = { en: '', es: '' };
 
 const fieldIds = [
   'quote-number',
@@ -211,24 +208,9 @@ function selectedPaymentMethods() {
   return ['ach', 'zelle', 'check', 'cash', 'online'].filter(method => $(`#accept-${method}`).checked);
 }
 
-function inferPaymentTemplate(values) {
-  const schedule = values.map(value => Number(value) || 0);
-  if (schedule.every((value, index) => Math.abs(value - [50, 0, 50][index]) < 0.001)) return 'one-day';
-  if (schedule.every((value, index) => Math.abs(value - [30, 45, 25][index]) < 0.001)) return 'standard';
-  return 'custom';
-}
+function inferPaymentTemplate(values) { return 'custom'; }
 
-function applyPaymentTemplate(template) {
-  const schedule = {
-    standard: [30, 45, 25],
-    'one-day': [50, 0, 50]
-  }[template];
-  if (!schedule) return handleChange();
-  schedule.forEach((value, index) => {
-    $(`#payment-${index + 1}`).value = value;
-  });
-  handleChange();
-}
+function applyPaymentTemplate(template) { handleChange(); }
 
 function isMissingRelation(error) {
   const code = String(error?.code || '');
@@ -532,10 +514,10 @@ function fresh() {
       notes: defaultTerms[language],
       discount: '0',
       tax: '0',
-      'payment-template': 'standard',
-      'payment-1': '30',
-      'payment-2': '45',
-      'payment-3': '25',
+      'payment-template': 'custom',
+      'payment-1': '0',
+      'payment-2': '0',
+      'payment-3': '0',
       'accept-ach': true,
       'accept-zelle': true,
       'accept-check': true,
