@@ -205,6 +205,7 @@
   const filterRegion = document.querySelector('.portfolio-phases');
 
   const filterLabels = {
+    driveways: ['driveways and driveway extensions', 'entradas y ampliaciones'],
     preparation: ['preparation', 'preparación'],
     demolition: ['demolition', 'demolición'],
     excavation: ['excavation', 'excavación'],
@@ -221,7 +222,7 @@
     });
 
     phases.forEach(phase => {
-      const visible = filter === 'all' || phase.dataset.phase === filter;
+      const visible = filter === 'all' || phase.dataset.phase === filter || (filter === 'finish' && phase.dataset.phase === 'driveways');
       phase.hidden = !visible;
     });
 
@@ -237,6 +238,7 @@
   filterButtons.forEach(button => {
     button.addEventListener('click', () => setFilter(button.dataset.filter || 'all'));
   });
+  if (window.location.hash === '#driveways') setFilter('driveways');
 
   const dialog = document.querySelector('#portfolio-lightbox');
   const dialogImage = document.querySelector('#portfolio-lightbox-image');
