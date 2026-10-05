@@ -30,6 +30,16 @@ const header = document.querySelector('.topbar');
     else if (href.startsWith('sms:')) track('click_to_text');
     else if (href.startsWith('mailto:')) track('click_to_email');
   });
+  const estimate = document.querySelector('#estimate-form');
+  // Record funnel stages only; never send values, files, addresses or lead references.
+  estimate?.addEventListener('input', () => track('estimate_start'), { once: true });
+  estimate?.addEventListener('submit', () => {
+    if (estimate.checkValidity()) track('estimate_review');
+  });
+  document.addEventListener('click', event => {
+    const href = event.target.closest?.('a')?.getAttribute('href') || '';
+    if (href === 'contact.html' || href.startsWith('contact.html#')) track('click_estimate');
+  });
   window.addEventListener('ebc:leadreceived', () => track('generate_lead'));
 })();
 const menuButton = document.querySelector('.menu-btn');

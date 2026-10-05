@@ -105,3 +105,5 @@ section[id] { scroll-margin-top: 100px; }
   .review-card { grid-template-columns: 48px minmax(0,1fr); padding: 20px; gap: 14px; }
   .review-card h2 { overflow-wrap: anywhere; }
 }
+.process-card > span, .service-combo-head > .num { color: #775820; }
+.faq-cta .btn.light { color: #182b25; border-color: #849287; background: transparent; }
