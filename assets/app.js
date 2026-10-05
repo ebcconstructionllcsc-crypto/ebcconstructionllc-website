@@ -62,6 +62,11 @@ const mobileMenu = window.matchMedia('(max-width: 980px)');
 const menuBackground = [...document.querySelectorAll('main, footer, .mobile-actions')];
 function setMenu(open, restoreFocus = false) {
   navigation?.classList.toggle('open', open);
+  if (navigation) {
+    const height = header?.offsetHeight || 70;
+    navigation.style.top = open && mobileMenu.matches ? `${height}px` : '';
+    navigation.style.maxHeight = open && mobileMenu.matches ? `calc(100svh - ${height}px)` : '';
+  }
   menuButton?.setAttribute('aria-expanded', String(open));
   menuButton?.setAttribute('aria-label', menuLabel(open));
   if (menuButton) menuButton.textContent = open ? '×' : '☰';

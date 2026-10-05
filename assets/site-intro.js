@@ -36,15 +36,15 @@
   function onKey(event) { if (event.key === 'Escape' || event.key === 'Tab') remove(); }
   skip.addEventListener('click', remove);
   document.addEventListener('keydown', onKey);
-  timers.push(setTimeout(remove, 3200));
+  timers.push(setTimeout(remove, 1500));
   image.addEventListener('error', remove, { once: true });
   image.addEventListener('load', () => {
     if (finished) return;
     try { sessionStorage.setItem(key, '1'); } catch { /* storage optional */ }
     document.documentElement.classList.add('site-intro-active');
     intro.classList.add('is-ready');
-    timers.push(setTimeout(() => intro.classList.add('is-out'), 1200));
-    timers.push(setTimeout(remove, 1800));
+    timers.push(setTimeout(() => intro.classList.add('is-out'), 700));
+    timers.push(setTimeout(remove, 1100));
   }, { once: true });
   image.src = images[page];
 })();
