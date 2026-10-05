@@ -5,6 +5,7 @@ import { JSDOM } from 'jsdom';
 const pages = ['index.html','services.html','projects.html','about.html','contact.html','reviews.html'];
 for (const page of pages) {
   const html = fs.readFileSync(page, 'utf8');
+  assert.ok(!/Real (?:project photos|EBC work|EBC project work|work\.|photos)|(?:trabajos?|fotos|proyectos) reales|trabajo real|Photos and videos shown here come from|Las fotos y videos mostrados aquí provienen/i.test(html), `${page}: redundant project-authenticity copy`);
   assert.ok(!html.includes('drive.google.com'), `${page}: unreliable Drive media`);
   const dom = new JSDOM(html, { url: 'https://ebcconstructionllc.com/' + page, runScripts: 'outside-only' });
   const { window } = dom;
