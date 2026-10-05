@@ -207,6 +207,9 @@
   const filterLabels = {
     specialty: ['California-style specialty', 'nuestra especialidad estilo California'],
     driveways: ['driveways and driveway extensions', 'entradas y ampliaciones'],
+    porches: ['porches and patios', 'porches y patios'],
+    sidewalks: ['sidewalks and walkways', 'banquetas y pasillos'],
+    decorative: ['decorative concrete', 'concreto decorativo'],
     preparation: ['preparation', 'preparación'],
     demolition: ['demolition', 'demolición'],
     excavation: ['excavation', 'excavación'],
