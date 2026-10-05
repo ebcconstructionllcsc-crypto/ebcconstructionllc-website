@@ -9,7 +9,7 @@ const manifest = JSON.parse(fs.readFileSync(path.join(root, 'assets/media/portfo
 let failures = 0;
 const fail = message => { failures += 1; console.error(`FAIL: ${message}`); };
 
-for (const category of ['preparation', 'demolition', 'excavation', 'grading', 'concrete', 'finish']) {
+for (const category of ['driveways', 'porches', 'sidewalks', 'preparation', 'demolition', 'excavation', 'grading', 'concrete']) {
   if (!html.includes(`data-phase="${category}"`)) fail(`projects.html is missing ${category} phase`);
   if (!html.includes(`data-filter="${category}"`)) fail(`projects.html is missing ${category} filter`);
 }

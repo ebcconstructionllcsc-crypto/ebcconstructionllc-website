@@ -208,14 +208,12 @@
     specialty: ['California-style specialty', 'nuestra especialidad estilo California'],
     driveways: ['driveways and driveway extensions', 'entradas y ampliaciones'],
     porches: ['porches and patios', 'porches y patios'],
-    sidewalks: ['sidewalks and walkways', 'banquetas y pasillos'],
-    decorative: ['decorative concrete', 'concreto decorativo'],
+    sidewalks: ['sidewalks, walkways and decorative concrete', 'banquetas, pasillos y concreto decorativo'],
     preparation: ['preparation', 'preparación'],
     demolition: ['demolition', 'demolición'],
     excavation: ['excavation', 'excavación'],
     grading: ['grading', 'nivelación'],
-    concrete: ['concrete', 'concreto'],
-    finish: ['finish', 'acabado']
+    concrete: ['concrete', 'concreto']
   };
 
   function setFilter(filter) {
@@ -229,7 +227,7 @@
       const cards = [...phase.querySelectorAll('.portfolio-card')];
       cards.forEach(card => {
         const category = card.dataset.category || phase.dataset.phase;
-        card.hidden = !(filter === 'all' || (filter === 'specialty' && phase.dataset.phase === 'specialty') || category === filter || (filter === 'finish' && category === 'driveways'));
+        card.hidden = !(filter === 'all' || (filter === 'specialty' && phase.dataset.phase === 'specialty') || category === filter);
       });
       phase.hidden = !cards.some(card => !card.hidden);
     });
