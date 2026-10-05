@@ -48,12 +48,22 @@ function syncHeader() {
   header?.classList.toggle('scrolled', window.scrollY > 30);
 }
 
-function setMenu(open) {
+const mobileMenu = window.matchMedia('(max-width: 980px)');
+const menuBackground = [...document.querySelectorAll('main, footer, .mobile-actions')];
+function setMenu(open, restoreFocus = false) {
   navigation?.classList.toggle('open', open);
   menuButton?.setAttribute('aria-expanded', String(open));
   menuButton?.setAttribute('aria-label', menuLabel(open));
   if (menuButton) menuButton.textContent = open ? '×' : '☰';
   document.body.classList.toggle('menu-open', open);
+  menuBackground.forEach(element => { element.inert = open && mobileMenu.matches; });
+  if (open && mobileMenu.matches) {
+    navigation?.querySelector('a, button')?.focus();
+    window.requestAnimationFrame?.(() => {
+      if (navigation?.classList.contains('open')) navigation.querySelector('a, button')?.focus();
+    });
+  }
+  if (!open && restoreFocus) menuButton?.focus();
 }
 
 syncHeader();
@@ -61,8 +71,17 @@ window.addEventListener('scroll', syncHeader, { passive: true });
 menuButton?.addEventListener('click', () => setMenu(!navigation?.classList.contains('open')));
 navigation?.querySelectorAll('a').forEach(link => link.addEventListener('click', () => setMenu(false)));
 window.addEventListener('keydown', event => {
-  if (event.key === 'Escape') setMenu(false);
+  if (!navigation?.classList.contains('open')) return;
+  if (event.key === 'Escape') { event.preventDefault(); setMenu(false, true); }
+  if (event.key === 'Tab' && mobileMenu.matches) {
+    const controls = [...navigation.querySelectorAll('a, button'), menuButton].filter(Boolean);
+    const index = controls.indexOf(document.activeElement);
+    if (event.shiftKey && index <= 0) { event.preventDefault(); controls.at(-1)?.focus(); }
+    else if (!event.shiftKey && (index === controls.length - 1 || index < 0)) { event.preventDefault(); controls[0]?.focus(); }
+  }
 });
+
+mobileMenu.addEventListener?.('change', () => setMenu(false));
 
 const currentPage = window.location.pathname.split('/').pop() || 'index.html';
 document.querySelectorAll('.navlinks a').forEach(link => {
@@ -111,7 +130,13 @@ function applyLanguage(language) {
     button.classList.toggle('active', active);
     button.setAttribute('aria-pressed', String(active));
   });
-  localStorage.setItem('ebc-lang', language);
+  document.querySelectorAll('[data-en-alt]').forEach(element => {
+    element.alt = language === 'es' ? element.dataset.esAlt : element.dataset.enAlt;
+  });
+  document.querySelectorAll('[data-en-aria-label]').forEach(element => {
+    element.setAttribute('aria-label', language === 'es' ? element.dataset.esAriaLabel : element.dataset.enAriaLabel);
+  });
+  try { localStorage.setItem('ebc-lang', language); } catch { /* Language still works with storage disabled. */ }
   setMenu(false);
   window.dispatchEvent(new CustomEvent('ebc:languagechange', {
     detail: { language }
@@ -121,7 +146,9 @@ function applyLanguage(language) {
 document.querySelectorAll('[data-lang-btn]').forEach(button => {
   button.addEventListener('click', () => applyLanguage(button.dataset.langBtn));
 });
-applyLanguage(localStorage.getItem('ebc-lang') || 'en');
+let savedLanguage = 'en';
+try { savedLanguage = localStorage.getItem('ebc-lang') === 'es' ? 'es' : 'en'; } catch { /* Use English by default. */ }
+applyLanguage(savedLanguage);
 
 const estimateForm = document.querySelector('#estimate-form');
 

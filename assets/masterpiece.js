@@ -32,6 +32,7 @@
   const dialogCaption = dialog?.querySelector('[data-dialog-caption]');
   const closeButton = dialog?.querySelector('.lightbox-close');
   let activeImage = null;
+  let activeTrigger = null;
   const imageTriggers = [...document.querySelectorAll('[data-lightbox]')];
   let imageControls;
   if (dialog && imageTriggers.length > 1) {
@@ -64,6 +65,7 @@
     if (!dialog || !dialogImage) return;
     clearDialog();
     activeImage = trigger;
+    activeTrigger = trigger;
     if (imageControls) imageControls.hidden = false;
     dialogImage.hidden = false;
     dialogImage.src = trigger.dataset.lightbox;
@@ -76,11 +78,12 @@
     if (!dialog || !dialogVideo) return;
     clearDialog();
     activeImage = null;
+    activeTrigger = trigger;
     if (imageControls) imageControls.hidden = true;
     dialogVideo.hidden = false;
     dialogVideo.src = trigger.dataset.videoSrc;
     if (dialogCaption) dialogCaption.textContent = trigger.dataset.caption || '';
-    dialog.showModal();
+    if (!dialog.open) dialog.showModal();
   }
 
   document.addEventListener('click', event => {
@@ -91,7 +94,7 @@
   });
 
   closeButton?.addEventListener('click', () => dialog?.close());
-  dialog?.addEventListener('close', () => { clearDialog(); activeImage?.focus(); activeImage = null; });
+  dialog?.addEventListener('close', () => { clearDialog(); activeTrigger?.focus(); activeTrigger = null; activeImage = null; });
   dialog?.addEventListener('click', event => { if (event.target === dialog) dialog.close(); });
   dialog?.addEventListener('keydown', event => {
     if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
