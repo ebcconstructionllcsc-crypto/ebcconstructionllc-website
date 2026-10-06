@@ -210,7 +210,7 @@
     porches: ['porches and patios', 'porches y patios'],
     sidewalks: ['sidewalks, walkways and decorative concrete', 'banquetas, pasillos y concreto decorativo'],
     slabs: ['slabs and steps', 'slab y escalones'],
-    'retaining-walls': ['retaining walls', 'muros de retención'],
+    'retaining-walls': ['retaining walls', 'muros de contención'],
     preparation: ['preparation', 'preparación'],
     demolition: ['demolition', 'demolición'],
     excavation: ['excavation', 'excavación'],
@@ -246,11 +246,13 @@
   filterButtons.forEach(button => {
     button.addEventListener('click', () => setFilter(button.dataset.filter || 'all'));
   });
+  if (window.location.hash === '#preparation-media') setFilter('preparation');
   if (window.location.hash === '#retaining-walls') setFilter('retaining-walls');
     if (window.location.hash === '#slab-steps') setFilter('slabs');
   if (window.location.hash === '#driveways') setFilter('driveways');
   if (window.location.hash === '#california-style') setFilter('specialty');
   window.addEventListener('hashchange', () => {
+    if (window.location.hash === '#preparation-media') setFilter('preparation');
     if (window.location.hash === '#retaining-walls') setFilter('retaining-walls');
     if (window.location.hash === '#slab-steps') setFilter('slabs');
     if (window.location.hash === '#california-style') setFilter('specialty');

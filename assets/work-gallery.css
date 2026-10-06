@@ -1,0 +1,43 @@
+/* Project-specific layouts retain the site's existing palette and card style. */
+.retaining-mosaic { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)) minmax(0,.85fr); grid-template-rows:300px 180px 200px; gap:14px; }
+.retaining-mosaic .portfolio-card { grid-column:auto; min-height:0; height:100%; border-radius:22px; }
+.retaining-mosaic .wall-overview { grid-column:1 / 3; grid-row:1; }
+.retaining-mosaic .wall-detail { grid-column:1; grid-row:2; }
+.retaining-mosaic .wall-angle { grid-column:2; grid-row:2; }
+.retaining-mosaic .wall-process { grid-column:1 / 3; grid-row:3; }
+.retaining-mosaic .wall-video { grid-column:3; grid-row:1 / 4; }
+.retaining-mosaic img { display:block; object-fit:cover; object-position:50% 25%; }
+.retaining-mosaic .wall-overview img { object-position:50% 0%; transform:scale(1.25); transform-origin:50% 0%; }
+.retaining-mosaic .wall-detail img, .retaining-mosaic .wall-angle img { object-position:50% 0%; transform:scale(1.5); transform-origin:50% 0%; }
+.retaining-mosaic .wall-process img { object-position:50% 15%; }
+.retaining-mosaic .wall-video img { object-position:center; }
+#retaining-walls .phase-heading { margin-bottom:20px; }
+#retaining-walls .actions { margin-top:20px; }
+.work-gallery { margin-top:24px; min-width:0; }
+.work-gallery-heading { display:flex; justify-content:space-between; align-items:center; gap:16px; margin-bottom:14px; }
+.work-gallery-heading h4 { margin:0; font-size:1.25rem; }
+.work-gallery-controls { display:flex; gap:8px; }
+.work-gallery-controls button { width:48px; height:48px; border:1px solid #827b6e; border-radius:50%; background:#f4efe5; color:#171714; font-size:1.4rem; cursor:pointer; }
+.work-gallery-controls button:disabled { opacity:.45; cursor:default; }
+.work-gallery-track { display:flex; gap:14px; overflow-x:auto; scroll-snap-type:x proximity; padding:3px 3px 16px; }
+.work-gallery-track .portfolio-card { flex:0 0 calc((100% - 28px) / 3); min-width:0; min-height:0; height:290px; grid-column:auto; scroll-snap-align:start; }
+.work-gallery-track img { display:block; }
+.work-gallery-track .portfolio-caption { padding:18px; }
+@media(max-width:980px) {
+ .retaining-mosaic { grid-template-rows:260px 170px 180px; }
+ .work-gallery-track .portfolio-card { flex-basis:calc((100% - 14px) / 2); }
+}
+@media(max-width:680px) {
+ .retaining-mosaic { grid-template-columns:repeat(2,minmax(0,1fr)); grid-template-rows:auto; gap:14px; }
+ .retaining-mosaic .wall-overview { grid-column:1 / -1; grid-row:auto; height:auto; aspect-ratio:1.5; }
+ .retaining-mosaic .wall-detail, .retaining-mosaic .wall-angle { grid-row:auto; height:auto; aspect-ratio:1; }
+ .retaining-mosaic .wall-process { grid-column:1 / -1; grid-row:auto; height:220px; }
+ .retaining-mosaic .wall-video { grid-column:1 / -1; grid-row:auto; height:420px; }
+ .retaining-mosaic .wall-video img { object-fit:contain; background:#171714; }
+ .retaining-mosaic .portfolio-caption { padding:12px; }
+ .retaining-mosaic .portfolio-caption strong { font-size:1rem; }
+ .work-gallery-track .portfolio-card { flex-basis:84%; height:280px; }
+ .work-gallery-track .portfolio-caption strong { font-size:1.1rem; }
+ .work-gallery-heading { gap:10px; }
+ .work-gallery-heading h4 { font-size:1.1rem; }
+}
