@@ -1,0 +1,28 @@
+{
+  "media": [
+    {
+      "source": "IMG_4126(1).jpeg",
+      "path": "assets/images/retaining-walls-20261006/curved-block-wall-wide.webp",
+      "width": 1440,
+      "height": 1080,
+      "en": "Curved block retaining wall by the porch",
+      "es": "Muro de retención curvo junto al porche"
+    },
+    {
+      "source": "IMG_4129(1).jpeg",
+      "path": "assets/images/retaining-walls-20261006/block-wall-lighting.webp",
+      "width": 1440,
+      "height": 1080,
+      "en": "Block wall with landscape lighting",
+      "es": "Muro de bloques con iluminación exterior"
+    },
+    {
+      "source": "IMG_4131(1).jpeg",
+      "path": "assets/images/retaining-walls-20261006/curved-wall-detail.webp",
+      "width": 1440,
+      "height": 1080,
+      "en": "A closer look at the curved wall",
+      "es": "Detalle de las curvas del muro"
+    }
+  ]
+}
