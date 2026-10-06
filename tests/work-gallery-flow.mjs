@@ -24,6 +24,25 @@ assert.equal(doc.querySelectorAll('#slab-steps [data-media-type="image"]').lengt
 assert.equal(doc.querySelectorAll('#slab-steps [data-media-type="video"]').length, 1);
 
 const collection = doc.querySelector('#preparation-media');
+const welding = doc.querySelector('#welding');
+assert.equal(welding.querySelectorAll('[data-media-type="image"]').length, 1);
+assert.ok(fs.existsSync(welding.querySelector('[data-media-type="image"]').dataset.fullSrc));
+assert.equal(welding.querySelectorAll('[data-media-type="video"]').length, 0);
+const facebook = welding.querySelector('[data-media-type="external"]');
+assert.equal(facebook.href, 'https://www.facebook.com/reel/2128611677759274');
+assert.equal(facebook.querySelector('img, video'), null, 'External reel has no invented poster or local player');
+assert.equal(facebook.dataset.videoSrc, undefined);
+doc.querySelector('#portfolio-lightbox').close = function () { this.open = false; };
+doc.querySelector('.portfolio-lightbox-close').click();
+facebook.dispatchEvent(new window.MouseEvent('click', { bubbles: true, cancelable: true }));
+assert.ok(!doc.querySelector('#portfolio-lightbox').open, 'Facebook link does not invoke the local lightbox');
+doc.querySelector('[data-filter="welding"]').click();
+assert.ok(!welding.hidden);
+assert.ok(walls.hidden);
+doc.querySelector('[data-filter="retaining-walls"]').click();
+assert.ok(!walls.hidden);
+assert.ok(welding.hidden);
+assert.ok(!doc.querySelector('.visualize-sound-note').textContent.includes('Process videos remain silent'));
 assert.equal(collection.closest('[data-phase]').dataset.phase, 'preparation');
 assert.equal(collection.querySelectorAll('[data-media-type="image"]').length, 5);
 assert.equal(collection.querySelectorAll('[data-media-type="video"]').length, 4);
@@ -54,7 +73,7 @@ doc.querySelector('[data-filter="all"]').click();
 assert.ok([...doc.querySelectorAll('[data-phase]')].every(section => !section.hidden));
 
 // The privacy-safe public variants carry neither EXIF nor XMP chunks.
-for (const folder of ['assets/images/retaining-walls-20261006', 'assets/images/preparation-20261006']) {
+for (const folder of ['assets/images/retaining-walls-20261006', 'assets/images/preparation-20261006', 'assets/images/welding-20261006']) {
   for (const file of fs.readdirSync(folder).filter(name => name.endsWith('.webp'))) {
     const bytes = fs.readFileSync(`${folder}/${file}`);
     for (let offset = 12; offset + 8 <= bytes.length;) {

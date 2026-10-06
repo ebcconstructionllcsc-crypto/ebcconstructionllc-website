@@ -1,4 +1,22 @@
 /* Project-specific layouts retain the site's existing palette and card style. */
+.welding-layout { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+.welding-layout .portfolio-card { grid-column:auto; min-height:0; height:420px; }
+.welding-photo img { object-position:50% 56%; }
+.welding-layout .welding-facebook-card { height:auto; min-height:420px; aspect-ratio:auto; display:flex; flex-direction:column; justify-content:center; gap:12px; padding:32px; background:#171714; color:#f4efe5; cursor:pointer; }
+.welding-facebook-card::before { display:none; }
+.welding-facebook-card .kicker { color:#e3bb6b; }
+.welding-facebook-card h4 { margin:0; font-size:1.8rem; }
+.welding-facebook-card p { margin:0; color:#f4efe5; }
+.welding-video-icon { display:grid; place-items:center; width:54px; height:54px; border-radius:50%; background:#e3bb6b; color:#171714; }
+.welding-reel-label { color:#e3bb6b; text-decoration:underline; text-underline-offset:4px; }
+.welding-new-tab { font-size:.85rem; }
+.welding-facebook-card > * { flex-shrink:0; }
+#welding .actions { margin-top:20px; }
+@media(max-width:680px) {
+ .welding-layout { grid-template-columns:minmax(0,1fr); }
+ .welding-layout .welding-photo { height:360px; }
+ .welding-layout .welding-facebook-card { height:auto; min-height:0; padding:24px; }
+}
 .retaining-mosaic { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)) minmax(0,.85fr); grid-template-rows:300px 180px 200px; gap:14px; }
 .retaining-mosaic .portfolio-card { grid-column:auto; min-height:0; height:100%; border-radius:22px; }
 .retaining-mosaic .wall-overview { grid-column:1 / 3; grid-row:1; }

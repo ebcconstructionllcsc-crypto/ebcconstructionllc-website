@@ -188,9 +188,9 @@
       </div>
 
       <p class="visualize-sound-note"
-        data-en="Sound begins only after you choose a video and press play. Process videos remain silent."
-        data-es="El sonido comienza solamente cuando eliges un video y presionas reproducir. Los videos de proceso permanecen silenciosos.">
-        Sound begins only after you choose a video and press play. Process videos remain silent.
+        data-en="Sound begins only after you choose a video and press play. These edited highlights include sound. Preparation on site has two clips with original sound and two without audio. The Slabs & Steps and Retaining Walls work videos retain sound."
+        data-es="El sonido comienza solamente cuando eliges un video y presionas reproducir. Estos videos de presentación incluyen sonido. Preparación en obra tiene dos clips con sonido original y dos sin audio. Los videos de Slab y escalones y Muros de contención conservan sonido.">
+        Sound begins only after you choose a video and press play. These edited highlights include sound. Preparation on site has two clips with original sound and two without audio. The Slabs & Steps and Retaining Walls work videos retain sound.
       </p>
     `;
 
@@ -211,6 +211,7 @@
     sidewalks: ['sidewalks, walkways and decorative concrete', 'banquetas, pasillos y concreto decorativo'],
     slabs: ['slabs and steps', 'slab y escalones'],
     'retaining-walls': ['retaining walls', 'muros de contención'],
+    welding: ['welding', 'soldadura'],
     preparation: ['preparation', 'preparación'],
     demolition: ['demolition', 'demolición'],
     excavation: ['excavation', 'excavación'],
@@ -246,12 +247,14 @@
   filterButtons.forEach(button => {
     button.addEventListener('click', () => setFilter(button.dataset.filter || 'all'));
   });
+  if (window.location.hash === '#welding') setFilter('welding');
   if (window.location.hash === '#preparation-media') setFilter('preparation');
   if (window.location.hash === '#retaining-walls') setFilter('retaining-walls');
     if (window.location.hash === '#slab-steps') setFilter('slabs');
   if (window.location.hash === '#driveways') setFilter('driveways');
   if (window.location.hash === '#california-style') setFilter('specialty');
   window.addEventListener('hashchange', () => {
+    if (window.location.hash === '#welding') setFilter('welding');
     if (window.location.hash === '#preparation-media') setFilter('preparation');
     if (window.location.hash === '#retaining-walls') setFilter('retaining-walls');
     if (window.location.hash === '#slab-steps') setFilter('slabs');
@@ -338,7 +341,7 @@
     dialogClose?.focus();
   }
 
-  document.querySelectorAll('.portfolio-card').forEach(card => {
+  document.querySelectorAll('.portfolio-card[data-media-type="image"], .portfolio-card[data-media-type="video"]').forEach(card => {
     card.addEventListener('click', () => openDialog(card));
   });
   dialogClose?.addEventListener('click', closeDialog);
