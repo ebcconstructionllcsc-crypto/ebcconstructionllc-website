@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { JSDOM } from 'jsdom';
 
 const root = path.resolve(import.meta.dirname, '..');
 const html = fs.readFileSync(path.join(root, 'projects.html'), 'utf8');
@@ -15,7 +16,14 @@ for (const category of ['driveways', 'porches', 'sidewalks', 'slabs', 'preparati
 }
 
 if (/drive\.google\.com|googleusercontent\.com/.test(html)) fail('projects.html still depends on Google Drive media');
-if (/<iframe\b/i.test(html)) fail('projects.html still embeds video through an iframe');
+// The visually verified Facebook welding reel is the only approved external player.
+const document = new JSDOM(html).window.document;
+for (const frame of document.querySelectorAll('iframe')) {
+  const source = new URL(frame.src);
+  if (!frame.closest('#welding') || source.origin !== 'https://www.facebook.com' || source.pathname !== '/plugins/video.php' || source.searchParams.get('href') !== 'https://www.facebook.com/reel/2128611677759274') {
+    fail('projects.html embeds a video other than the approved welding reel');
+  }
+}
 if (!/Visualize your project before work begins\./.test(html)) fail('projects.html is missing the visual planning section');
 if (!/representations? are conceptual|Visual references are conceptual/.test(html)) fail('projects.html is missing the conceptual visualization disclaimer');
 if (!/aria-pressed="true"/.test(html)) fail('portfolio filters do not expose an active state');

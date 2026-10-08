@@ -1,0 +1,82 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import { JSDOM } from 'jsdom';
+
+const html = fs.readFileSync('contact.html', 'utf8');
+const scripts = ['assets/app.js', 'assets/contact-enhancements.js', 'assets/direct-estimate-submit.js'].map(file => fs.readFileSync(file, 'utf8'));
+function setup(service = 'welding') {
+  const dom = new JSDOM(html, { url: `https://example.test/contact.html?service=${service}`, runScripts: 'outside-only', pretendToBeVisual: true });
+  const { window } = dom;
+  window.matchMedia = () => ({ matches: true, addEventListener() {} });
+  window.HTMLElement.prototype.scrollIntoView = () => {};
+  scripts.forEach(script => window.eval(script));
+  return dom;
+}
+const tick = () => new Promise(resolve => setTimeout(resolve, 0));
+for (const [query, expected] of [['welding', 'Welding / Soldadura'], ['concrete', 'Concrete / Concreto'], ['grading', 'Grading & Excavation / Nivelación y Excavación'], ['unknown', ''], ['constructor', '']]) {
+  const dom = setup(query);
+  assert.equal(dom.window.document.querySelector('#service').value, expected);
+  dom.window.close();
+}
+const dom = setup();
+const { window } = dom;
+const document = window.document;
+const form = document.querySelector('#estimate-form');
+for (const [id, value] of Object.entries({ name: 'Test Customer', phone: '8645550100', email: 'test@example.com', address: 'Test address, Greer, SC', project: 'Welding estimate test' })) document.getElementById(id).value = value;
+document.querySelector('#consent').checked = true;
+const photo = new window.File(['photo-test'], 'sample.jpg', { type: 'image/jpeg' });
+Object.defineProperty(document.querySelector('#photos'), 'files', { configurable: true, value: [photo] });
+form.dispatchEvent(new window.Event('submit', { bubbles: true, cancelable: true }));
+await tick();
+const button = document.querySelector('#direct-estimate-submit');
+const status = document.querySelector('#direct-estimate-status');
+const fallback = document.querySelector('#estimate-contact-fallback');
+assert.equal(fallback.hidden, true);
+let received = 0;
+window.addEventListener('ebc:leadreceived', () => received++);
+window.fetch = async () => { throw new TypeError('Network failure'); };
+button.click();
+await tick();
+assert.equal(status.dataset.state, 'error');
+assert.match(status.textContent, /could not confirm delivery/);
+assert.equal(fallback.hidden, false);
+assert.equal(received, 0);
+assert.equal(form.querySelector('#name').value, 'Test Customer');
+assert.equal(form.querySelector('#photos').files[0], photo, 'failure retains photo selection');
+assert.equal(fallback.querySelector('a[href^="tel:"]').getAttribute('href'), 'tel:+18644502954');
+assert.match(decodeURIComponent(fallback.querySelector('#text-request').href), /Welding estimate test/);
+assert.match(fallback.textContent, /attach your photos/);
+document.querySelector('[data-lang-btn="es"]').click();
+await tick();
+assert.equal(status.dataset.state, 'error', 'language change must not clear delivery errors');
+assert.match(status.textContent, /No pudimos confirmar la entrega/);
+assert.match(fallback.textContent, /adjunta tus fotos/);
+assert.equal(fallback.hidden, false);
+// Trigger the real timeout callback immediately without waiting 90 seconds.
+const originalTimeout = window.setTimeout.bind(window);
+window.setTimeout = (callback, delay) => originalTimeout(callback, delay === 90000 ? 0 : delay);
+window.fetch = (_url, options) => new Promise((_resolve, reject) => options.signal.addEventListener('abort', () => reject(new window.DOMException('Aborted', 'AbortError'))));
+button.click();
+await tick();
+await tick();
+assert.match(status.textContent, /La conexión tardó demasiado/);
+assert.match(status.textContent, /No pudimos confirmar/);
+assert.doesNotMatch(status.textContent, /No se envió nada/);
+assert.equal(received, 0);
+window.fetch = async (_url, options) => {
+  assert.equal(options.body.get('service'), 'Welding / Soldadura');
+  assert.equal(options.body.get('photos').name, 'sample.jpg');
+  return { ok: true, json: async () => ({ ok: true, reference: 'TEST-ONLY' }) };
+};
+button.click();
+await tick();
+assert.equal(status.dataset.state, 'success');
+assert.match(status.textContent, /Solicitud recibida por EBC.*TEST-ONLY/);
+assert.equal(fallback.hidden, true);
+assert.equal(button.disabled, true);
+assert.equal(received, 1);
+button.click();
+await tick();
+assert.equal(received, 1, 'confirmed request cannot be submitted again');
+dom.window.close();
+console.log('Direct recovery: service context, preserved details/photos, call/SMS fallback, EN/ES errors, timeout uncertainty and confirmed receipt.');

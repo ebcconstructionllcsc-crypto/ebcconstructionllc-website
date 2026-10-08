@@ -31,6 +31,15 @@ assert.equal(commands().filter(item => item[1] === 'estimate_review').length, 1,
 form.checkValidity = () => true;
 window.document.querySelector('a[href="contact.html"]').click();
 assert.equal(commands().at(-1)[1], 'click_estimate');
+const trackedBefore = commands().filter(item => item[1] === 'click_estimate').length;
+for (const href of ['contact.html?service=welding#estimate-form', '/contact.html?service=concrete', 'https://ebcconstructionllc.com/contact.html#estimate-form', 'https://example.test/contact.html?service=welding', '#contact-us']) {
+  const link = window.document.createElement('a');
+  link.href = href;
+  link.addEventListener('click', event => event.preventDefault());
+  window.document.body.append(link);
+  link.click();
+}
+assert.equal(commands().filter(item => item[1] === 'click_estimate').length, trackedBefore + 3, 'count local estimate links with service queries, excluding external sites');
 assert.ok(!JSON.stringify(commands()).includes('PRIVATE-CUSTOMER-NAME'));
 
 window.HTMLElement.prototype.scrollIntoView = () => {};

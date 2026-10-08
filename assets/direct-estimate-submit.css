@@ -24,8 +24,8 @@
 }
 
 #direct-estimate-status[data-state="success"] {
-  border-color: rgba(125, 213, 151, .9);
-  background: rgba(38, 111, 62, .22);
+  border-color: var(--accent);
+  background: rgba(212, 166, 78, .12);
 }
 
 #direct-estimate-status[data-state="error"] {
@@ -43,7 +43,27 @@
 }
 
 .estimate-review[data-submission-complete="true"] {
-  border-color: rgba(125, 213, 151, .75);
+  border-color: var(--accent);
+}
+
+.estimate-review[data-submission-complete="true"] #direct-estimate-submit {
+  cursor: default;
+}
+
+.estimate-contact-fallback {
+  padding: 16px;
+  border: 1px solid rgba(212, 166, 78, .58);
+  border-radius: 12px;
+}
+
+.estimate-contact-fallback[hidden] {
+  display: none;
+}
+
+.estimate-contact-fallback p {
+  margin: 0 0 12px;
+  color: inherit;
+  line-height: 1.55;
 }
 
 @media (max-width: 680px) {

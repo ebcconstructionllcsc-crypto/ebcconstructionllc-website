@@ -38,7 +38,11 @@ const header = document.querySelector('.topbar');
   });
   document.addEventListener('click', event => {
     const href = event.target.closest?.('a')?.getAttribute('href') || '';
-    if (href === 'contact.html' || href.startsWith('contact.html#')) track('click_estimate');
+    if (!href) return;
+    try {
+      const target = new URL(href, location.href);
+      if (target.origin === location.origin && target.pathname === '/contact.html' && (!target.hash || target.hash === '#estimate-form')) track('click_estimate');
+    } catch { /* Ignore malformed links; never send their contents to analytics. */ }
   });
   window.addEventListener('ebc:leadreceived', () => track('generate_lead'));
 })();

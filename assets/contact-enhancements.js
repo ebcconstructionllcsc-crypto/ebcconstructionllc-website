@@ -17,11 +17,12 @@
   const requestedService = new URLSearchParams(window.location.search).get('service');
   const serviceValues = {
     concrete: 'Concrete / Concreto',
+    welding: 'Welding / Soldadura',
     grading: 'Grading & Excavation / Nivelación y Excavación',
     excavation: 'Grading & Excavation / Nivelación y Excavación',
     sitework: 'Grading & Excavation / Nivelación y Excavación'
   };
-  if (serviceSelect && requestedService && serviceValues[requestedService]) {
+  if (serviceSelect && requestedService && Object.hasOwn(serviceValues, requestedService)) {
     serviceSelect.value = serviceValues[requestedService];
   }
 

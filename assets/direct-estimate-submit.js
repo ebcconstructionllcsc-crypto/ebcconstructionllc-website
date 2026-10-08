@@ -18,7 +18,6 @@
   let sending = false;
   let submitted = false;
   let reference = '';
-  let emailNotified = false;
 
   const isSpanish = () => document.documentElement.lang === 'es';
   const copy = (english, spanish) => isSpanish() ? spanish : english;
@@ -30,8 +29,8 @@
 
   const instruction = document.createElement('p');
   instruction.className = 'estimate-direct-instruction';
-  instruction.dataset.en = 'Confirm the information below, then press one button. The request and selected photos will be delivered directly to EBC Manager.';
-  instruction.dataset.es = 'Confirma la información y después presiona un solo botón. La solicitud y las fotos seleccionadas llegarán directamente a EBC Manager.';
+  instruction.dataset.en = 'Confirm the information below, then send your request and selected photos directly to EBC.';
+  instruction.dataset.es = 'Confirma la información y envía tu solicitud y las fotos seleccionadas directamente a EBC.';
 
   const status = document.createElement('p');
   status.id = 'direct-estimate-status';
@@ -47,9 +46,24 @@
   sendButton.dataset.en = 'Send request to EBC';
   sendButton.dataset.es = 'Enviar solicitud a EBC';
 
+  // Keep the existing prepared SMS link: its request details are updated by app.js.
+  const textLink = actions.querySelector('#text-request');
+  const callLink = actions.querySelector('a[href^="tel:"]');
+  const fallback = document.createElement('div');
+  fallback.id = 'estimate-contact-fallback';
+  fallback.className = 'estimate-contact-fallback';
+  fallback.hidden = true;
+  const fallbackText = document.createElement('p');
+  fallbackText.dataset.en = 'You can call or open a text with your request details. For a text, attach your photos in the messaging app and press Send there.';
+  fallbackText.dataset.es = 'Puedes llamar o abrir un mensaje con los detalles de tu solicitud. Para enviarlo por mensaje, adjunta tus fotos en la aplicación de mensajes y presiona Enviar allí.';
+  const fallbackActions = document.createElement('div');
+  fallbackActions.className = 'estimate-review-actions';
+  if (callLink) fallbackActions.append(callLink);
+  if (textLink) fallbackActions.append(textLink);
+  fallback.append(fallbackText, fallbackActions);
   actions.replaceChildren(sendButton, editButton);
   actions.before(instruction);
-  transferNote.before(status);
+  transferNote.before(status, fallback);
 
   function localizeStaticText() {
     if (intakeNotice) {
@@ -61,8 +75,8 @@
         strong.textContent = copy(strong.dataset.en, strong.dataset.es);
       }
       if (paragraph) {
-        paragraph.dataset.en = 'Review your information first. When you press Send request to EBC, the details and selected photos are saved directly in EBC Manager.';
-        paragraph.dataset.es = 'Primero revisa tu información. Al presionar Enviar solicitud a EBC, los detalles y las fotos seleccionadas se guardan directamente en EBC Manager.';
+        paragraph.dataset.en = 'Review your information first. Press Send request to EBC to send your details and selected photos. Look for a confirmation reference on this page.';
+        paragraph.dataset.es = 'Primero revisa tu información. Presiona Enviar solicitud a EBC para enviar tus detalles y las fotos seleccionadas. Busca la referencia de confirmación en esta página.';
         paragraph.textContent = copy(paragraph.dataset.en, paragraph.dataset.es);
       }
     }
@@ -79,15 +93,16 @@
     }
     if (reviewIntro) {
       reviewIntro.dataset.en = submitted
-        ? 'EBC Manager has received the information shown below.'
+        ? 'EBC has received the information shown below.'
         : 'Confirm the details and photos. Nothing is sent until you press the gold button.';
       reviewIntro.dataset.es = submitted
-        ? 'EBC Manager recibió la información que aparece abajo.'
+        ? 'EBC recibió la información que aparece abajo.'
         : 'Confirma los detalles y las fotos. Nada se envía hasta que presiones el botón dorado.';
       reviewIntro.textContent = copy(reviewIntro.dataset.en, reviewIntro.dataset.es);
     }
 
     instruction.textContent = copy(instruction.dataset.en, instruction.dataset.es);
+    fallbackText.textContent = copy(fallbackText.dataset.en, fallbackText.dataset.es);
     sendButton.textContent = sending
       ? copy('Sending securely…', 'Enviando de forma segura…')
       : copy(sendButton.dataset.en, sendButton.dataset.es);
@@ -98,6 +113,8 @@
 
     if (submitted) {
       setSuccessStatus();
+    } else if (status.dataset.state === 'error' || sending) {
+      status.textContent = copy(status.dataset.en, status.dataset.es);
     } else if (!sending) {
       setStatus(
         'Ready. Press the gold button to send this request directly to EBC.',
@@ -108,16 +125,17 @@
   }
 
   function setStatus(english, spanish, state = 'ready') {
+    status.dataset.en = english;
+    status.dataset.es = spanish;
     status.textContent = copy(english, spanish);
     status.dataset.state = state;
+    fallback.hidden = state !== 'error';
   }
 
   function setSuccessStatus() {
-    const emailEnglish = emailNotified ? ' A notification was also sent to the EBC email.' : '';
-    const emailSpanish = emailNotified ? ' También se envió una notificación al correo de EBC.' : '';
     setStatus(
-      `Request received in EBC Manager. Confirmation: ${reference}.${emailEnglish}`,
-      `Solicitud recibida en EBC Manager. Confirmación: ${reference}.${emailSpanish}`,
+      `Request received by EBC. Confirmation: ${reference}.`,
+      `Solicitud recibida por EBC. Confirmación: ${reference}.`,
       'success'
     );
   }
@@ -167,8 +185,8 @@
     };
     const normalizedCode = String(code || '').toLowerCase();
     return errors[normalizedCode] || [
-      'The request could not be delivered. Check your connection and try again.',
-      'No se pudo entregar la solicitud. Revisa tu conexión e inténtalo de nuevo.'
+      'We could not confirm delivery. Call or text EBC before retrying to avoid duplicate requests.',
+      'No pudimos confirmar la entrega. Llama o envía un mensaje a EBC antes de reintentar para evitar solicitudes duplicadas.'
     ];
   }
 
@@ -207,8 +225,8 @@
 
     setBusy(true);
     setStatus(
-      'Sending the request and photos securely to EBC Manager…',
-      'Enviando la solicitud y las fotos de forma segura a EBC Manager…',
+      'Sending the request and photos securely to EBC…',
+      'Enviando la solicitud y las fotos de forma segura a EBC…',
       'sending'
     );
 
@@ -239,7 +257,6 @@
 
       submitted = true;
       reference = String(payload.reference);
-      emailNotified = payload.emailNotified === true;
       review.dataset.submissionComplete = 'true';
       window.dispatchEvent(new Event('ebc:leadreceived'));
       instruction.hidden = true;
@@ -254,8 +271,8 @@
     } catch (error) {
       if (error?.name === 'AbortError') {
         setStatus(
-          'The connection took too long. Nothing was submitted. Try again.',
-          'La conexión tardó demasiado. No se envió nada. Inténtalo de nuevo.',
+          'The connection took too long. We could not confirm delivery. Call or text EBC before retrying to avoid duplicate requests.',
+          'La conexión tardó demasiado. No pudimos confirmar la entrega. Llama o envía un mensaje a EBC antes de reintentar para evitar solicitudes duplicadas.',
           'error'
         );
       } else {

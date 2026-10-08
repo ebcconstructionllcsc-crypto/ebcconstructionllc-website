@@ -31,8 +31,8 @@ const requiredScriptPatterns = [
   ['multipart payload', /new FormData\(\)/],
   ['direct POST request', /fetch\(ENDPOINT,[\s\S]*method:\s*'POST'/],
   ['photo attachment loop', /for \(const file of \[\.\.\.photosInput\.files\]\)/],
-  ['manager confirmation reference', /Request received in EBC Manager/],
-  ['Spanish manager confirmation', /Solicitud recibida en EBC Manager/],
+  ['customer confirmation reference', /Request received by EBC/],
+  ['Spanish customer confirmation', /Solicitud recibida por EBC/],
   ['single direct send button', /direct-estimate-submit/],
   ['request timeout', /REQUEST_TIMEOUT_MS/]
 ];
