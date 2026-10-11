@@ -1,9 +1,9 @@
 /* Let the signature driveway lead; keep the familiar charcoal and gold. */
-.hero { min-height: 820px; }
+.hero { height:auto; min-height:820px; padding:0; }
 .hero .hero-media { left: 35%; }
 .hero .hero-media img { object-position: 68% 70%; }
 .hero::before { background: linear-gradient(90deg,#11130f 12%,rgba(17,19,15,.95) 29%,rgba(17,19,15,.48) 54%,rgba(17,19,15,.04) 83%); }
-.hero .hero-inner { min-height: 820px; padding-top: 180px; padding-bottom: 64px; }
+.hero .hero-inner { height:auto; min-height: 820px; padding-top: 180px; padding-bottom: 64px; }
 .hero .hero-copy-wrap { max-width: 625px; width: 100%; background: none; box-shadow: none; border: 0; border-radius: 0; padding: 0; backdrop-filter: none; }
 .hero h1 { font-size: clamp(3.7rem,6.3vw,6rem); line-height: 1.02; text-wrap: balance; }
 .hero .hero-copy { max-width: 505px; color: #e0e0d8; }
