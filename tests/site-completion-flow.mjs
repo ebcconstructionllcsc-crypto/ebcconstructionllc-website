@@ -69,7 +69,7 @@ assert.equal(navigationDoc.querySelector('main').inert, false);
 assert.equal(navigationDoc.activeElement, menu, 'Escape restores menu focus');
 navigationDoc.querySelector('[data-lang-btn="es"]').click();
 assert.equal(navigationDoc.documentElement.lang, 'es', 'language must work when storage is blocked');
-assert.match(navigationDoc.querySelector('.hero-media img').alt, /Entrada de concreto instalada por EBC/);
+assert.match(navigationDoc.querySelector('.hero-media img').alt, /Entrada estilo California/);
 assert.equal(navigationDoc.querySelector('.hero video'), null, 'large original poster without an automatic video download');
 assert.ok(navigationDoc.querySelector('.intro-grid a[href="about.html"]'), 'restore About access in homepage content');
 const presentation = fs.readFileSync('assets/public-quality.css', 'utf8');

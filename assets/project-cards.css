@@ -1,0 +1,37 @@
+/* Consistent previews; the existing lightbox retains the complete original. */
+.portfolio-page .portfolio-grid,
+.portfolio-page .landscaping-gallery,
+.portfolio-page .retaining-mosaic,
+.portfolio-page .welding-layout,
+.portfolio-page .work-gallery-track {
+  display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); grid-template-rows:none;
+  grid-auto-flow:row; gap:20px; overflow:visible; padding-bottom:0;
+}
+.portfolio-page .portfolio-card:not(.welding-video-embed) {
+  display:block; width:100%; min-width:0; min-height:0; height:auto;
+  grid-column:auto; grid-row:auto; aspect-ratio:auto; padding:0;
+  border:1px solid #ddd5c5; border-radius:16px; overflow:hidden; background:#171714;
+}
+.portfolio-page .portfolio-card:not(.welding-video-embed)::before { display:none; }
+.portfolio-page .portfolio-card:not(.welding-video-embed) > picture { display:block; height:auto; }
+.portfolio-page .portfolio-grid > .portfolio-card[data-media-type="image"] img,
+.portfolio-page .portfolio-card:not(.welding-video-embed) img {
+  display:block; position:static; width:100%; height:260px; min-height:0; max-height:260px;
+  object-fit:cover; object-position:center; transform:none; filter:none;
+}
+.portfolio-page .portfolio-card:not(.welding-video-embed) .portfolio-caption {
+  display:block; position:static; min-height:96px; padding:18px 20px; background:#171714;
+}
+.portfolio-page .portfolio-caption strong { font-size:1.15rem; line-height:1.35; }
+.portfolio-page .work-gallery-heading [data-gallery-prev],
+.portfolio-page .work-gallery-heading [data-gallery-next] { display:none; }
+.portfolio-page .welding-video-embed { grid-column:1/-1; }
+@media(max-width:980px) {
+  .portfolio-page .portfolio-grid,.portfolio-page .landscaping-gallery,.portfolio-page .retaining-mosaic,.portfolio-page .welding-layout,.portfolio-page .work-gallery-track { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+@media(max-width:680px) {
+  .portfolio-page .portfolio-grid,.portfolio-page .landscaping-gallery,.portfolio-page .retaining-mosaic,.portfolio-page .welding-layout,.portfolio-page .work-gallery-track { grid-template-columns:minmax(0,1fr); gap:18px; }
+  .portfolio-page .portfolio-grid > .portfolio-card[data-media-type="image"] img,
+.portfolio-page .portfolio-card:not(.welding-video-embed) img { height:280px; max-height:280px; }
+  .portfolio-page .portfolio-card:not(.welding-video-embed) .portfolio-caption { min-height:0; }
+}

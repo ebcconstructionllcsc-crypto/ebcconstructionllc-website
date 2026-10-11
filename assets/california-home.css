@@ -1,0 +1,25 @@
+/* Let the signature driveway lead; keep the familiar charcoal and gold. */
+.hero { min-height: 820px; }
+.hero .hero-media { left: 35%; }
+.hero .hero-media img { object-position: 68% 70%; }
+.hero::before { background: linear-gradient(90deg,#11130f 12%,rgba(17,19,15,.95) 29%,rgba(17,19,15,.48) 54%,rgba(17,19,15,.04) 83%); }
+.hero .hero-inner { min-height: 820px; padding-top: 180px; padding-bottom: 64px; }
+.hero .hero-copy-wrap { max-width: 625px; width: 100%; background: none; box-shadow: none; border: 0; border-radius: 0; padding: 0; backdrop-filter: none; }
+.hero h1 { font-size: clamp(3.7rem,6.3vw,6rem); line-height: 1.02; text-wrap: balance; }
+.hero .hero-copy { max-width: 505px; color: #e0e0d8; }
+.hero .eyebrow { color: #f0cb7d; }
+.hero .hero-stats { max-width: 580px; margin-top: 35px; background: transparent; }
+.hero .hero-stat { background: rgba(17,19,15,.74); border: 1px solid rgba(230,198,130,.32); }
+.hero .btn.primary { background: #e5b958; color: #17130b; }
+.hero .btn.light { background: rgba(17,19,15,.6); }
+@media(max-width:760px) {
+  .hero { min-height:0; padding-bottom: 0; }
+  .hero .hero-media { left:0; top:0; height:410px; }
+  .hero .hero-media img { object-position:65% 65%; }
+  .hero::before { background: linear-gradient(180deg,rgba(17,19,15,.06),rgba(17,19,15,.1) 230px,#11130f 410px); }
+  .hero .hero-inner { min-height:0; padding-top:330px; padding-bottom:36px; }
+  .hero h1 { font-size:clamp(3rem,12vw,4.5rem); }
+  .hero .hero-copy { font-size:1.05rem; }
+  .hero .hero-stats { grid-template-columns:1fr; gap:8px; }
+  .hero .hero-stat { padding:12px 15px; display:flex; align-items:center; justify-content:space-between; gap:15px; }
+}
