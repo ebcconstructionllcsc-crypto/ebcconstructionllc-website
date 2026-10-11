@@ -1,4 +1,5 @@
 (() => {
+  if (document.documentElement.dataset.skipIntro === 'true') return;
   const page = location.pathname.split('/').pop() || 'index.html';
   const images = {
     'index.html': 'assets/images/logo.png',

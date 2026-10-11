@@ -20,6 +20,11 @@ for (const page of pages) {
   window.matchMedia = () => ({ matches: false });
   window.eval(fs.readFileSync('assets/site-intro.js', 'utf8'));
   const intro = doc.querySelector('.site-intro');
+  if (['index.html', 'contact.html'].includes(page)) {
+    assert.equal(intro, null, 'customers must reach the homepage and estimate form immediately');
+    dom.window.close();
+    continue;
+  }
   assert.ok(intro, 'original page-specific entrance restored');
   intro.querySelector('img').dispatchEvent(new window.Event('load'));
   intro.querySelector('button').click();
@@ -64,7 +69,7 @@ assert.equal(navigationDoc.querySelector('main').inert, false);
 assert.equal(navigationDoc.activeElement, menu, 'Escape restores menu focus');
 navigationDoc.querySelector('[data-lang-btn="es"]').click();
 assert.equal(navigationDoc.documentElement.lang, 'es', 'language must work when storage is blocked');
-assert.match(navigationDoc.querySelector('.hero-media img').alt, /Equipo de EBC/);
+assert.match(navigationDoc.querySelector('.hero-media img').alt, /Entrada de concreto instalada por EBC/);
 assert.equal(navigationDoc.querySelector('.hero video'), null, 'large original poster without an automatic video download');
 assert.ok(navigationDoc.querySelector('.intro-grid a[href="about.html"]'), 'restore About access in homepage content');
 const presentation = fs.readFileSync('assets/public-quality.css', 'utf8');

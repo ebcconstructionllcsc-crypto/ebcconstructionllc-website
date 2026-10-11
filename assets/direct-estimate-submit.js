@@ -12,12 +12,21 @@
 
   if (!form || !review || !actions || !transferNote || !editButton || !photosInput) return;
 
+  // Until server email delivery is configured and verified, use the existing
+  // on-device review/share flow. Never save a request only to the unused CRM.
+  if (form.dataset.deliveryMode === 'email') {
+    const emailLink = actions.querySelector('#email-request');
+    if (emailLink) actions.prepend(emailLink);
+    return;
+  }
+
   const ENDPOINT = 'https://tcjtodjxxszhhmsvqtge.supabase.co/functions/v1/submit-website-lead';
   const REQUEST_TIMEOUT_MS = 90000;
 
   let sending = false;
   let submitted = false;
   let reference = '';
+  let emailNotified = false;
 
   const isSpanish = () => document.documentElement.lang === 'es';
   const copy = (english, spanish) => isSpanish() ? spanish : english;
@@ -48,6 +57,7 @@
 
   // Keep the existing prepared SMS link: its request details are updated by app.js.
   const textLink = actions.querySelector('#text-request');
+  const emailLink = actions.querySelector('#email-request');
   const callLink = actions.querySelector('a[href^="tel:"]');
   const fallback = document.createElement('div');
   fallback.id = 'estimate-contact-fallback';
@@ -58,6 +68,7 @@
   fallbackText.dataset.es = 'Puedes llamar o abrir un mensaje con los detalles de tu solicitud. Para enviarlo por mensaje, adjunta tus fotos en la aplicación de mensajes y presiona Enviar allí.';
   const fallbackActions = document.createElement('div');
   fallbackActions.className = 'estimate-review-actions';
+  if (emailLink) fallbackActions.append(emailLink);
   if (callLink) fallbackActions.append(callLink);
   if (textLink) fallbackActions.append(textLink);
   fallback.append(fallbackText, fallbackActions);
@@ -87,16 +98,16 @@
       reviewKicker.textContent = copy(reviewKicker.dataset.en, reviewKicker.dataset.es);
     }
     if (reviewTitle) {
-      reviewTitle.dataset.en = submitted ? 'Request delivered to EBC.' : 'Review your request before sending.';
-      reviewTitle.dataset.es = submitted ? 'Solicitud entregada a EBC.' : 'Revisa tu solicitud antes de enviarla.';
+      reviewTitle.dataset.en = submitted ? (emailNotified ? 'Request received by EBC.' : 'One more step: contact Edgar.') : 'Review your request before sending.';
+      reviewTitle.dataset.es = submitted ? (emailNotified ? 'Solicitud recibida por EBC.' : 'Un paso más: contacta a Edgar.') : 'Revisa tu solicitud antes de enviarla.';
       reviewTitle.textContent = copy(reviewTitle.dataset.en, reviewTitle.dataset.es);
     }
     if (reviewIntro) {
       reviewIntro.dataset.en = submitted
-        ? 'EBC has received the information shown below.'
+        ? (emailNotified ? 'Your request has been accepted for email delivery to EBC.' : 'Your details were saved, but the email notification was not confirmed.')
         : 'Confirm the details and photos. Nothing is sent until you press the gold button.';
       reviewIntro.dataset.es = submitted
-        ? 'EBC recibió la información que aparece abajo.'
+        ? (emailNotified ? 'Tu solicitud fue aceptada para envío por correo a EBC.' : 'Tus datos se guardaron, pero no se confirmó la notificación por correo.')
         : 'Confirma los detalles y las fotos. Nada se envía hasta que presiones el botón dorado.';
       reviewIntro.textContent = copy(reviewIntro.dataset.en, reviewIntro.dataset.es);
     }
@@ -129,10 +140,18 @@
     status.dataset.es = spanish;
     status.textContent = copy(english, spanish);
     status.dataset.state = state;
-    fallback.hidden = state !== 'error';
+    fallback.hidden = state !== 'error' && state !== 'warning';
   }
 
   function setSuccessStatus() {
+    if (!emailNotified) {
+      setStatus(
+        `Request saved (${reference}), but email delivery to EBC was not confirmed. Please use Email or Text below to contact Edgar directly.`,
+        `Solicitud guardada (${reference}), pero no se confirmó el envío por correo a EBC. Usa Correo o Texto abajo para contactar directamente a Edgar.`,
+        'warning'
+      );
+      return;
+    }
     setStatus(
       `Request received by EBC. Confirmation: ${reference}.`,
       `Solicitud recibida por EBC. Confirmación: ${reference}.`,
@@ -255,10 +274,11 @@
         throw failure;
       }
 
+      emailNotified = payload.emailNotified === true;
       submitted = true;
       reference = String(payload.reference);
       review.dataset.submissionComplete = 'true';
-      window.dispatchEvent(new Event('ebc:leadreceived'));
+      if (emailNotified) window.dispatchEvent(new Event('ebc:leadreceived'));
       instruction.hidden = true;
       sendButton.disabled = true;
       editButton.hidden = true;

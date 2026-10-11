@@ -6,9 +6,9 @@ Official public website and private operations application for EBC Construction 
 
 The repository contains the bilingual marketing site for EBC's concrete, grading, and excavation services. Public pages are designed for GitHub Pages and use original EBC project media.
 
-The public estimate form reviews the request on-device first, then delivers the approved details and selected photos directly to the active EBC OS intake. The website posts only to the secured `submit-website-lead` Edge Function for the official domain. Leads are stored in the private EBC OS database, uploaded photos use the private `website-leads` bucket, and the browser never receives a service-role key.
+The public estimate form currently prepares a reviewed email to `ebcconstructionllcsc@gmail.com`, with text/call alternatives. It does not POST to EBC OS in email mode. Customers must attach photos and press Send in their chosen email app; opening the composer is never represented as confirmed delivery.
 
-The direct intake requires explicit consent to contact, validates required fields and image limits, restricts allowed origins, and returns an EBC confirmation reference after a successful save.
+Automatic delivery is pending configuration and end-to-end verification of the existing email provider. The live `submit-website-lead` function returned `emailNotified: false` in the 2026-10-11 internal delivery test. Before enabling direct mode, configure the server-side `RESEND_API_KEY` and verified `EBC_FROM_EMAIL`, confirm `EBC_NOTIFICATION_EMAIL`, include accessible photos in the email, and verify receipt in Gmail. Never expose these secrets in browser code. The inactive direct controller now distinguishes saved requests from confirmed email notification and offers email/text recovery.
 
 Project media must use original EBC photographs and videos. Do not replace source media, apply filters, overwrite originals, or introduce AI-styled edits.
 

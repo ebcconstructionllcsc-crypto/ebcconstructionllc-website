@@ -239,8 +239,8 @@
 
   function setDefaultStatus() {
     setTransferStatus(
-      'Choose how to send it. EBC receives the request only after you press Send in Messages, WhatsApp, Mail, or another app.',
-      'Elige cómo enviarlo. EBC recibe la solicitud únicamente después de que presiones Enviar en Mensajes, WhatsApp, Correo u otra aplicación.'
+      'Choose how to send it. EBC receives the request only after you press Send in Mail or Messages.',
+      'Elige cómo enviarlo. EBC recibe la solicitud únicamente después de que presiones Enviar en Correo o Mensajes.'
     );
   }
 
@@ -303,8 +303,8 @@
 
   shareButton?.addEventListener('click', () => {
     setTransferStatus(
-      'Opening your phone’s send options. Choose Messages, WhatsApp, Mail, or another app, then press Send.',
-      'Abriendo las opciones de envío. Elige Mensajes, WhatsApp, Correo u otra aplicación y después presiona Enviar.'
+      'Opening your phone’s send options. Choose Mail or Messages, then press Send.',
+      'Abriendo las opciones de envío. Elige Correo o Mensajes y después presiona Enviar.'
     );
   });
 

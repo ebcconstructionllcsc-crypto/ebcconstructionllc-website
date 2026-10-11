@@ -44,6 +44,7 @@ assert.ok(!JSON.stringify(commands()).includes('PRIVATE-CUSTOMER-NAME'));
 
 window.HTMLElement.prototype.scrollIntoView = () => {};
 window.matchMedia = () => ({ matches: true });
+form.removeAttribute('data-delivery-mode');
 window.eval(direct);
 window.fetch = async () => ({ ok: false, status: 500, json: async () => ({ ok: false }) });
 const button = window.document.querySelector('#direct-estimate-submit');
@@ -51,7 +52,7 @@ const tick = () => new Promise(resolve => setTimeout(resolve, 0));
 button.click();
 await tick();
 assert.equal(commands().filter(item => item[1] === 'generate_lead').length, 0);
-window.fetch = async () => ({ ok: true, json: async () => ({ ok: true, reference: 'PRIVATE-REFERENCE' }) });
+window.fetch = async () => ({ ok: true, json: async () => ({ ok: true, reference: 'PRIVATE-REFERENCE', emailNotified: true }) });
 button.click();
 await tick();
 button.click();

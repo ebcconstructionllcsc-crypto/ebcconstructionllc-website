@@ -1,0 +1,27 @@
+/* Customer-facing improvements; original project photography remains unchanged. */
+.hero { min-height: min(880px, 96svh); }
+.hero .hero-media img { object-position: center 65%; }
+.hero::before { background: linear-gradient(90deg, rgba(12,17,15,.92), rgba(12,17,15,.64) 48%, rgba(12,17,15,.12)); }
+.hero h1 { max-width: 880px; font-size: clamp(3.1rem, 6.5vw, 6.4rem); line-height: 1.04; letter-spacing: -.045em; }
+.hero .hero-copy { max-width: 600px; font-size: clamp(1rem, 1.6vw, 1.23rem); line-height: 1.7; }
+.hero .actions { gap: 14px; }
+.hero .btn { min-height: 52px; }
+#estimate-form { scroll-margin-top: 110px; }
+#estimate-form .intake-notice { border: 1px solid #b98936; border-left-width: 4px; padding: 20px; border-radius: 12px; background: #f8f0df; color: #282116; }
+#estimate-form .intake-notice strong { font-size: 1.08rem; }
+#estimate-form .intake-notice p { color: #453a28; line-height: 1.6; }
+#estimate-form .estimate-transfer-instruction { color: inherit !important; }
+#estimate-form .estimate-review-actions a, #estimate-form .estimate-review-actions button { min-height: 48px; }
+#estimate-form #email-request { background: #d4a64e; color: #16140f; border-color: #d4a64e; font-weight: 800; }
+#direct-estimate-status[data-state="warning"] { border-color: #e7bd65; background: #392e18; color: #fff; }
+.contact-list a[href^="mailto:"] { overflow-wrap: anywhere; }
+@media(max-width: 680px) {
+  .hero { min-height: 0; }
+  .hero::before { background: linear-gradient(180deg, rgba(12,17,15,.75), rgba(12,17,15,.82)); }
+  .hero .hero-inner { padding-top: 132px; padding-bottom: 55px; }
+  .hero h1 { font-size: clamp(2.85rem, 11vw, 4.6rem); }
+  .hero .actions { display: grid; grid-template-columns: 1fr; }
+  .hero .actions .btn { text-align: center; }
+  #estimate-form .estimate-review-actions { display: grid; grid-template-columns: 1fr; }
+  .contact-grid-wide { gap: 36px; }
+}

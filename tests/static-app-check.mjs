@@ -88,7 +88,7 @@ if (!/aria-live="polite"/.test(contactHtml)) fail('contact.html is missing an ac
 if (!/id="estimate-form"[\s\S]*?data-submission-mode="local-share"/.test(contactHtml)) {
   fail('contact.html must keep production intake in local sharing mode');
 }
-if (!/stay on this device until you choose Share, Text or Email/i.test(contactHtml)) {
+if (!/The form does not send automatically/i.test(contactHtml)) {
   fail('contact.html does not clearly disclose the local sharing boundary');
 }
 

@@ -9,6 +9,7 @@ function setup(service = 'welding') {
   const { window } = dom;
   window.matchMedia = () => ({ matches: true, addEventListener() {} });
   window.HTMLElement.prototype.scrollIntoView = () => {};
+  window.document.querySelector('#estimate-form').removeAttribute('data-delivery-mode');
   scripts.forEach(script => window.eval(script));
   return dom;
 }
@@ -66,7 +67,7 @@ assert.equal(received, 0);
 window.fetch = async (_url, options) => {
   assert.equal(options.body.get('service'), 'Welding / Soldadura');
   assert.equal(options.body.get('photos').name, 'sample.jpg');
-  return { ok: true, json: async () => ({ ok: true, reference: 'TEST-ONLY' }) };
+  return { ok: true, json: async () => ({ ok: true, reference: 'TEST-ONLY', emailNotified: true }) };
 };
 button.click();
 await tick();
@@ -80,3 +81,43 @@ await tick();
 assert.equal(received, 1, 'confirmed request cannot be submitted again');
 dom.window.close();
 console.log('Direct recovery: service context, preserved details/photos, call/SMS fallback, EN/ES errors, timeout uncertainty and confirmed receipt.');
+
+// The production email flow must never silently save requests only in the CRM.
+const mailDom = new JSDOM(html, { url: 'https://ebcconstructionllc.com/contact.html', runScripts: 'outside-only' });
+const w = mailDom.window;
+w.matchMedia = () => ({ matches: true, addEventListener() {} });
+w.HTMLElement.prototype.scrollIntoView = () => {};
+let posts = 0;
+w.fetch = async () => { posts++; throw new Error('Unexpected network submission'); };
+scripts.forEach(script => w.eval(script));
+for (const [id, value] of Object.entries({name:'Email Test',phone:'8645550100',email:'test@example.com',address:'Greer SC',service:'Concrete / Concreto',project:'Patio 12 x 16'})) w.document.getElementById(id).value = value;
+w.document.getElementById('consent').checked = true;
+w.document.getElementById('estimate-form').dispatchEvent(new w.Event('submit', {bubbles:true,cancelable:true}));
+await tick();
+assert.equal(posts,0);
+assert.equal(w.document.querySelector('#direct-estimate-submit'),null);
+const mail = w.document.getElementById('email-request');
+assert.equal(mail.parentElement.firstElementChild,mail);
+assert.match(decodeURIComponent(mail.href),/mailto:ebcconstructionllcsc@gmail.com\?subject=.*body=.*Patio 12 x 16/s);
+assert.match(w.document.getElementById('intake-mode-note').textContent,/does not send automatically/);
+assert.equal(w.document.getElementById('estimate-review').hidden,false);
+w.document.querySelector('[data-lang-btn="es"]').click();
+await tick();
+assert.match(w.document.getElementById('intake-mode-note').textContent,/no envía automáticamente/);
+mailDom.window.close();
+
+const warningDom = setup();
+const wd = warningDom.window.document;
+for (const [id,value] of Object.entries({name:'Test',phone:'8645550100',address:'Greer SC',project:'Test only'})) wd.getElementById(id).value=value;
+wd.getElementById('consent').checked=true;
+warningDom.window.fetch=async()=>({ok:true,json:async()=>({ok:true,reference:'TEST-WARNING',emailNotified:false})});
+wd.getElementById('estimate-form').dispatchEvent(new warningDom.window.Event('submit',{bubbles:true,cancelable:true}));
+await tick();
+wd.getElementById('direct-estimate-submit').click();
+await tick();
+assert.equal(wd.getElementById('direct-estimate-status').dataset.state,'warning');
+assert.equal(wd.getElementById('estimate-contact-fallback').hidden,false);
+assert.match(wd.getElementById('direct-estimate-status').textContent,/email delivery.*not confirmed/);
+assert.equal(wd.getElementById('direct-estimate-submit').disabled,true,'saved request must not be re-submitted');
+warningDom.window.close();
+console.log('Email-first production flow and unconfirmed server-notification recovery passed.');
