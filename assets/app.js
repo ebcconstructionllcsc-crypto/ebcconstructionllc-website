@@ -1,7 +1,7 @@
 const header = document.querySelector('.topbar');
 // Measure public pages only; never send request contents or URL parameters.
 (() => {
-  const pages = new Set(['/', '/index.html', '/about.html', '/services.html', '/projects.html', '/contact.html', '/reviews.html', '/landscaping-pavers.html', '/welding.html']);
+  const pages = new Set(['/', '/index.html', '/about.html', '/services.html', '/projects.html', '/contact.html', '/reviews.html', '/landscaping-pavers.html', '/welding.html', '/greenville-county-sc.html', '/spartanburg-county-sc.html']);
   if (!['ebcconstructionllc.com', 'www.ebcconstructionllc.com'].includes(location.hostname) || !pages.has(location.pathname)) return;
   const measurementId = 'G-6ETD936XE7';
   window.dataLayer = window.dataLayer || [];
