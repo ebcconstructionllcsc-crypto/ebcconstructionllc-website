@@ -15,6 +15,10 @@ function setup({ language = 'en', query = '' } = {}) {
     pretendToBeVisual: true
   });
   const { window } = dom;
+  // Exercise the retained local-share fallback in isolation; the direct controller
+  // and production markup are covered by direct-estimate-recovery-flow.mjs.
+  window.document.querySelector('#estimate-form').dataset.submissionMode = 'local-share';
+  window.document.querySelector('#estimate-form').dataset.deliveryMode = 'email';
   const sharedPayloads = [];
   const copiedText = [];
   let injectedScripts = 0;
