@@ -6,7 +6,7 @@
 section { padding-block: clamp(48px, 7vw, 88px); }
 .section-head { margin-bottom: 32px; }
 .display { font-size: clamp(2.5rem, 5.5vw, 5.2rem); line-height: 1.04; }
-.page-hero { padding: 142px 0 56px; background-image: linear-gradient(110deg,rgba(12,12,11,.91),rgba(12,12,11,.55)),url('images/portfolio/finish/wide-driveway-finish-1440.webp'); }
+.page-hero { padding: 142px 0 56px; background-image: linear-gradient(110deg,rgba(12,12,11,.91),rgba(12,12,11,.55)),var(--page-hero-photo, url('images/portfolio/finish/wide-driveway-finish-1440.webp')); }
 .page-hero h1 { font-size: clamp(3rem,7vw,6rem); line-height: 1.04; }
 .portfolio-hero { background-image: linear-gradient(90deg,rgba(12,12,11,.9),rgba(12,12,11,.4)),url('images/gallery-20261002/driveway-angled-joints-1440.webp'); }
 .portfolio-hero-inner { padding-block: 22px; }
@@ -70,3 +70,9 @@ html.site-intro-active { overflow: hidden; }
 .portfolio-page .portfolio-card[hidden], .portfolio-page .portfolio-phase[hidden] { display: none !important; }
 @media (max-width: 980px) { .specialty-gallery .portfolio-card { grid-column: span 6; } }
 @media (max-width: 680px) { .specialty-gallery .portfolio-card { grid-column: auto; } }
+
+/* A distinct real EBC project welcomes visitors to each public page. */
+.services-hero { --page-hero-photo: url('images/portfolio/finish/wide-driveway-finish-1440.webp'); }
+.about-hero { --page-hero-photo: url('images/gallery-20261002/crew-screeding-concrete-1440.webp'); }
+.reviews-hero { --page-hero-photo: url('images/gallery-20261002/backyard-patio-diagonal-joints-1920.webp'); }
+.contact-hero { --page-hero-photo: url('images/gallery-20261002/residential-concrete-access-wide-1440.webp'); }
