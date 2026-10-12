@@ -85,11 +85,11 @@ for (const requiredId of [
 }
 if (/formsubmit\.co/i.test(contactHtml)) fail('contact.html still sends customer information to FormSubmit');
 if (!/aria-live="polite"/.test(contactHtml)) fail('contact.html is missing an accessible live submission status');
-if (!/id="estimate-form"[\s\S]*?data-submission-mode="local-share"/.test(contactHtml)) {
-  fail('contact.html must keep production intake in local sharing mode');
+if (!/id="estimate-form"[\s\S]*?data-submission-mode="direct"/.test(contactHtml)) {
+  fail('contact.html must enable the verified direct delivery flow');
 }
-if (!/The form does not send automatically/i.test(contactHtml)) {
-  fail('contact.html does not clearly disclose the local sharing boundary');
+if (!/press Send request to EBC/i.test(contactHtml)) {
+  fail('contact.html must explain the explicit send action');
 }
 
 const servicesHtml = fs.readFileSync(path.join(root, 'services.html'), 'utf8');
