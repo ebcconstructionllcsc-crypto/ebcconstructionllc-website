@@ -158,8 +158,8 @@ const contactHtml = read('contact.html');
 if (/formsubmit\.co/i.test(contactHtml)) {
   fail('contact.html still exposes customer submissions to an external form service');
 }
-if (!/data-submission-mode="local-share"/.test(contactHtml)) {
-  fail('public estimate delivery is not locked to the local sharing flow');
+if (!/data-submission-mode="direct"/.test(contactHtml)) {
+  fail('public estimate delivery must use the verified direct submission controller');
 }
 if (/supabase\.co|createClient\(|\.rpc\('submit_estimate_request'|project-files/.test(publicScript)) {
   fail('public estimate runtime still connects to the uncertified production intake');
