@@ -82,7 +82,7 @@ assert.equal(received, 1, 'confirmed request cannot be submitted again');
 dom.window.close();
 console.log('Direct recovery: service context, preserved details/photos, call/SMS fallback, EN/ES errors, timeout uncertainty and confirmed receipt.');
 
-// The production email flow must never silently save requests only in the CRM.
+// Production must offer direct delivery and wait for the explicit send action.
 const mailDom = new JSDOM(html, { url: 'https://ebcconstructionllc.com/contact.html', runScripts: 'outside-only' });
 const w = mailDom.window;
 w.matchMedia = () => ({ matches: true, addEventListener() {} });
@@ -95,15 +95,15 @@ w.document.getElementById('consent').checked = true;
 w.document.getElementById('estimate-form').dispatchEvent(new w.Event('submit', {bubbles:true,cancelable:true}));
 await tick();
 assert.equal(posts,0);
-assert.equal(w.document.querySelector('#direct-estimate-submit'),null);
+assert.ok(w.document.querySelector('#direct-estimate-submit'));
 const mail = w.document.getElementById('email-request');
-assert.equal(mail.parentElement.firstElementChild,mail);
+assert.equal(w.document.getElementById('estimate-contact-fallback').hidden,true);
 assert.match(decodeURIComponent(mail.href),/mailto:ebcconstructionllcsc@gmail.com\?subject=.*body=.*Patio 12 x 16/s);
-assert.match(w.document.getElementById('intake-mode-note').textContent,/does not send automatically/);
+assert.match(w.document.getElementById('intake-mode-note').textContent,/Send request to EBC/);
 assert.equal(w.document.getElementById('estimate-review').hidden,false);
 w.document.querySelector('[data-lang-btn="es"]').click();
 await tick();
-assert.match(w.document.getElementById('intake-mode-note').textContent,/no envía automáticamente/);
+assert.match(w.document.getElementById('intake-mode-note').textContent,/Enviar solicitud a EBC/);
 mailDom.window.close();
 
 const warningDom = setup();
@@ -120,4 +120,4 @@ assert.equal(wd.getElementById('estimate-contact-fallback').hidden,false);
 assert.match(wd.getElementById('direct-estimate-status').textContent,/email delivery.*not confirmed/);
 assert.equal(wd.getElementById('direct-estimate-submit').disabled,true,'saved request must not be re-submitted');
 warningDom.window.close();
-console.log('Email-first production flow and unconfirmed server-notification recovery passed.');
+console.log('Direct production flow and unconfirmed server-notification recovery passed.');
