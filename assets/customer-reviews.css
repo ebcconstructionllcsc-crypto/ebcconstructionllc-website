@@ -1,0 +1,30 @@
+.customer-feedback{padding-block:clamp(40px,6vw,80px)}
+.customer-feedback[hidden]{display:none}
+.customer-feedback .section-head{max-width:780px;margin-bottom:32px}
+.review-captures{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;align-items:start}
+.review-capture{margin:0;min-width:0;overflow:hidden;border:1px solid var(--line);border-radius:18px;background:#fff;box-shadow:0 12px 36px rgba(16,16,15,.08)}
+.review-capture>a{display:block;background:#fff}
+.review-capture img{display:block;width:100%;height:auto;object-fit:contain}
+.review-capture figcaption{padding:18px 20px;color:var(--ink);line-height:1.5}
+.review-capture figcaption strong{display:block;font-size:1.1rem}
+.review-source{display:block;color:var(--muted);font-size:.9rem;margin-block:4px 10px}
+.review-transcript,.review-long-capture{border-top:1px solid var(--line)}
+.review-transcript{margin-top:16px;padding-top:12px}
+.review-transcript summary,.review-long-capture summary{cursor:pointer;font-weight:700;line-height:1.5}
+.review-long-capture summary{padding:24px;color:var(--ink)}
+.review-transcript blockquote{margin:16px 0 0;line-height:1.7;font-size:1rem;overflow-wrap:anywhere}
+.review-transcript blockquote p{margin:0 0 16px}
+.review-capture:has(.review-long-capture){grid-column:1/-1;max-width:850px;width:100%;justify-self:center}
+.review-capture figcaption>a{display:inline-block;color:inherit;text-decoration:underline;text-underline-offset:3px}
+.review-capture a:focus-visible{outline:3px solid var(--accent);outline-offset:4px}
+.customer-feedback .actions{margin-top:28px}
+.customer-quote-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px;align-items:stretch}
+.customer-quote{display:flex;flex-direction:column;min-width:0;padding:30px;border-radius:18px;border:1px solid var(--line);background:#fff;color:var(--ink);box-shadow:0 12px 36px rgba(16,16,15,.06)}
+.customer-quote-mark{color:var(--accent-dark);font-family:Georgia,serif;font-size:4rem;line-height:1;height:42px}
+.customer-quote blockquote{margin:16px 0 28px;font-size:clamp(1.1rem,2vw,1.4rem);line-height:1.6;overflow-wrap:anywhere;flex:1}
+.customer-quote footer{border-top:1px solid var(--line);padding-top:18px;font-size:.95rem}
+.customer-quote footer strong,.customer-quote footer span{display:block}
+.customer-quote footer span{color:var(--muted);font-size:.85rem;margin-top:5px}
+@media(max-width:620px){.customer-quote-grid{grid-template-columns:minmax(0,1fr)}.customer-quote{padding:24px}}
+@media(max-width:980px){.review-captures{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:620px){.review-captures{grid-template-columns:minmax(0,1fr);gap:20px}.customer-feedback .actions .btn{width:100%;text-align:center}}
