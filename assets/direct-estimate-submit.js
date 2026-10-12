@@ -93,8 +93,8 @@
     }
 
     if (reviewKicker) {
-      reviewKicker.dataset.en = 'Ready to send';
-      reviewKicker.dataset.es = 'Listo para enviar';
+      reviewKicker.dataset.en = submitted ? 'Request submitted' : 'Ready to send';
+      reviewKicker.dataset.es = submitted ? 'Solicitud enviada' : 'Listo para enviar';
       reviewKicker.textContent = copy(reviewKicker.dataset.en, reviewKicker.dataset.es);
     }
     if (reviewTitle) {
@@ -123,6 +123,14 @@
     transferNote.textContent = copy(transferNote.dataset.en, transferNote.dataset.es);
 
     if (submitted) {
+      const formStatus = form.querySelector('.form-status');
+      if (formStatus) {
+        formStatus.dataset.en = 'Request submitted. See the delivery status below.';
+        formStatus.dataset.es = 'Solicitud enviada. Consulta el estado de entrega abajo.';
+        formStatus.textContent = copy(formStatus.dataset.en, formStatus.dataset.es);
+      }
+      const reviewButton = form.querySelector('button[type="submit"]');
+      if (reviewButton) reviewButton.hidden = true;
       setSuccessStatus();
     } else if (status.dataset.state === 'error' || sending) {
       status.textContent = copy(status.dataset.en, status.dataset.es);
