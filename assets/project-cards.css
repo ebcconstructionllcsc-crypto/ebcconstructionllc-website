@@ -35,3 +35,12 @@
 .portfolio-page .portfolio-card:not(.welding-video-embed) img { height:280px; max-height:280px; }
   .portfolio-page .portfolio-card:not(.welding-video-embed) .portfolio-caption { min-height:0; }
 }
+
+/* Project updates: local photos and official Instagram video players. */
+.recent-projects { padding:64px 0; scroll-margin-top:110px; }
+.recent-reels { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:24px; margin:32px 0; align-items:start; }
+.recent-reel { min-width:0; padding:20px; border:1px solid #ddd5c5; border-radius:16px; background:#fff; color:#171714; }
+.recent-reel h3 { margin:0 0 16px; font-size:1.2rem; line-height:1.4; }
+.recent-reel .instagram-media { width:100% !important; min-width:0 !important; max-width:100% !important; margin:0 !important; }
+.recent-reel-link { display:inline-block; margin-top:16px; color:#6b4810; text-decoration:underline; }
+@media(max-width:680px) { .recent-reels { grid-template-columns:minmax(0,1fr); } .recent-projects { padding:40px 0; } .recent-reel { padding:12px; } }
