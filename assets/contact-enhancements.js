@@ -17,6 +17,8 @@
   const requestedService = new URLSearchParams(window.location.search).get('service');
   const serviceValues = {
     concrete: 'Concrete / Concreto',
+    landscaping: 'Landscaping / Paisajismo',
+    pavers: 'Pavers / Adoquines',
     welding: 'Welding / Soldadura',
     grading: 'Grading & Excavation / Nivelación y Excavación',
     excavation: 'Grading & Excavation / Nivelación y Excavación',
