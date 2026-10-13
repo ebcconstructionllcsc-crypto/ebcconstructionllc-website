@@ -12,6 +12,7 @@ function setup(hash = '') {
   window.HTMLDialogElement.prototype.close = function () { this.open = false; this.dispatchEvent(new window.Event('close')); };
   window.HTMLMediaElement.prototype.pause = () => {};
   window.HTMLMediaElement.prototype.load = () => {};
+  window.document.querySelector('.topbar').getBoundingClientRect = () => ({ height: 142 });
   window.eval(script);
   return dom;
 }
@@ -20,6 +21,10 @@ function setup(hash = '') {
 // even after explicitly selecting the all-services overview.
 const dom = setup();
 const doc = dom.window.document;
+assert.equal(doc.documentElement.style.getPropertyValue('--portfolio-header-offset'), '150px', 'Sticky filters clear the actual header height');
+doc.querySelector('.topbar').getBoundingClientRect = () => ({ height: 72 });
+dom.window.dispatchEvent(new dom.window.Event('resize'));
+assert.equal(doc.documentElement.style.getPropertyValue('--portfolio-header-offset'), '80px', 'Sticky offset follows the mobile header height');
 doc.querySelector('[data-filter="all"]').click();
 const weld = doc.querySelector('#welding [data-media-type="image"]');
 weld.click();
@@ -48,6 +53,7 @@ for (const [hash, service] of [['', 'concrete'], ['#concrete', 'concrete'], ['#l
   const d = page.window.document;
   assert.ok([...d.querySelectorAll('[data-phase]')].filter(s=>!s.hidden).every(s=>s.dataset.service === service), `${hash}: correct service on entry`);
   assert.match(d.querySelector('.portfolio-hero').getAttribute('style'), service === 'welding' ? /workshop-welding/ : service === 'landscaping' ? /landscaping-20261013/ : /driveway/);
+  assert.match(d.querySelector('.portfolio-hero').style.getPropertyValue('--portfolio-hero-photo'), /url\(['"]https:\/\/ebcconstructionllc\.com\/assets\/images\//, 'CSS custom-property URLs must be absolute to avoid assets/assets resolution');
   page.window.close();
 }
 

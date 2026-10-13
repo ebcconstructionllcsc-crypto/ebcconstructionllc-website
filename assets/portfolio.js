@@ -203,6 +203,13 @@
   const filterButtons = [...document.querySelectorAll('[data-filter]')];
   const phases = [...document.querySelectorAll('[data-phase]')];
   const filterRegion = document.querySelector('.portfolio-phases');
+  const header = document.querySelector('.topbar');
+  function updateHeaderOffset() {
+    if (header) document.documentElement.style.setProperty('--portfolio-header-offset', `${Math.ceil(header.getBoundingClientRect().height) + 8}px`);
+  }
+  updateHeaderOffset();
+  window.addEventListener('resize', updateHeaderOffset);
+  if (header && typeof ResizeObserver !== 'undefined') new ResizeObserver(updateHeaderOffset).observe(header);
   const serviceFor = element => element?.closest('[data-service]')?.dataset.service || 'concrete';
   const servicePhotos = {
     concrete: 'assets/images/gallery-20261002/driveway-angled-joints-1440.webp',
@@ -249,7 +256,7 @@
     });
     const detailFilters = document.querySelector('.portfolio-detail-filters');
     if (detailFilters) detailFilters.hidden = filter !== 'all' && service !== 'concrete';
-    document.querySelector('.portfolio-hero')?.style.setProperty('--portfolio-hero-photo', `url('${servicePhotos[service]}')`);
+    document.querySelector('.portfolio-hero')?.style.setProperty('--portfolio-hero-photo', `url('${new URL(servicePhotos[service], document.baseURI).href}')`);
 
     if (filterRegion) {
       const label = filterLabels[filter] || [filter, filter];
