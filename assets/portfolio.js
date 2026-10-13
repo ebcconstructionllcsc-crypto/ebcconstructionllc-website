@@ -203,8 +203,16 @@
   const filterButtons = [...document.querySelectorAll('[data-filter]')];
   const phases = [...document.querySelectorAll('[data-phase]')];
   const filterRegion = document.querySelector('.portfolio-phases');
+  const serviceFor = element => element?.closest('[data-service]')?.dataset.service || 'concrete';
+  const servicePhotos = {
+    concrete: 'assets/images/gallery-20261002/driveway-angled-joints-1440.webp',
+    landscaping: 'assets/images/landscaping-20261013/site-preparation-1440.webp',
+    welding: 'assets/images/welding-20261006/workshop-welding-941.webp'
+  };
 
   const filterLabels = {
+    'concrete-work': ['concrete projects', 'proyectos de concreto'],
+    landscaping: ['landscaping and pavers', 'paisajismo y adoquines'],
     specialty: ['California-style specialty', 'nuestra especialidad estilo California'],
     driveways: ['driveways and driveway extensions', 'entradas y ampliaciones'],
     porches: ['porches and patios', 'porches y patios'],
@@ -220,8 +228,9 @@
   };
 
   function setFilter(filter) {
+    const service = ['landscaping', 'welding'].includes(filter) ? filter : 'concrete';
     filterButtons.forEach(button => {
-      const active = button.dataset.filter === filter;
+      const active = button.dataset.filter === filter || (button.dataset.filter === 'concrete-work' && service === 'concrete' && filter !== 'all');
       button.classList.toggle('active', active);
       button.setAttribute('aria-pressed', String(active));
     });
@@ -230,10 +239,17 @@
       const cards = [...phase.querySelectorAll('.portfolio-card')];
       cards.forEach(card => {
         const category = card.dataset.category || phase.dataset.phase;
-        card.hidden = !(filter === 'all' || (filter === 'specialty' && phase.dataset.phase === 'specialty') || category === filter);
+        const serviceMatch = filter === 'concrete-work' ? serviceFor(card) === 'concrete' : filter === 'landscaping' && serviceFor(card) === 'landscaping';
+        card.hidden = !(filter === 'all' || serviceMatch || (filter === 'specialty' && phase.dataset.phase === 'specialty') || category === filter);
       });
       phase.hidden = !cards.some(card => !card.hidden);
     });
+    document.querySelectorAll('[data-service-only]').forEach(block => {
+      block.hidden = filter !== 'all' && block.dataset.serviceOnly !== service;
+    });
+    const detailFilters = document.querySelector('.portfolio-detail-filters');
+    if (detailFilters) detailFilters.hidden = filter !== 'all' && service !== 'concrete';
+    document.querySelector('.portfolio-hero')?.style.setProperty('--portfolio-hero-photo', `url('${servicePhotos[service]}')`);
 
     if (filterRegion) {
       const label = filterLabels[filter] || [filter, filter];
@@ -247,19 +263,15 @@
   filterButtons.forEach(button => {
     button.addEventListener('click', () => setFilter(button.dataset.filter || 'all'));
   });
-  if (window.location.hash === '#welding') setFilter('welding');
-  if (window.location.hash === '#preparation-media') setFilter('preparation');
-  if (window.location.hash === '#retaining-walls') setFilter('retaining-walls');
-    if (window.location.hash === '#slab-steps') setFilter('slabs');
-  if (window.location.hash === '#driveways') setFilter('driveways');
-  if (window.location.hash === '#california-style') setFilter('specialty');
+  const hashFilters = {
+    '#concrete': 'concrete-work', '#landscaping': 'landscaping', '#welding': 'welding',
+    '#preparation-media': 'preparation', '#retaining-walls': 'retaining-walls',
+    '#slab-steps': 'slabs', '#driveways': 'driveways', '#porches': 'porches',
+    '#sidewalks': 'sidewalks', '#california-style': 'specialty'
+  };
+  setFilter(hashFilters[window.location.hash] || 'concrete-work');
   window.addEventListener('hashchange', () => {
-    if (window.location.hash === '#welding') setFilter('welding');
-    if (window.location.hash === '#preparation-media') setFilter('preparation');
-    if (window.location.hash === '#retaining-walls') setFilter('retaining-walls');
-    if (window.location.hash === '#slab-steps') setFilter('slabs');
-    if (window.location.hash === '#california-style') setFilter('specialty');
-    if (window.location.hash === '#driveways') setFilter('driveways');
+    setFilter(hashFilters[window.location.hash] || 'concrete-work');
   });
 
   const dialog = document.querySelector('#portfolio-lightbox');
@@ -284,9 +296,9 @@
   dialogCaption?.after(photoControls);
 
   function movePhoto(step) {
-    const scope = activeTrigger?.closest('.portfolio-phases') || document;
+    const scope = activeTrigger?.closest('.portfolio-phases, [data-gallery-scope], .visualize-media') || activeTrigger?.closest('section') || document;
     const photos = [...scope.querySelectorAll('.portfolio-card[data-media-type="image"]')].filter(card => {
-      return !card.hidden && !card.closest('[data-phase]')?.hidden && !card.classList.contains('gallery-deferred');
+      return serviceFor(card) === serviceFor(activeTrigger) && !card.closest('[hidden]') && !card.classList.contains('gallery-deferred');
     });
     const index = photos.indexOf(activeTrigger);
     if (index < 0 || !photos.length) return;

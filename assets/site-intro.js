@@ -9,6 +9,8 @@
     'contact.html': 'assets/images/gallery-20261002/crew-screeding-concrete-720.webp',
     'reviews.html': 'assets/images/gallery-20261002/backyard-patio-diagonal-joints-720.webp'
   };
+  // Service deep links must not flash a concrete photo before their own gallery.
+  if (page === 'projects.html' && ['#landscaping', '#welding'].includes(window.location.hash)) return;
   if (!images[page] || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   const key = 'ebc-intro-' + page;
   try { if (sessionStorage.getItem(key)) return; } catch { /* storage optional */ }

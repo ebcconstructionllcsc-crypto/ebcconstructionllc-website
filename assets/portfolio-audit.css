@@ -50,6 +50,15 @@
 .portfolio-filter button { flex: 0 0 auto; min-height: 44px; padding: 9px 16px; border: 1px solid transparent; border-radius: 999px; background: transparent; cursor: pointer; font-weight: 850; }
 .portfolio-filter button:hover, .portfolio-filter button:focus-visible { border-color: var(--ink); }
 .portfolio-filter button.active { color: white; background: var(--ink); }
+.portfolio-controls { position: sticky; top: 78px; z-index: 20; margin-bottom: 48px; padding: 12px; border-radius: 18px; background: #f3efe6; box-shadow: 0 12px 32px rgba(16,16,15,.12); }
+.portfolio-controls .portfolio-filter { position: static; margin: 0; padding: 6px 0; border: 0; border-radius: 0; box-shadow: none; background: transparent; backdrop-filter: none; }
+.portfolio-controls .portfolio-service-filter { flex-wrap: wrap; overflow: visible; }
+.portfolio-service-filter button { border-color: #b6a57f; }
+.portfolio-controls [hidden], .portfolio-page [data-service-only][hidden] { display: none !important; }
+body.portfolio-page .portfolio-hero { background-image: linear-gradient(90deg,rgba(12,12,11,.9),rgba(12,12,11,.4)),var(--portfolio-hero-photo,url('images/gallery-20261002/driveway-angled-joints-1440.webp')); }
+#landscaping, #welding { scroll-margin-top: 210px; }
+.landscaping-projects .recent-reel { margin-top: 28px; max-width: 620px; }
+@media(max-width:680px) { .portfolio-controls { top: 70px; padding: 8px; } .portfolio-controls .portfolio-filter { margin-inline: 0; } .portfolio-service-filter button { padding: 10px 12px; font-size: .82rem; } }
 .portfolio-phases { display: grid; gap: 104px; }
 .portfolio-phase[hidden] { display: none !important; }
 .phase-heading { display: grid; grid-template-columns: 100px minmax(0,760px); gap: 26px; align-items: start; margin-bottom: 32px; }
