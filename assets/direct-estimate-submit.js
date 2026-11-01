@@ -22,6 +22,7 @@
 
   const ENDPOINT = 'https://tcjtodjxxszhhmsvqtge.supabase.co/functions/v1/submit-website-lead';
   const REQUEST_TIMEOUT_MS = 90000;
+  const requestControls = [...form.querySelectorAll('input, select, textarea, #use-location, button[type="submit"]')];
 
   let sending = false;
   let submitted = false;
@@ -169,6 +170,10 @@
 
   function errorCopy(code) {
     const errors = {
+      email_not_configured: [
+        'Online delivery is temporarily unavailable. Use Email or Text below to send your request to Edgar. Your details and photos are still here.',
+        'El envío en línea no está disponible por el momento. Usa Correo o Texto abajo para enviar tu solicitud a Edgar. Tus datos y fotos siguen aquí.'
+      ],
       too_many_requests: [
         'This phone number submitted several requests recently. Wait a few minutes and try again.',
         'Este número envió varias solicitudes recientemente. Espera unos minutos e inténtalo de nuevo.'
@@ -235,6 +240,7 @@
 
   function setBusy(busy) {
     sending = busy;
+    requestControls.forEach(control => { control.disabled = busy || submitted; });
     sendButton.disabled = busy || submitted;
     editButton.disabled = busy || submitted;
     review.setAttribute('aria-busy', String(busy));

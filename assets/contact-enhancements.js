@@ -45,8 +45,10 @@
   }
 
   function choose(item) {
+    if (addressInput.disabled) return;
     addressInput.value = item.full;
-    closeResults();
+    addressInput.dispatchEvent(new Event('change', { bubbles: true }));
+    stopSearch();
     setStatus('Complete address selected.', 'Dirección completa seleccionada.');
   }
 
@@ -166,13 +168,16 @@
         const locality = [p.city || p.town || p.village || p.county, p.state, p.postcode].filter(Boolean).join(', ');
         const full = [street, locality].filter(Boolean).join(', ');
         if (!full) throw new Error('missing');
+        if (addressInput.disabled) return;
         addressInput.value = full;
+        addressInput.dispatchEvent(new Event('change', { bubbles: true }));
+        stopSearch();
         setStatus('Location added. Verify the street number.', 'Ubicación agregada. Verifica el número de la calle.');
       } catch {
         setStatus('Location found, but the address could not be completed. Enter it manually.', 'Encontramos tu ubicación, pero no pudimos completar la dirección. Escríbela manualmente.');
-      } finally { locateButton.disabled = false; }
+      } finally { locateButton.disabled = addressInput.disabled; }
     }, () => {
-      locateButton.disabled = false;
+      locateButton.disabled = addressInput.disabled;
       setStatus('Location permission was not granted.', 'No se autorizó la ubicación.');
     }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 });
   });

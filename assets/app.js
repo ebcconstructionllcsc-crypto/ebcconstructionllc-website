@@ -479,6 +479,10 @@ if (estimateForm) {
     resetPreparedRequest();
   });
 
+  estimateForm.addEventListener('change', event => {
+    if (event.target !== photosInput) resetPreparedRequest();
+  });
+
   estimateReviewEdit?.addEventListener('click', () => {
     estimateForm.querySelector('#name')?.focus();
     estimateForm.querySelector('#name')?.scrollIntoView({

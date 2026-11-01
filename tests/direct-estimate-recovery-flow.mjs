@@ -121,3 +121,35 @@ assert.match(wd.getElementById('direct-estimate-status').textContent,/email deli
 assert.equal(wd.getElementById('direct-estimate-submit').disabled,true,'saved request must not be re-submitted');
 warningDom.window.close();
 console.log('Direct production flow and unconfirmed server-notification recovery passed.');
+
+// An automatically completed address must invalidate the old review and its links.
+const addressDom = setup();
+const aw = addressDom.window;
+const ad = aw.document;
+for (const [id, value] of Object.entries({ name: 'Address test', phone: '8645550100', address: 'Original project address', project: 'Test only' })) ad.getElementById(id).value = value;
+ad.getElementById('consent').checked = true;
+ad.getElementById('estimate-form').dispatchEvent(new aw.Event('submit', { bubbles: true, cancelable: true }));
+await tick();
+Object.defineProperty(aw.navigator, 'geolocation', { value: { getCurrentPosition: callback => callback({ coords: { latitude: 34.9, longitude: -82.2 } }) } });
+aw.fetch = async () => ({ ok: true, json: async () => ({ features: [{ properties: { housenumber: '10', street: 'Example Street', city: 'Greer', state: 'SC' } }] }) });
+ad.getElementById('use-location').click();
+await tick();
+assert.equal(ad.getElementById('estimate-review').hidden, true, 'Auto-filled address must require a new review');
+ad.getElementById('estimate-form').dispatchEvent(new aw.Event('submit', { bubbles: true, cancelable: true }));
+await tick();
+assert.match(ad.getElementById('estimate-review-details').textContent, /10 Example Street/);
+assert.match(decodeURIComponent(ad.getElementById('email-request').href), /10 Example Street/);
+
+let finishDelivery;
+aw.fetch = () => new Promise(resolve => { finishDelivery = resolve; });
+ad.getElementById('direct-estimate-submit').click();
+assert.equal(ad.getElementById('address').disabled, true, 'Reviewed fields must stay stable during delivery');
+assert.equal(ad.getElementById('photos').disabled, true);
+finishDelivery({ ok: false, status: 503, json: async () => ({ error: 'EMAIL_NOT_CONFIGURED' }) });
+await tick();
+assert.equal(ad.getElementById('address').disabled, false, 'Failure must restore editable fields');
+assert.equal(ad.getElementById('photos').disabled, false);
+assert.match(ad.getElementById('direct-estimate-status').textContent, /Email or Text/);
+assert.equal(ad.getElementById('address').value, '10 Example Street, Greer, SC');
+addressDom.window.close();
+console.log('Address completion refreshes the review; delivery locks fields and restores them on failure.');
