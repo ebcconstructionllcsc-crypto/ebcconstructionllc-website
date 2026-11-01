@@ -52,7 +52,7 @@ for (const [hash, service] of [['', 'concrete'], ['#concrete', 'concrete'], ['#l
   const page = setup(hash);
   const d = page.window.document;
   assert.ok([...d.querySelectorAll('[data-phase]')].filter(s=>!s.hidden).every(s=>s.dataset.service === service), `${hash}: correct service on entry`);
-  assert.match(d.querySelector('.portfolio-hero').getAttribute('style'), service === 'welding' ? /workshop-welding/ : service === 'landscaping' ? /landscaping-20261013/ : /driveway/);
+  assert.match(d.querySelector('.portfolio-hero').getAttribute('style'), service === 'welding' ? /workshop-welding/ : service === 'landscaping' ? /journal-20261101/ : /driveway/);
   assert.match(d.querySelector('.portfolio-hero').style.getPropertyValue('--portfolio-hero-photo'), /url\(['"]https:\/\/ebcconstructionllc\.com\/assets\/images\//, 'CSS custom-property URLs must be absolute to avoid assets/assets resolution');
   page.window.close();
 }
@@ -61,18 +61,18 @@ const land = new JSDOM(fs.readFileSync('landscaping-pavers.html', 'utf8')).windo
 const welding = new JSDOM(fs.readFileSync('welding.html', 'utf8')).window.document;
 assert.ok(land.querySelector('a[href="projects.html#landscaping"]'));
 assert.ok(welding.querySelector('a[href="projects.html#welding"]'));
-assert.match(land.querySelector('.dedicated-hero').getAttribute('style'), /landscaping-20261013/);
-for (const [document, allowed] of [[land, /landscaping-20261013|logo/], [welding, /welding-20261006|logo/]]) {
+assert.match(land.querySelector('.dedicated-hero').getAttribute('style'), /journal-20261101/);
+for (const [document, allowed] of [[land, /journal-20261101\/sod-|logo/], [welding, /welding-20261006|logo/]]) {
   for (const img of document.querySelectorAll('img[src]')) {
     assert.match(img.getAttribute('src'), allowed, 'Service page images belong to that service');
     assert.ok(fs.existsSync(img.getAttribute('src')));
   }
 }
-assert.ok(land.querySelector('[data-instgrm-permalink="https://www.instagram.com/reel/DeTNAeNg0uX/"]'));
+assert.ok(land.querySelector('video[src="assets/video/journal-20261101/sod.mp4"]'));
 assert.equal(doc.querySelector('#recent-projects [data-instgrm-permalink="https://www.instagram.com/reel/DeTNAeNg0uX/"]'), null);
 
-for (const name of fs.readdirSync('assets/images/landscaping-20261013')) {
-  const bytes = fs.readFileSync(`assets/images/landscaping-20261013/${name}`);
+for (const name of fs.readdirSync('assets/images/journal-20261101')) {
+  const bytes = fs.readFileSync(`assets/images/journal-20261101/${name}`);
   assert.ok(bytes.length < 500_000, 'Optimized public photo stays under 500 KB');
   for (let offset = 12; offset + 8 <= bytes.length;) {
     assert.ok(!['EXIF', 'XMP '].includes(bytes.toString('ascii', offset, offset + 4)), 'Private camera metadata is stripped');

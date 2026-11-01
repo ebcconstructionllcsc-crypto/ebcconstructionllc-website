@@ -213,7 +213,7 @@
   const serviceFor = element => element?.closest('[data-service]')?.dataset.service || 'concrete';
   const servicePhotos = {
     concrete: 'assets/images/gallery-20261002/driveway-angled-joints-1440.webp',
-    landscaping: 'assets/images/landscaping-20261013/site-preparation-1440.webp',
+    landscaping: 'assets/images/journal-20261101/sod-2.webp',
     welding: 'assets/images/welding-20261006/workshop-welding-941.webp'
   };
 
@@ -235,7 +235,7 @@
   };
 
   function setFilter(filter) {
-    const service = ['landscaping', 'welding'].includes(filter) ? filter : 'concrete';
+    const service = filter === 'retaining-walls' ? 'landscaping' : ['landscaping', 'welding'].includes(filter) ? filter : 'concrete';
     filterButtons.forEach(button => {
       const active = button.dataset.filter === filter || (button.dataset.filter === 'concrete-work' && service === 'concrete' && filter !== 'all');
       button.classList.toggle('active', active);

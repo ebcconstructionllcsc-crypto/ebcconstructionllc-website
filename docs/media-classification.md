@@ -46,3 +46,18 @@ paver-installation photograph was found among the reviewed samples.
 - Service deep links skip the old concrete-photo entrance animation.
 - `tests/service-media-flow.mjs` protects service boundaries, backgrounds,
   deep links, source placement, photo existence, size and private metadata.
+
+
+## November 1 journal curation
+
+Original footage visually reviewed in Drive; selected frames and silent H.264 clips are published. No synthetic project imagery. File upload dates are not presented as completion dates. Each journal story stays within one project.
+
+| Gallery | Original | Drive file ID | Published clip |
+|---|---|---|---|
+| deck | IMG_0686.mov | `1TkNG9iCLO7TohS_bAqMHe2ArSLZcvirC` | 0–18s |
+| sod | IMG_5376.MOV | `1WMeun_ltdR1kFz4zJWivgVHReBQBbdkn` | 38–57s |
+| welding | IMG_5134.MOV | `1WchwKdM9EdHdiIfv6kvtVhbEhdFS_sUd` | 25–37s |
+| driveway | IMG_1281.MOV | `1kXpsZ6p9S6EhMUO3tjPw_Cw1RoHbAB_Y` | 2–22s |
+| walkway | IMG_0769.MOV | `1LeRv_pWqvLxrqBmkL6uujkPKVx1eUqff` | 0–12s |
+
+Sod images replace soil/gravel illustrations on the landscaping page and portfolio. Block walls belong to landscaping in the portfolio and have their own journal filter. Concrete joints are not labeled as pavers. The deck is explicitly in progress. The remaining patio, wall and workshop photos retain their previously documented provenance. Two social-only concrete videos link to their original EBC posts.

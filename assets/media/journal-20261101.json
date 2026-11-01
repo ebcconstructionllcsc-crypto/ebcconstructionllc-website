@@ -1,0 +1,407 @@
+[
+  {
+    "id": "deck",
+    "service": "decks",
+    "title": {
+      "en": "A deck takes shape",
+      "es": "Un deck toma forma"
+    },
+    "description": {
+      "en": "A closer look at the framing and boards as this outdoor space takes shape.",
+      "es": "Un recorrido por la estructura y las tablas mientras toma forma este espacio exterior."
+    },
+    "media": [
+      {
+        "type": "image",
+        "src": "assets/images/journal-20261101/deck-1.webp",
+        "caption": {
+          "en": "Deck framing in progress",
+          "es": "Estructura de deck en proceso"
+        }
+      },
+      {
+        "type": "image",
+        "src": "assets/images/journal-20261101/deck-2.webp",
+        "caption": {
+          "en": "Deck framing in progress",
+          "es": "Estructura de deck en proceso"
+        }
+      },
+      {
+        "type": "image",
+        "src": "assets/images/journal-20261101/deck-3.webp",
+        "caption": {
+          "en": "Deck framing in progress",
+          "es": "Estructura de deck en proceso"
+        }
+      },
+      {
+        "type": "video",
+        "src": "assets/video/journal-20261101/deck.mp4",
+        "caption": {
+          "en": "Deck framing in progress · Video",
+          "es": "Estructura de deck en proceso · Video"
+        },
+        "poster": "assets/images/journal-20261101/deck-1.webp"
+      }
+    ],
+    "cover": "assets/images/journal-20261101/deck-1.webp"
+  },
+  {
+    "id": "sod",
+    "service": "landscaping",
+    "title": {
+      "en": "Fresh sod, a new beginning",
+      "es": "Pasto nuevo, un nuevo comienzo"
+    },
+    "description": {
+      "en": "Sod installation around a residential backyard. Follow the work up close.",
+      "es": "Instalación de pasto en un patio residencial. Conoce el trabajo de cerca."
+    },
+    "media": [
+      {
+        "type": "image",
+        "src": "assets/images/journal-20261101/sod-1.webp",
+        "caption": {
+          "en": "Backyard sod installation",
+          "es": "Instalación de pasto en patio"
+        }
+      },
+      {
+        "type": "image",
+        "src": "assets/images/journal-20261101/sod-2.webp",
+        "caption": {
+          "en": "Backyard sod installation",
+          "es": "Instalación de pasto en patio"
+        }
+      },
+      {
+        "type": "image",
+        "src": "assets/images/journal-20261101/sod-3.webp",
+        "caption": {
+          "en": "Backyard sod installation",
+          "es": "Instalación de pasto en patio"
+        }
+      },
+      {
+        "type": "video",
+        "src": "assets/video/journal-20261101/sod.mp4",
+        "caption": {
+          "en": "Backyard sod installation · Video",
+          "es": "Instalación de pasto en patio · Video"
+        },
+        "poster": "assets/images/journal-20261101/sod-1.webp"
+      }
+    ],
+    "cover": "assets/images/journal-20261101/sod-2.webp"
+  },
+  {
+    "id": "welding",
+    "service": "welding",
+    "title": {
+      "en": "Precision at the weld",
+      "es": "Precisión en cada soldadura"
+    },
+    "description": {
+      "en": "A close-up of our welding work, captured on site.",
+      "es": "Una mirada de cerca a nuestro trabajo de soldadura en sitio."
+    },
+    "media": [
+      {
+        "type": "image",
+        "src": "assets/images/journal-20261101/welding-1.webp",
+        "caption": {
+          "en": "Welding in progress",
+          "es": "Soldadura en proceso"
+        }
+      },
+      {
+        "type": "image",
+        "src": "assets/images/journal-20261101/welding-2.webp",
+        "caption": {
+          "en": "Welding in progress",
+          "es": "Soldadura en proceso"
+        }
+      },
+      {
+        "type": "image",
+        "src": "assets/images/journal-20261101/welding-3.webp",
+        "caption": {
+          "en": "Welding in progress",
+          "es": "Soldadura en proceso"
+        }
+      },
+      {
+        "type": "video",
+        "src": "assets/video/journal-20261101/welding.mp4",
+        "caption": {
+          "en": "Welding in progress · Video",
+          "es": "Soldadura en proceso · Video"
+        },
+        "poster": "assets/images/journal-20261101/welding-1.webp"
+      }
+    ],
+    "cover": "assets/images/journal-20261101/welding-1.webp"
+  },
+  {
+    "id": "patio",
+    "service": "concrete",
+    "title": {
+      "en": "More room outdoors",
+      "es": "Más espacio al aire libre"
+    },
+    "description": {
+      "en": "Three views of a concrete patio extension alongside the home.",
+      "es": "Tres vistas de una ampliación de patio de concreto junto a la casa."
+    },
+    "media": [
+      {
+        "type": "image",
+        "src": "assets/images/projects-20261012/patio-extension-1.webp",
+        "caption": {
+          "en": "Patio extension · View 1",
+          "es": "Ampliación de patio · Vista 1"
+        }
+      },
+      {
+        "type": "image",
+        "src": "assets/images/projects-20261012/patio-extension-2.webp",
+        "caption": {
+          "en": "Patio extension · View 2",
+          "es": "Ampliación de patio · Vista 2"
+        }
+      },
+      {
+        "type": "image",
+        "src": "assets/images/projects-20261012/patio-extension-3.webp",
+        "caption": {
+          "en": "Patio extension · View 3",
+          "es": "Ampliación de patio · Vista 3"
+        }
+      }
+    ],
+    "cover": "assets/images/projects-20261012/patio-extension-1.webp"
+  },
+  {
+    "id": "driveway",
+    "service": "concrete",
+    "title": {
+      "en": "A clean arrival",
+      "es": "Una entrada renovada"
+    },
+    "description": {
+      "en": "Walk through the curves and finished surface of this concrete driveway.",
+      "es": "Recorre las curvas y la superficie terminada de esta entrada de concreto."
+    },
+    "media": [
+      {
+        "type": "image",
+        "src": "assets/images/journal-20261101/driveway-1.webp",
+        "caption": {
+          "en": "Finished concrete driveway",
+          "es": "Entrada de concreto terminada"
+        }
+      },
+      {
+        "type": "image",
+        "src": "assets/images/journal-20261101/driveway-2.webp",
+        "caption": {
+          "en": "Finished concrete driveway",
+          "es": "Entrada de concreto terminada"
+        }
+      },
+      {
+        "type": "image",
+        "src": "assets/images/journal-20261101/driveway-3.webp",
+        "caption": {
+          "en": "Finished concrete driveway",
+          "es": "Entrada de concreto terminada"
+        }
+      },
+      {
+        "type": "video",
+        "src": "assets/video/journal-20261101/driveway.mp4",
+        "caption": {
+          "en": "Finished concrete driveway · Video",
+          "es": "Entrada de concreto terminada · Video"
+        },
+        "poster": "assets/images/journal-20261101/driveway-1.webp"
+      }
+    ],
+    "cover": "assets/images/journal-20261101/driveway-1.webp"
+  },
+  {
+    "id": "walls",
+    "service": "walls",
+    "title": {
+      "en": "Curves, blocks & light",
+      "es": "Curvas, bloques y luz"
+    },
+    "description": {
+      "en": "A curved block wall with integrated lighting along the yard.",
+      "es": "Un muro curvo de bloques con iluminación junto al jardín."
+    },
+    "media": [
+      {
+        "type": "image",
+        "src": "assets/images/retaining-walls-20261006/curved-block-wall-wide-1440.webp",
+        "caption": {
+          "en": "Curved block wall",
+          "es": "Muro curvo de bloques"
+        }
+      },
+      {
+        "type": "image",
+        "src": "assets/images/retaining-walls-20261006/block-wall-lighting-1440.webp",
+        "caption": {
+          "en": "Wall lighting detail",
+          "es": "Detalle de iluminación del muro"
+        }
+      },
+      {
+        "type": "image",
+        "src": "assets/images/retaining-walls-20261006/curved-wall-detail.webp",
+        "caption": {
+          "en": "Block wall detail",
+          "es": "Detalle del muro de bloques"
+        }
+      }
+    ],
+    "cover": "assets/images/retaining-walls-20261006/curved-block-wall-wide-1440.webp"
+  },
+  {
+    "id": "walkway",
+    "service": "concrete",
+    "title": {
+      "en": "Connected by concrete",
+      "es": "Caminos que conectan"
+    },
+    "description": {
+      "en": "Concrete access beside the home, seen from several angles.",
+      "es": "Acceso de concreto junto a la casa, visto desde varios ángulos."
+    },
+    "media": [
+      {
+        "type": "image",
+        "src": "assets/images/journal-20261101/walkway-1.webp",
+        "caption": {
+          "en": "Concrete access beside the home",
+          "es": "Acceso de concreto junto a la casa"
+        }
+      },
+      {
+        "type": "image",
+        "src": "assets/images/journal-20261101/walkway-2.webp",
+        "caption": {
+          "en": "Concrete access beside the home",
+          "es": "Acceso de concreto junto a la casa"
+        }
+      },
+      {
+        "type": "image",
+        "src": "assets/images/journal-20261101/walkway-3.webp",
+        "caption": {
+          "en": "Concrete access beside the home",
+          "es": "Acceso de concreto junto a la casa"
+        }
+      },
+      {
+        "type": "video",
+        "src": "assets/video/journal-20261101/walkway.mp4",
+        "caption": {
+          "en": "Concrete access beside the home · Video",
+          "es": "Acceso de concreto junto a la casa · Video"
+        },
+        "poster": "assets/images/journal-20261101/walkway-1.webp"
+      }
+    ],
+    "cover": "assets/images/journal-20261101/walkway-1.webp"
+  },
+  {
+    "id": "extension",
+    "service": "concrete",
+    "title": {
+      "en": "Space for the everyday",
+      "es": "Espacio para cada día"
+    },
+    "description": {
+      "en": "A driveway extension from the EBC project archive.",
+      "es": "Una ampliación de entrada del archivo de proyectos de EBC."
+    },
+    "media": [
+      {
+        "type": "image",
+        "src": "assets/images/updates-20261101/project-5.webp",
+        "caption": {
+          "en": "Driveway extension",
+          "es": "Ampliación de entrada"
+        }
+      },
+      {
+        "type": "social",
+        "src": "https://www.instagram.com/reel/DeZuQUsgfXP/",
+        "caption": {
+          "en": "Original project video on Instagram",
+          "es": "Video original del proyecto en Instagram"
+        },
+        "poster": "assets/images/updates-20261101/project-5.webp"
+      }
+    ],
+    "cover": "assets/images/updates-20261101/project-5.webp"
+  },
+  {
+    "id": "diamond",
+    "service": "concrete",
+    "title": {
+      "en": "Details in every direction",
+      "es": "Detalles en cada dirección"
+    },
+    "description": {
+      "en": "A concrete driveway with a diagonal joint pattern.",
+      "es": "Una entrada de concreto con un patrón de juntas diagonales."
+    },
+    "media": [
+      {
+        "type": "image",
+        "src": "assets/images/updates-20261101/project-10.webp",
+        "caption": {
+          "en": "Diagonal concrete driveway",
+          "es": "Entrada de concreto con diseño diagonal"
+        }
+      },
+      {
+        "type": "social",
+        "src": "https://www.instagram.com/reel/DeDTFHwEclo/",
+        "caption": {
+          "en": "Original project video on Instagram",
+          "es": "Video original del proyecto en Instagram"
+        },
+        "poster": "assets/images/updates-20261101/project-10.webp"
+      }
+    ],
+    "cover": "assets/images/updates-20261101/project-10.webp"
+  },
+  {
+    "id": "workshop",
+    "service": "welding",
+    "title": {
+      "en": "Inside the workshop",
+      "es": "Dentro del taller"
+    },
+    "description": {
+      "en": "Metalwork in the EBC workshop.",
+      "es": "Trabajo de metal en el taller de EBC."
+    },
+    "media": [
+      {
+        "type": "image",
+        "src": "assets/images/welding-20261006/workshop-welding-941.webp",
+        "caption": {
+          "en": "Workshop welding",
+          "es": "Soldadura en taller"
+        }
+      }
+    ],
+    "cover": "assets/images/welding-20261006/workshop-welding-941.webp"
+  }
+]
