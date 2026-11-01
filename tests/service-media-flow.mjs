@@ -62,7 +62,7 @@ const welding = new JSDOM(fs.readFileSync('welding.html', 'utf8')).window.docume
 assert.ok(land.querySelector('a[href="projects.html#landscaping"]'));
 assert.ok(welding.querySelector('a[href="projects.html#welding"]'));
 assert.match(land.querySelector('.dedicated-hero').getAttribute('style'), /journal-20261101/);
-for (const [document, allowed] of [[land, /journal-20261101\/sod-|logo/], [welding, /welding-20261006|logo/]]) {
+for (const [document, allowed] of [[land, /journal-20261101\/sod-|logo/], [welding, /welding-20261006|journal-20261101\/welding-|logo/]]) {
   for (const img of document.querySelectorAll('img[src]')) {
     assert.match(img.getAttribute('src'), allowed, 'Service page images belong to that service');
     assert.ok(fs.existsSync(img.getAttribute('src')));

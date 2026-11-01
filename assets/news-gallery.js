@@ -19,6 +19,7 @@
   let service = known.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'all';
   let type = 'all', current = null, index = 0, origin = null, swipeX = null;
   function filter(updateURL = true) {
+    root.querySelector('.journal-feature').hidden = service !== 'all' && service !== 'concrete';
     let count = 0;
     cards.forEach(card => {
       const story = stories.find(item => item.id === card.dataset.story);
@@ -45,6 +46,8 @@
     stopMedia();
     const media = current.media[index];
     title.textContent = current.title[lang()];
+    const estimateService = {concrete:'concrete',landscaping:'landscaping',walls:'landscaping',welding:'welding'}[current.service];
+    dialog.querySelector('[data-viewer-estimate]').href = 'contact.html' + (estimateService ? '?service=' + estimateService : '');
     caption.textContent = media.caption[lang()];
     counter.textContent = `${index + 1} / ${current.media.length}`;
     if (media.type === 'video') {
@@ -76,6 +79,7 @@
   function openStory(id, trigger) {
     current = stories.find(s => s.id === id); if (!current) return;
     origin = trigger; index = type === 'all' ? 0 : Math.max(0, current.media.findIndex(m => (m.type === type || (type === 'video' && m.type === 'social'))));
+    const url = new URL(location.href); url.searchParams.set('project', id); history.replaceState(null, '', url.pathname + url.search + url.hash);
     showMedia(); dialog.showModal(); document.documentElement.classList.add('news-viewer-open');
     dialog.querySelector('[data-viewer-close]').focus();
   }
@@ -85,10 +89,13 @@
   dialog.querySelector('[data-viewer-next]').addEventListener('click', () => advance(1));
   dialog.querySelector('[data-viewer-close]').addEventListener('click', () => dialog.close());
   dialog.addEventListener('click', event => { if (event.target === dialog) { const rect = dialog.getBoundingClientRect(); if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) dialog.close(); } });
-  dialog.addEventListener('close', () => { stopMedia(); current = null; document.documentElement.classList.remove('news-viewer-open'); origin?.focus({preventScroll:true}); });
+  dialog.addEventListener('close', () => { const url = new URL(location.href); url.searchParams.delete('project'); history.replaceState(null, '', url.pathname + url.search + url.hash); stopMedia(); current = null; document.documentElement.classList.remove('news-viewer-open'); origin?.focus({preventScroll:true}); });
   dialog.addEventListener('keydown', event => { if (event.target.closest('video') || event.target.closest('.journal-thumbnails')) return; if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') { event.preventDefault(); advance(event.key === 'ArrowRight' ? 1 : -1); } });
   stage.addEventListener('touchstart', event => { swipeX = event.target.tagName === 'IMG' ? event.touches[0].clientX : null; }, {passive:true});
   stage.addEventListener('touchend', event => { if (swipeX === null) return; const distance = event.changedTouches[0].clientX - swipeX; if (Math.abs(distance) > 60) advance(distance < 0 ? 1 : -1); swipeX = null; }, {passive:true});
   window.addEventListener('ebc:languagechange', () => { filter(false); if (current) showMedia(); });
+  const linkedStory = stories.find(s => s.id === new URLSearchParams(location.search).get('project'));
+  if (linkedStory) service = linkedStory.service;
   filter(false);
+  if (linkedStory) openStory(linkedStory.id, root.querySelector(`[data-story="${linkedStory.id}"] [data-open-story]`));
 })();

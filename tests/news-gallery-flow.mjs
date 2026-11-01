@@ -13,3 +13,20 @@ w.document.documentElement.lang='es';w.dispatchEvent(new w.Event('ebc:languagech
 click('[data-news-service="walls"]');assert.deepEqual(visible(),[]);assert.equal(d.querySelector('[data-news-empty]').hidden,false);click('[data-reset-news]');assert.equal(visible().length,10);
 click('[data-news-service="concrete"]');click('[data-news-type="video"]');assert.deepEqual(visible(),['driveway','walkway','extension','diamond']);click('[data-story="extension"] [data-open-story]');assert.ok(d.querySelector('.journal-source'));assert.match(d.querySelector('.journal-source').href,/DeZuQUsgfXP/);
 dom.window.close();console.log('Journal: service/media intersections, native video, social fallback, same-project navigation, localization, keyboard and asset integrity passed.');
+
+// A project link from a service page opens that exact project, not the generic gallery.
+const linked = new JSDOM(fs.readFileSync('news.html','utf8'), {url:'https://ebcconstructionllc.com/news.html?project=sod#landscaping',runScripts:'outside-only'});
+linked.window.HTMLDialogElement.prototype.showModal=function(){this.open=true};
+linked.window.HTMLDialogElement.prototype.close=function(){this.open=false;this.dispatchEvent(new linked.window.Event('close'))};
+linked.window.HTMLMediaElement.prototype.pause=()=>{};linked.window.HTMLMediaElement.prototype.load=()=>{};
+linked.window.eval(fs.readFileSync('assets/news-gallery.js','utf8'));
+const ld=linked.window.document;
+assert.equal(ld.querySelector('dialog').open,true);
+assert.match(ld.querySelector('.journal-stage img').src,/sod-1.webp$/);
+assert.equal(ld.querySelector('.journal-feature').hidden,true,'Concrete feature is hidden in landscaping');
+assert.match(ld.querySelector('[data-viewer-estimate]').href,/service=landscaping$/);
+ld.querySelector('[data-viewer-close]').click();
+assert.equal(new URL(linked.window.location.href).searchParams.has('project'),false);
+assert.equal(ld.activeElement.dataset.openStory,'sod');
+linked.window.close();
+console.log('Journal project links, matching-service estimate and focus recovery passed.');
