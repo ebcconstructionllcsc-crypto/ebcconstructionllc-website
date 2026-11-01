@@ -1,6 +1,8 @@
 /* Keep the established charcoal, gold and cream design; retain functional fixes. */
 .hero-media img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .navlinks a[aria-current="page"]:not(.nav-cta) { color: #f0cf89; text-decoration: underline; text-underline-offset: 7px; }
+/* The active-page treatment must preserve the estimate button's contrast. */
+.navlinks > .nav-cta[aria-current="page"] { background: #d8ad50; color: #171714; }
 .form input:not([type="checkbox"]):not([type="file"]), .form select, .form textarea { font-size: 16px; }
 .contact-list { overflow-wrap: anywhere; }
 .business-hours { margin-top: 28px; padding: 22px; border: 1px solid #d9d4c8; border-radius: 12px; background: white; }
