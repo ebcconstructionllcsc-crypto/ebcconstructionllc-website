@@ -33,7 +33,7 @@ for (const page of pages) {
   assert.ok(doc.querySelector('#primary-navigation'));
   dom.window.close();
 }
-const dom = new JSDOM(fs.readFileSync('index.html','utf8'), { url:'https://ebcconstructionllc.com/', runScripts:'outside-only' });
+const dom = new JSDOM(fs.readFileSync('project-curved-driveway.html','utf8'), { url:'https://ebcconstructionllc.com/', runScripts:'outside-only' });
 const { window } = dom;
 window.HTMLDialogElement.prototype.showModal = function () { this.open = true; };
 window.HTMLMediaElement.prototype.pause = () => {};
@@ -45,7 +45,7 @@ const photo = window.document.querySelector('[data-dialog-image]');
 const firstSrc = photo.src;
 window.document.querySelectorAll('.lightbox-navigation button')[1].click();
 assert.notEqual(photo.src, firstSrc, 'next photo should change the enlarged image');
-window.document.querySelector('[data-video-src]').click();
+assert.ok(window.document.querySelector('.project-video video[controls][preload=none]'), 'project video remains native and downloads on demand');
 assert.equal(window.document.querySelector('[data-dialog-video]').tagName, 'VIDEO');
 assert.ok(window.document.querySelector('[data-dialog-video]').controls);
 dom.window.close();
