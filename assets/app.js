@@ -1,7 +1,7 @@
 const header = document.querySelector('.topbar');
 // Measure public pages only; never send request contents or URL parameters.
 (() => {
-  const pages = new Set(["/news.html","/project-curved-driveway.html","/project-patio-extension.html","/project-concrete-walkway.html","/project-curved-block-wall.html","/project-backyard-sod.html","/project-field-welding.html","/concrete-driveways.html","/concrete-patios.html","/concrete-slabs.html","/concrete-walkways.html",'/', '/index.html', '/about.html', '/services.html', '/projects.html', '/contact.html', '/reviews.html', '/landscaping-pavers.html', '/welding.html', '/greenville-county-sc.html', '/spartanburg-county-sc.html', '/service-areas.html', '/pickens-county-sc.html', '/anderson-county-sc.html', '/laurens-county-sc.html', '/henderson-county-nc.html', '/transylvania-county-nc.html', '/polk-county-nc.html', '/abbeville-county-sc.html', '/oconee-county-sc.html', '/greenwood-county-sc.html', '/rutherford-county-nc.html', '/union-county-sc.html', '/cherokee-county-sc.html', '/jackson-county-nc.html', '/hart-county-ga.html', '/buncombe-county-nc.html']);
+  const pages = new Set(['/california-style.html',"/news.html","/project-curved-driveway.html","/project-patio-extension.html","/project-concrete-walkway.html","/project-curved-block-wall.html","/project-backyard-sod.html","/project-field-welding.html","/concrete-driveways.html","/concrete-patios.html","/concrete-slabs.html","/concrete-walkways.html",'/', '/index.html', '/about.html', '/services.html', '/projects.html', '/contact.html', '/reviews.html', '/landscaping-pavers.html', '/welding.html', '/greenville-county-sc.html', '/spartanburg-county-sc.html', '/service-areas.html', '/pickens-county-sc.html', '/anderson-county-sc.html', '/laurens-county-sc.html', '/henderson-county-nc.html', '/transylvania-county-nc.html', '/polk-county-nc.html', '/abbeville-county-sc.html', '/oconee-county-sc.html', '/greenwood-county-sc.html', '/rutherford-county-nc.html', '/union-county-sc.html', '/cherokee-county-sc.html', '/jackson-county-nc.html', '/hart-county-ga.html', '/buncombe-county-nc.html']);
   if (!['ebcconstructionllc.com', 'www.ebcconstructionllc.com'].includes(location.hostname) || !pages.has(location.pathname)) return;
   const measurementId = 'G-6ETD936XE7';
   window.dataLayer = window.dataLayer || [];
@@ -582,3 +582,9 @@ if (estimateForm) {
   renderPhotoSelection();
   updatePhotoStatus();
 }
+
+// Consistent, reversible presentation of the original California Style collection.
+(() => {
+ if(document.querySelector('link[href^="assets/california-style.css"]'))return;
+ const link=document.createElement('link');link.rel='stylesheet';link.href='assets/california-style.css?v=20261101-ca';document.head.append(link);
+})();

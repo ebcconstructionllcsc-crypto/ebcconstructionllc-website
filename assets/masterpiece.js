@@ -69,8 +69,8 @@
     if (imageControls) imageControls.hidden = false;
     dialogImage.hidden = false;
     dialogImage.src = trigger.dataset.lightbox;
-    dialogImage.alt = trigger.dataset.caption || '';
-    if (dialogCaption) dialogCaption.textContent = trigger.dataset.caption || '';
+    dialogImage.alt = trigger.dataset[document.documentElement.lang === 'es' ? 'captionEs' : 'captionEn'] || trigger.dataset.caption || '';
+    if (dialogCaption) dialogCaption.textContent = trigger.dataset[document.documentElement.lang === 'es' ? 'captionEs' : 'captionEn'] || trigger.dataset.caption || '';
     if (!dialog.open) dialog.showModal();
   }
 
@@ -82,7 +82,7 @@
     if (imageControls) imageControls.hidden = true;
     dialogVideo.hidden = false;
     dialogVideo.src = trigger.dataset.videoSrc;
-    if (dialogCaption) dialogCaption.textContent = trigger.dataset.caption || '';
+    if (dialogCaption) dialogCaption.textContent = trigger.dataset[document.documentElement.lang === 'es' ? 'captionEs' : 'captionEn'] || trigger.dataset.caption || '';
     if (!dialog.open) dialog.showModal();
   }
 
