@@ -51,8 +51,8 @@
     "id": "sod",
     "service": "landscaping",
     "title": {
-      "en": "Fresh sod, a new beginning",
-      "es": "Pasto nuevo, un nuevo comienzo"
+      "en": "Backyard sod installation",
+      "es": "Instalación de pasto en patio"
     },
     "description": {
       "en": "Sod installation around a residential backyard. Follow the work up close.",
@@ -99,12 +99,12 @@
     "id": "welding",
     "service": "welding",
     "title": {
-      "en": "Precision at the weld",
-      "es": "Precisión en cada soldadura"
+      "en": "On-site welding",
+      "es": "Soldadura en obra"
     },
     "description": {
-      "en": "A close-up of our welding work, captured on site.",
-      "es": "Una mirada de cerca a nuestro trabajo de soldadura en sitio."
+      "en": "Our crew welding on site.",
+      "es": "Nuestro equipo realizando soldadura en obra."
     },
     "media": [
       {
@@ -186,12 +186,12 @@
     "id": "driveway",
     "service": "concrete",
     "title": {
-      "en": "A clean arrival",
-      "es": "Una entrada renovada"
+      "en": "Completed concrete driveway",
+      "es": "Entrada de concreto terminada"
     },
     "description": {
-      "en": "Walk through the curves and finished surface of this concrete driveway.",
-      "es": "Recorre las curvas y la superficie terminada de esta entrada de concreto."
+      "en": "See the finished driveway, curved edges and joint layout.",
+      "es": "Conoce la entrada terminada, sus bordes curvos y la distribución de juntas."
     },
     "media": [
       {
@@ -321,12 +321,12 @@
     "id": "extension",
     "service": "concrete",
     "title": {
-      "en": "Space for the everyday",
-      "es": "Espacio para cada día"
+      "en": "Driveway extension",
+      "es": "Ampliación de entrada"
     },
     "description": {
-      "en": "A driveway extension from the EBC project archive.",
-      "es": "Una ampliación de entrada del archivo de proyectos de EBC."
+      "en": "A driveway extension completed by our team.",
+      "es": "Una ampliación de entrada realizada por nuestro equipo."
     },
     "media": [
       {
@@ -342,7 +342,7 @@
         "src": "https://www.instagram.com/reel/DeZuQUsgfXP/",
         "caption": {
           "en": "Original project video on Instagram",
-          "es": "Video original del proyecto en Instagram"
+          "es": "Video del proyecto en Instagram"
         },
         "poster": "assets/images/updates-20261101/project-5.webp"
       }
@@ -353,8 +353,8 @@
     "id": "diamond",
     "service": "concrete",
     "title": {
-      "en": "Details in every direction",
-      "es": "Detalles en cada dirección"
+      "en": "Driveway with diagonal joints",
+      "es": "Entrada con juntas diagonales"
     },
     "description": {
       "en": "A concrete driveway with a diagonal joint pattern.",
@@ -374,7 +374,7 @@
         "src": "https://www.instagram.com/reel/DeDTFHwEclo/",
         "caption": {
           "en": "Original project video on Instagram",
-          "es": "Video original del proyecto en Instagram"
+          "es": "Video del proyecto en Instagram"
         },
         "poster": "assets/images/updates-20261101/project-10.webp"
       }

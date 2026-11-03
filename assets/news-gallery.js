@@ -29,7 +29,7 @@
     });
     serviceButtons.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.newsService === service)));
     typeButtons.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.newsType === type)));
-    result.textContent = text(`${count} project ${count === 1 ? "story" : "stories"}`, `${count} ${count === 1 ? "historia de proyecto" : "historias de proyectos"}`);
+    result.textContent = text(`${count} ${count === 1 ? "project" : "projects"}`, `${count} ${count === 1 ? "proyecto" : "proyectos"}`);
     empty.hidden = count > 0;
     if (updateURL) history.replaceState(null, '', location.pathname + location.search + (service === 'all' ? '' : '#' + service));
   }
@@ -60,7 +60,7 @@
       video.append(fallback); stage.append(video);
     } else if (media.type === 'social') {
       const image = document.createElement('img'); image.src = media.poster; image.alt = media.caption[lang()];
-      const link = document.createElement('a'); link.className = 'journal-source'; link.href = media.src; link.target = '_blank'; link.rel = 'noopener noreferrer'; link.textContent = text('Watch the original video ↗', 'Ver video original ↗');
+      const link = document.createElement('a'); link.className = 'journal-source'; link.href = media.src; link.target = '_blank'; link.rel = 'noopener noreferrer'; link.textContent = text('Watch the project video ↗', 'Ver video del proyecto ↗');
       stage.append(image, link);
     } else {
       const image = document.createElement('img'); image.src = media.src; image.alt = media.caption[lang()]; stage.append(image);

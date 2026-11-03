@@ -21,7 +21,7 @@ if (!/Mira el potencial de tu espacio antes de construir\./.test(script)) fail('
 if ((script.match(/data-visualization-photo=\"/g) || []).length !== 6) fail('visualization section must expose exactly six replacement photos');
 if ((script.match(/data-visualization-story=\"/g) || []).length !== 2) fail('visualization section must expose exactly two optional edited stories');
 if ((script.match(/data-audio=\"on\"/g) || []).length !== 2) fail('only the two edited stories may enable sound');
-if (!/two clips with original sound and two without audio/.test(script) || !/dos clips con sonido original y dos sin audio/.test(script)) {
+if (!/Sound begins only after you choose a video and press play/.test(script) || !/El sonido comienza solamente cuando eliges un video y presionas reproducir/.test(script)) {
   fail('visualization section is missing the bilingual sound disclosure');
 }
 

@@ -105,7 +105,7 @@
             data-es-alt="Propuesta visual de un patio de concreto y un muro junto a un garaje independiente">
           <span class="portfolio-caption">
             <span data-en="Visual concept" data-es="Concepto visual">Visual concept</span>
-            <strong data-en="A direction before construction" data-es="Una dirección antes de construir">A direction before construction</strong>
+            <strong data-en="Proposed patio design" data-es="Propuesta de diseño para el patio">Proposed patio design</strong>
           </span>
         </button>
 
@@ -188,9 +188,9 @@
       </div>
 
       <p class="visualize-sound-note"
-        data-en="Sound begins only after you choose a video and press play. These edited highlights include sound. Preparation on site has two clips with original sound and two without audio. The Slabs & Steps and Retaining Walls work videos retain sound."
-        data-es="El sonido comienza solamente cuando eliges un video y presionas reproducir. Estos videos de presentación incluyen sonido. Preparación en obra tiene dos clips con sonido original y dos sin audio. Los videos de Slab y escalones y Muros de contención conservan sonido.">
-        Sound begins only after you choose a video and press play. These edited highlights include sound. Preparation on site has two clips with original sound and two without audio. The Slabs & Steps and Retaining Walls work videos retain sound.
+        data-en="Sound begins only after you choose a video and press play."
+        data-es="El sonido comienza solamente cuando eliges un video y presionas reproducir. Estos videos de presentación incluyen sonido. Preparación en obra tiene dos clips con sonido original y dos sin audio. Los videos de Losas y escalones y Muros de contención conservan sonido.">
+        Sound begins only after you choose a video and press play.
       </p>
     `;
 
