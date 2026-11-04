@@ -27,7 +27,7 @@ for(const f of counties){
 for(const f of fs.readdirSync('.').filter(x=>x.endsWith('.html'))){
  const dom=new JSDOM(fs.readFileSync(f,'utf8')),d=dom.window.document;
  for(const a of d.querySelectorAll('a[href="tel:+18644502954"]'))assert.equal(a.nextElementSibling?.getAttribute('href'),'tel:+18648673397',f+': adjacent team contact');
- const bar=d.querySelector('.mobile-actions');assert.equal(bar.querySelectorAll('a').length,4,f+': mobile bar');assert.equal(bar.querySelector('a[href="tel:+18644502954"]').textContent,'Edgar');assert.equal(bar.querySelector('a[href="tel:+18648673397"]').textContent,'Noemí');
+ const bar=d.querySelector('.mobile-actions');assert.equal(bar.querySelectorAll('a').length,4,f+': mobile bar');assert.equal(bar.querySelector('a[href="tel:+18644502954"]').textContent,'☎ Español');assert.equal(bar.querySelector('a[href="tel:+18648673397"]').textContent,'☎ English');
  for(const s of d.querySelectorAll('script,style'))s.remove();assert.ok(!/english (and|or) spanish|inglés (y|o) español|bilingual|bilingüe/i.test(d.documentElement.outerHTML),f+': no staff language claims');dom.window.close();
 }
 for(const query of ['?area=PRIVATE','?area=__proto__','?area=constructor']){
