@@ -2,9 +2,9 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {JSDOM} from 'jsdom';
 const files=fs.readdirSync('.').filter(f=>/^(project-|concrete-).*\.html$/.test(f));
-assert.equal(files.length,10);
+assert.equal(files.length,11);
 const home=new JSDOM(fs.readFileSync('index.html','utf8')).window.document;
-assert.equal(home.querySelectorAll('main > section').length,7);
+assert.equal(home.querySelectorAll('main > section').length,8);
 assert.equal(home.querySelectorAll('#project-updates .signature-card').length,6);
 for(const file of files){
  const d=new JSDOM(fs.readFileSync(file,'utf8')).window.document;

@@ -1,0 +1,663 @@
+{
+  "version": "2026-11-04-corrected",
+  "projects": [
+    {
+      "id": "01-acceso-ladrillo",
+      "title_en": "Curved driveway at a brick home",
+      "title_es": "Acceso curvo en casa de ladrillo",
+      "images": [
+        {
+          "path": "assets/images/project-stories/01-acceso-ladrillo/antes-01.webp",
+          "stage": "antes",
+          "kind": "Foto real"
+        },
+        {
+          "path": "assets/images/project-stories/01-acceso-ladrillo/antes-02.webp",
+          "stage": "antes",
+          "kind": "Foto real"
+        },
+        {
+          "path": "assets/images/project-stories/01-acceso-ladrillo/antes-03.webp",
+          "stage": "antes",
+          "kind": "Foto real"
+        },
+        {
+          "path": "assets/images/project-stories/01-acceso-ladrillo/antes-04.webp",
+          "stage": "antes",
+          "kind": "Foto real"
+        },
+        {
+          "path": "assets/images/project-stories/01-acceso-ladrillo/preview-05.webp",
+          "stage": "preview",
+          "kind": "Preview recuperado del estimado"
+        },
+        {
+          "path": "assets/images/project-stories/01-acceso-ladrillo/preview-06.webp",
+          "stage": "preview",
+          "kind": "Preview recuperado del estimado"
+        },
+        {
+          "path": "assets/images/project-stories/01-acceso-ladrillo/preview-07.webp",
+          "stage": "preview",
+          "kind": "Preview recuperado del estimado"
+        },
+        {
+          "path": "assets/images/project-stories/01-acceso-ladrillo/preview-08.webp",
+          "stage": "preview",
+          "kind": "Preview recuperado del estimado"
+        },
+        {
+          "path": "assets/images/project-stories/01-acceso-ladrillo/resultado-09.webp",
+          "stage": "resultado",
+          "kind": "Foto real"
+        },
+        {
+          "path": "assets/images/project-stories/01-acceso-ladrillo/resultado-10.webp",
+          "stage": "resultado",
+          "kind": "Foto real"
+        },
+        {
+          "path": "assets/images/project-stories/01-acceso-ladrillo/resultado-11.webp",
+          "stage": "resultado",
+          "kind": "Foto real"
+        },
+        {
+          "path": "assets/images/project-stories/01-acceso-ladrillo/resultado-12.webp",
+          "stage": "resultado",
+          "kind": "Foto real"
+        }
+      ],
+      "video": "assets/video/project-stories/01-acceso-ladrillo.mp4"
+    },
+    {
+      "id": "02-patio-gris",
+      "title_en": "A patio with room to gather",
+      "title_es": "Ampliación alrededor del patio",
+      "images": [
+        {
+          "path": "assets/images/project-stories/02-patio-gris/antes-01.webp",
+          "stage": "antes",
+          "kind": "Captura de video real"
+        },
+        {
+          "path": "assets/images/project-stories/02-patio-gris/antes-02.webp",
+          "stage": "antes",
+          "kind": "Captura de video real"
+        },
+        {
+          "path": "assets/images/project-stories/02-patio-gris/preview-03.webp",
+          "stage": "preview",
+          "kind": "Preview recuperado del estimado"
+        },
+        {
+          "path": "assets/images/project-stories/02-patio-gris/preview-04.webp",
+          "stage": "preview",
+          "kind": "Preview recuperado del estimado"
+        },
+        {
+          "path": "assets/images/project-stories/02-patio-gris/preview-05.webp",
+          "stage": "preview",
+          "kind": "Preview recuperado del estimado"
+        },
+        {
+          "path": "assets/images/project-stories/02-patio-gris/preview-06.webp",
+          "stage": "preview",
+          "kind": "Preview recuperado del estimado"
+        },
+        {
+          "path": "assets/images/project-stories/02-patio-gris/resultado-07.webp",
+          "stage": "resultado",
+          "kind": "Foto real"
+        },
+        {
+          "path": "assets/images/project-stories/02-patio-gris/resultado-08.webp",
+          "stage": "resultado",
+          "kind": "Foto real"
+        },
+        {
+          "path": "assets/images/project-stories/02-patio-gris/resultado-09.webp",
+          "stage": "resultado",
+          "kind": "Foto real"
+        },
+        {
+          "path": "assets/images/project-stories/02-patio-gris/resultado-10.webp",
+          "stage": "resultado",
+          "kind": "Foto real"
+        }
+      ],
+      "video": "assets/video/project-stories/02-patio-gris.mp4"
+    },
+    {
+      "id": "03-patio-diamante",
+      "title_en": "Diamond-pattern concrete patio",
+      "title_es": "Patio con juntas en diamante",
+      "images": [
+        {
+          "path": "assets/images/project-stories/03-patio-diamante/antes-01.webp",
+          "stage": "antes",
+          "kind": "Foto real"
+        },
+        {
+          "path": "assets/images/project-stories/03-patio-diamante/preview-04.webp",
+          "stage": "preview",
+          "kind": "Preview recuperado del estimado"
+        },
+        {
+          "path": "assets/images/project-stories/03-patio-diamante/preview-05.webp",
+          "stage": "preview",
+          "kind": "Preview recreado"
+        },
+        {
+          "path": "assets/images/project-stories/03-patio-diamante/preview-06.webp",
+          "stage": "preview",
+          "kind": "Preview recreado"
+        },
+        {
+          "path": "assets/images/project-stories/03-patio-diamante/resultado-07.webp",
+          "stage": "resultado",
+          "kind": "Foto real"
+        },
+        {
+          "path": "assets/images/project-stories/03-patio-diamante/resultado-08.webp",
+          "stage": "resultado",
+          "kind": "Foto real"
+        },
+        {
+          "path": "assets/images/project-stories/03-patio-diamante/resultado-09.webp",
+          "stage": "resultado",
+          "kind": "Foto real"
+        },
+        {
+          "path": "assets/images/project-stories/03-patio-diamante/resultado-10.webp",
+          "stage": "resultado",
+          "kind": "Foto real"
+        },
+        {
+          "path": "assets/images/project-stories/03-patio-diamante/resultado-11.webp",
+          "stage": "resultado",
+          "kind": "Foto real"
+        },
+        {
+          "path": "assets/images/project-stories/03-patio-diamante/resultado-12.webp",
+          "stage": "resultado",
+          "kind": "Foto real"
+        }
+      ],
+      "video": "assets/video/project-stories/03-patio-diamante.mp4"
+    },
+    {
+      "id": "04-acceso-california",
+      "title_en": "California Style curved access",
+      "title_es": "Acceso curvo California Style",
+      "images": [
+        {
+          "path": "assets/images/project-stories/04-acceso-california/antes-01.webp",
+          "stage": "antes",
+          "kind": "Foto real"
+        },
+        {
+          "path": "assets/images/project-stories/04-acceso-california/antes-02.webp",
+          "stage": "antes",
+          "kind": "Foto real"
+        },
+        {
+          "path": "assets/images/project-stories/04-acceso-california/antes-03.webp",
+          "stage": "antes",
+          "kind": "Foto real"
+        },
+        {
+          "path": "assets/images/project-stories/04-acceso-california/preview-04.webp",
+          "stage": "preview",
+          "kind": "Preview recreado"
+        },
+        {
+          "path": "assets/images/project-stories/04-acceso-california/preview-05.webp",
+          "stage": "preview",
+          "kind": "Preview recreado"
+        },
+        {
+          "path": "assets/images/project-stories/04-acceso-california/preview-06.webp",
+          "stage": "preview",
+          "kind": "Preview recreado"
+        },
+        {
+          "path": "assets/images/project-stories/04-acceso-california/resultado-07.webp",
+          "stage": "resultado",
+          "kind": "Foto real"
+        },
+        {
+          "path": "assets/images/project-stories/04-acceso-california/resultado-08.webp",
+          "stage": "resultado",
+          "kind": "Foto real"
+        },
+        {
+          "path": "assets/images/project-stories/04-acceso-california/resultado-09.webp",
+          "stage": "resultado",
+          "kind": "Captura de video real"
+        },
+        {
+          "path": "assets/images/project-stories/04-acceso-california/resultado-10.webp",
+          "stage": "resultado",
+          "kind": "Captura de video real"
+        }
+      ],
+      "video": "assets/video/project-stories/04-acceso-california.mp4"
+    },
+    {
+      "id": "05-muro-piscina",
+      "title_en": "Stone finish beside the pool",
+      "title_es": "Un nuevo acabado junto a la piscina",
+      "images": [
+        {
+          "path": "assets/images/project-stories/05-muro-piscina/antes-01.webp",
+          "stage": "antes",
+          "kind": "Foto real"
+        },
+        {
+          "path": "assets/images/project-stories/05-muro-piscina/preview-02.webp",
+          "stage": "preview",
+          "kind": "Preview recreado"
+        },
+        {
+          "path": "assets/images/project-stories/05-muro-piscina/resultado-03.webp",
+          "stage": "resultado",
+          "kind": "Foto real"
+        },
+        {
+          "path": "assets/images/project-stories/05-muro-piscina/resultado-04.webp",
+          "stage": "resultado",
+          "kind": "Foto real"
+        }
+      ]
+    },
+    {
+      "id": "06-driveway-arboles",
+      "title_en": "A renewed residential driveway",
+      "title_es": "Una entrada completamente renovada",
+      "images": [
+        {
+          "path": "assets/images/project-stories/06-driveway-arboles/proceso-01.webp",
+          "stage": "proceso",
+          "kind": "Foto real"
+        },
+        {
+          "path": "assets/images/project-stories/06-driveway-arboles/preview-02.webp",
+          "stage": "preview",
+          "kind": "Preview recreado"
+        },
+        {
+          "path": "assets/images/project-stories/06-driveway-arboles/resultado-05.webp",
+          "stage": "resultado",
+          "kind": "Foto real"
+        },
+        {
+          "path": "assets/images/project-stories/06-driveway-arboles/resultado-06.webp",
+          "stage": "resultado",
+          "kind": "Foto real"
+        }
+      ]
+    },
+    {
+      "id": "07-losa-exterior",
+      "title_en": "Concrete slab beside an existing building",
+      "title_es": "Del terreno preparado a una nueva losa",
+      "images": [
+        {
+          "path": "assets/images/project-stories/07-losa-exterior/proceso-01.webp",
+          "stage": "proceso",
+          "kind": "Foto real"
+        },
+        {
+          "path": "assets/images/project-stories/07-losa-exterior/preview-02.webp",
+          "stage": "preview",
+          "kind": "Preview recreado"
+        },
+        {
+          "path": "assets/images/project-stories/07-losa-exterior/resultado-03.webp",
+          "stage": "resultado",
+          "kind": "Foto real"
+        }
+      ]
+    },
+    {
+      "id": "08-patio-lateral",
+      "title_en": "More room on the patio",
+      "title_es": "Más espacio para disfrutar el patio",
+      "images": [
+        {
+          "path": "assets/images/project-stories/08-patio-lateral/antes-01.webp",
+          "stage": "antes",
+          "kind": "Foto real"
+        },
+        {
+          "path": "assets/images/project-stories/08-patio-lateral/preview-02.webp",
+          "stage": "preview",
+          "kind": "Preview recreado"
+        },
+        {
+          "path": "assets/images/project-stories/08-patio-lateral/resultado-03.webp",
+          "stage": "resultado",
+          "kind": "Foto real"
+        },
+        {
+          "path": "assets/images/project-stories/08-patio-lateral/resultado-04.webp",
+          "stage": "resultado",
+          "kind": "Foto real"
+        }
+      ],
+      "video": "assets/video/project-stories/08-patio-lateral.mp4"
+    },
+    {
+      "id": "09-banqueta-lateral",
+      "title_en": "Front walkway and side access",
+      "title_es": "Banqueta frontal y recorrido lateral",
+      "images": [
+        {
+          "path": "assets/images/project-stories/09-banqueta-lateral/preview-01.webp",
+          "stage": "preview",
+          "kind": "Preview recreado"
+        },
+        {
+          "path": "assets/images/project-stories/09-banqueta-lateral/resultado-02.webp",
+          "stage": "resultado",
+          "kind": "Foto real"
+        },
+        {
+          "path": "assets/images/project-stories/09-banqueta-lateral/resultado-03.webp",
+          "stage": "resultado",
+          "kind": "Foto real"
+        },
+        {
+          "path": "assets/images/project-stories/09-banqueta-lateral/resultado-04.webp",
+          "stage": "resultado",
+          "kind": "Foto real"
+        },
+        {
+          "path": "assets/images/project-stories/09-banqueta-lateral/resultado-05.webp",
+          "stage": "resultado",
+          "kind": "Foto real"
+        }
+      ]
+    },
+    {
+      "id": "10-ampliacion-acceso",
+      "title_en": "A wider residential entrance",
+      "title_es": "Ampliación de acceso residencial",
+      "images": [
+        {
+          "path": "assets/images/project-stories/10-ampliacion-acceso/preview-01.webp",
+          "stage": "preview",
+          "kind": "Preview recreado"
+        },
+        {
+          "path": "assets/images/project-stories/10-ampliacion-acceso/resultado-02.webp",
+          "stage": "resultado",
+          "kind": "Foto real"
+        },
+        {
+          "path": "assets/images/project-stories/10-ampliacion-acceso/resultado-03.webp",
+          "stage": "resultado",
+          "kind": "Foto real"
+        }
+      ]
+    },
+    {
+      "id": "11-franjas-acceso",
+      "title_en": "Driveway side extensions",
+      "title_es": "Franjas laterales de driveway",
+      "images": [
+        {
+          "path": "assets/images/project-stories/11-franjas-acceso/preview-01.webp",
+          "stage": "preview",
+          "kind": "Preview recreado"
+        },
+        {
+          "path": "assets/images/project-stories/11-franjas-acceso/resultado-02.webp",
+          "stage": "resultado",
+          "kind": "Foto real"
+        },
+        {
+          "path": "assets/images/project-stories/11-franjas-acceso/resultado-03.webp",
+          "stage": "resultado",
+          "kind": "Foto real"
+        }
+      ]
+    },
+    {
+      "id": "12-banqueta-escalones",
+      "title_en": "Concrete walkway and steps",
+      "title_es": "Banqueta y escalones de concreto",
+      "images": [
+        {
+          "path": "assets/images/project-stories/12-banqueta-escalones/preview-01.webp",
+          "stage": "preview",
+          "kind": "Preview recreado"
+        },
+        {
+          "path": "assets/images/project-stories/12-banqueta-escalones/resultado-02.webp",
+          "stage": "resultado",
+          "kind": "Foto real"
+        },
+        {
+          "path": "assets/images/project-stories/12-banqueta-escalones/resultado-03.webp",
+          "stage": "resultado",
+          "kind": "Foto real"
+        }
+      ]
+    },
+    {
+      "id": "13-conexion-vivienda",
+      "title_en": "Driveway and access beside the home",
+      "title_es": "Acceso y conexión junto a la vivienda",
+      "images": [
+        {
+          "path": "assets/images/project-stories/13-conexion-vivienda/preview-01.webp",
+          "stage": "preview",
+          "kind": "Preview recreado"
+        },
+        {
+          "path": "assets/images/project-stories/13-conexion-vivienda/resultado-02.webp",
+          "stage": "resultado",
+          "kind": "Foto real"
+        },
+        {
+          "path": "assets/images/project-stories/13-conexion-vivienda/resultado-03.webp",
+          "stage": "resultado",
+          "kind": "Foto real"
+        },
+        {
+          "path": "assets/images/project-stories/13-conexion-vivienda/resultado-04.webp",
+          "stage": "resultado",
+          "kind": "Foto real"
+        },
+        {
+          "path": "assets/images/project-stories/13-conexion-vivienda/resultado-05.webp",
+          "stage": "resultado",
+          "kind": "Foto real"
+        },
+        {
+          "path": "assets/images/project-stories/13-conexion-vivienda/resultado-06.webp",
+          "stage": "resultado",
+          "kind": "Foto real"
+        },
+        {
+          "path": "assets/images/project-stories/13-conexion-vivienda/resultado-07.webp",
+          "stage": "resultado",
+          "kind": "Foto real"
+        }
+      ],
+      "video": "assets/video/project-stories/13-conexion-vivienda.mp4"
+    },
+    {
+      "id": "14-estampado",
+      "title_en": "Stamped concrete beside the porch",
+      "title_es": "Concreto estampado junto al porche",
+      "images": [
+        {
+          "path": "assets/images/project-stories/14-estampado/proceso-01.webp",
+          "stage": "proceso",
+          "kind": "Foto real"
+        },
+        {
+          "path": "assets/images/project-stories/14-estampado/preview-02.webp",
+          "stage": "preview",
+          "kind": "Preview recreado"
+        },
+        {
+          "path": "assets/images/project-stories/14-estampado/resultado-03.webp",
+          "stage": "resultado",
+          "kind": "Foto real"
+        },
+        {
+          "path": "assets/images/project-stories/14-estampado/resultado-04.webp",
+          "stage": "resultado",
+          "kind": "Foto real"
+        },
+        {
+          "path": "assets/images/project-stories/14-estampado/resultado-05.webp",
+          "stage": "resultado",
+          "kind": "Foto real"
+        }
+      ]
+    },
+    {
+      "id": "15-acceso-amplio",
+      "title_en": "A spacious residential entrance",
+      "title_es": "Acceso amplio junto a la residencia",
+      "images": [
+        {
+          "path": "assets/images/project-stories/15-acceso-amplio/preview-01.webp",
+          "stage": "preview",
+          "kind": "Preview recreado"
+        },
+        {
+          "path": "assets/images/project-stories/15-acceso-amplio/resultado-02.webp",
+          "stage": "resultado",
+          "kind": "Foto real"
+        }
+      ]
+    },
+    {
+      "id": "16-acceso-pendiente",
+      "title_en": "A curved driveway on a slope",
+      "title_es": "Driveway curvo en pendiente",
+      "images": [
+        {
+          "path": "assets/images/project-stories/16-acceso-pendiente/preview-01.webp",
+          "stage": "preview",
+          "kind": "Preview recreado"
+        },
+        {
+          "path": "assets/images/project-stories/16-acceso-pendiente/resultado-02.webp",
+          "stage": "resultado",
+          "kind": "Foto real"
+        }
+      ]
+    },
+    {
+      "id": "17-pasto",
+      "title_en": "Grading and fresh sod",
+      "title_es": "Nivelación y colocación de pasto",
+      "images": [
+        {
+          "path": "assets/images/project-stories/17-pasto/antes-01.webp",
+          "stage": "antes",
+          "kind": "Foto real"
+        },
+        {
+          "path": "assets/images/project-stories/17-pasto/proceso-02.webp",
+          "stage": "proceso",
+          "kind": "Foto real"
+        },
+        {
+          "path": "assets/images/project-stories/17-pasto/proceso-03.webp",
+          "stage": "proceso",
+          "kind": "Foto real"
+        },
+        {
+          "path": "assets/images/project-stories/17-pasto/preview-04.webp",
+          "stage": "preview",
+          "kind": "Preview recreado"
+        },
+        {
+          "path": "assets/images/project-stories/17-pasto/resultado-05.webp",
+          "stage": "resultado",
+          "kind": "Foto real"
+        },
+        {
+          "path": "assets/images/project-stories/17-pasto/resultado-06.webp",
+          "stage": "resultado",
+          "kind": "Captura de video real"
+        },
+        {
+          "path": "assets/images/project-stories/17-pasto/resultado-07.webp",
+          "stage": "resultado",
+          "kind": "Captura de video real"
+        }
+      ],
+      "video": "assets/video/project-stories/17-pasto.mp4"
+    },
+    {
+      "id": "18-losa-rectangular",
+      "title_en": "Rectangular outdoor concrete slab",
+      "title_es": "Losa rectangular exterior",
+      "images": [
+        {
+          "path": "assets/images/project-stories/18-losa-rectangular/preview-01.webp",
+          "stage": "preview",
+          "kind": "Preview recreado"
+        },
+        {
+          "path": "assets/images/project-stories/18-losa-rectangular/resultado-02.webp",
+          "stage": "resultado",
+          "kind": "Foto real"
+        }
+      ]
+    },
+    {
+      "id": "19-acceso-garaje",
+      "title_en": "A renewed garage approach",
+      "title_es": "Renovación del acceso al garaje",
+      "images": [
+        {
+          "path": "assets/images/project-stories/19-acceso-garaje/preview-01.webp",
+          "stage": "preview",
+          "kind": "Preview recreado"
+        },
+        {
+          "path": "assets/images/project-stories/19-acceso-garaje/resultado-02.webp",
+          "stage": "resultado",
+          "kind": "Foto real"
+        },
+        {
+          "path": "assets/images/project-stories/19-acceso-garaje/resultado-03.webp",
+          "stage": "resultado",
+          "kind": "Foto real"
+        },
+        {
+          "path": "assets/images/project-stories/19-acceso-garaje/resultado-04.webp",
+          "stage": "resultado",
+          "kind": "Foto real"
+        }
+      ],
+      "video": "assets/video/project-stories/19-acceso-garaje.mp4"
+    },
+    {
+      "id": "20-acceso-peatonal",
+      "title_en": "Front walkway repair",
+      "title_es": "Reparación de acceso peatonal",
+      "images": [
+        {
+          "path": "assets/images/project-stories/20-acceso-peatonal/preview-01.webp",
+          "stage": "preview",
+          "kind": "Preview recreado"
+        },
+        {
+          "path": "assets/images/project-stories/20-acceso-peatonal/resultado-02.webp",
+          "stage": "resultado",
+          "kind": "Foto real"
+        }
+      ]
+    }
+  ]
+}
