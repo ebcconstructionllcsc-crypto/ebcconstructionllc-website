@@ -89,3 +89,11 @@ html.site-intro-active { overflow: auto; }
   }
   .mobile-actions a { min-height: 46px; padding: 11px 8px; font-size: .9rem; }
 }
+
+/* Keep both team contacts one tap away on phones. */
+@media (max-width: 900px) {
+ .mobile-actions { grid-template-columns: repeat(4,minmax(0,1fr)); grid-auto-flow: row; }
+ .mobile-actions a { min-width:0; min-height:48px; display:flex; align-items:center; justify-content:center; padding:10px 4px; }
+}
+
+.service-choices .planning-card .btn { margin:8px 8px 0 0; }
