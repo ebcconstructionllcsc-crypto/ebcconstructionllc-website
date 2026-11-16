@@ -385,6 +385,7 @@ function renderTable(type) {
             ${columns.map(column => `<td>${cell(row, column)}</td>`).join('')}
             <td class="row-actions">
               ${type === 'leads' ? `<button onclick="viewLead('${row.id}')">Ver</button>` : ''}
+              ${type === 'projects' && row.status === 'completed' ? `<button onclick="requestProjectReview('${row.id}')">Pedir reseña</button>` : ''}
               <button onclick="editRecord('${type}','${row.id}')">Editar</button>
               <button onclick="deleteRecord('${type}','${row.id}')">Eliminar</button>
             </td>
@@ -481,6 +482,10 @@ $('#record-form').addEventListener('submit', async event => {
   $('#record-dialog').close();
   toast('Registro guardado');
   await refresh();
+  if (type === 'projects' && data.status === 'completed' && row?.status !== 'completed') {
+    const client = state.clients.find(item => item.id === data.client_id);
+    if (client) window.EBCReviewRequest?.open(client);
+  }
 });
 
 window.deleteRecord = async (type, id) => {
@@ -789,6 +794,14 @@ window.deleteMedia = async id => {
   }
   toast('Material eliminado');
   await refresh();
+};
+
+window.requestProjectReview = id => {
+  const project = state.projects.find(item => item.id === id);
+  if (!project || project.status !== 'completed') return;
+  const client = state.clients.find(item => item.id === project.client_id);
+  if (!client) { toast('Asigna un cliente al proyecto para preparar su mensaje.', true); return; }
+  window.EBCReviewRequest?.open(client);
 };
 
 boot();
