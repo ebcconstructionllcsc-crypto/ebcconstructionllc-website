@@ -280,6 +280,7 @@ if (estimateForm) {
   }
 
   function updatePhotoStatus(files = selectedFiles()) {
+    photosInput?.setCustomValidity('');
     try {
       validateFiles(files);
       if (files.length) {
@@ -294,6 +295,7 @@ if (estimateForm) {
         ));
       }
     } catch (error) {
+      photosInput?.setCustomValidity(error.message);
       setFormStatus(error.message, 'error');
     }
   }
@@ -419,8 +421,8 @@ if (estimateForm) {
     if (!preparedRequest.files.length) {
       const item = document.createElement('li');
       item.textContent = text(
-        'No photos selected. You can still text or email the project details.',
-        'No hay fotos seleccionadas. Aun así puedes enviar los detalles por texto o correo.'
+        'No photos added. You can send a request with your project details.',
+        'No agregaste fotos. Puedes enviar la solicitud con los detalles de tu proyecto.'
       );
       estimateReviewPhotos.append(item);
     } else {
@@ -435,7 +437,7 @@ if (estimateForm) {
     estimateReview.hidden = false;
   }
 
-  function resetPreparedRequest() {
+  function resetPreparedRequest(target) {
     if (!preparedRequest) return;
     preparedRequest = null;
     preparedFiles = [];
@@ -447,6 +449,7 @@ if (estimateForm) {
       'Details changed. Review the updated request before sharing it.',
       'Los detalles cambiaron. Revisa la solicitud actualizada antes de compartirla.'
     ));
+    estimateForm.dispatchEvent(new CustomEvent('ebc:estimateinvalidated', { detail: { field: target?.id || '' } }));
   }
 
   function showPreparedRequest(files) {
@@ -462,6 +465,7 @@ if (estimateForm) {
       submitButton.textContent = text('Update review', 'Actualizar revisión');
     }
 
+    estimateForm.dispatchEvent(new Event('ebc:estimatereview'));
     estimateReview?.focus({ preventScroll: true });
     estimateReview?.scrollIntoView({
       behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
@@ -470,7 +474,7 @@ if (estimateForm) {
   }
 
   photosInput?.addEventListener('change', () => {
-    resetPreparedRequest();
+    resetPreparedRequest(photosInput);
     const files = selectedFiles();
     renderPhotoSelection(files);
     updatePhotoStatus(files);
@@ -478,14 +482,19 @@ if (estimateForm) {
 
   estimateForm.addEventListener('input', event => {
     if (event.target === photosInput) return;
-    resetPreparedRequest();
+    resetPreparedRequest(event.target);
   });
 
   estimateForm.addEventListener('change', event => {
-    if (event.target !== photosInput) resetPreparedRequest();
+    if (event.target !== photosInput) resetPreparedRequest(event.target);
   });
 
+  estimateForm.addEventListener('invalid', event => resetPreparedRequest(event.target), true);
+
   estimateReviewEdit?.addEventListener('click', () => {
+    if (estimateReview?.getAttribute('aria-busy') === 'true' || estimateReview?.dataset.submissionComplete === 'true') return;
+    resetPreparedRequest(estimateForm.querySelector('#name'));
+    estimateForm.dispatchEvent(new Event('ebc:estimateedit'));
     estimateForm.querySelector('#name')?.focus();
     estimateForm.querySelector('#name')?.scrollIntoView({
       behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
@@ -581,6 +590,9 @@ if (estimateForm) {
 
   renderPhotoSelection();
   updatePhotoStatus();
+  // A failed script must not leave an active native form posting customer data.
+  estimateForm.dataset.reviewReady = 'true';
+  if (submitButton) submitButton.disabled = false;
 }
 
 // Consistent, reversible presentation of the original California Style collection.

@@ -59,7 +59,7 @@
   // Keep the existing prepared SMS link: its request details are updated by app.js.
   const textLink = actions.querySelector('#text-request');
   const emailLink = actions.querySelector('#email-request');
-  const callLink = actions.querySelector('a[href^="tel:"]');
+  const callLinks = [...actions.querySelectorAll('a[href^="tel:"]')];
   const fallback = document.createElement('div');
   fallback.id = 'estimate-contact-fallback';
   fallback.className = 'estimate-contact-fallback';
@@ -70,7 +70,7 @@
   const fallbackActions = document.createElement('div');
   fallbackActions.className = 'estimate-review-actions';
   if (emailLink) fallbackActions.append(emailLink);
-  if (callLink) fallbackActions.append(callLink);
+  callLinks.forEach(link => fallbackActions.append(link));
   if (textLink) fallbackActions.append(textLink);
   fallback.append(fallbackText, fallbackActions);
   actions.replaceChildren(sendButton, editButton);
@@ -82,13 +82,13 @@
       const strong = intakeNotice.querySelector('strong');
       const paragraph = intakeNotice.querySelector('p');
       if (strong) {
-        strong.dataset.en = 'Direct and secure delivery';
-        strong.dataset.es = 'Envío directo y seguro';
+        strong.dataset.en = 'Review first. Send when you’re ready.';
+        strong.dataset.es = 'Primero revisa. Envía cuando estés listo.';
         strong.textContent = copy(strong.dataset.en, strong.dataset.es);
       }
       if (paragraph) {
-        paragraph.dataset.en = 'Review your information first. Press Send request to EBC to send your details and selected photos. Look for a confirmation reference on this page.';
-        paragraph.dataset.es = 'Primero revisa tu información. Presiona Enviar solicitud a EBC para enviar tus detalles y las fotos seleccionadas. Busca la referencia de confirmación en esta página.';
+        paragraph.dataset.en = 'You can check your details and photos before pressing Send request to EBC. Keep this page open for your confirmation.';
+        paragraph.dataset.es = 'Puedes revisar tus datos y fotos antes de presionar Enviar solicitud a EBC. Mantén esta página abierta para ver la confirmación.';
         paragraph.textContent = copy(paragraph.dataset.en, paragraph.dataset.es);
       }
     }
