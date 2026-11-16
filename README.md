@@ -12,6 +12,8 @@ Automatic delivery is pending configuration and end-to-end verification of the e
 
 Project media must use original EBC photographs and videos. Do not replace source media, apply filters, overwrite originals, or introduce AI-styled edits.
 
+For verified project updates in `news.html` and the homepage, follow the [Novedades publishing workflow](docs/news-workflow.md).
+
 ## Private application
 
 The private application is served from `/app/` and uses Supabase authentication and row-level security. It currently includes:
