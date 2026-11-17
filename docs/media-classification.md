@@ -139,3 +139,40 @@ The three homepage previews now link to `sod`, `extension` and
 `driveway-deck-20261111`. All prior journal IDs and archive links remain valid.
 The concrete hero and service filtering remain unchanged. Only the homepage and
 news sitemap dates were advanced to the actual website-update date.
+
+
+## November 17 complete project catalog
+
+Projects now uses all verified stories from the journal data, including the deck,
+field welding, poolside retaining wall and recent concrete galleries. The catalog
+is generated; its links preserve each original story and keep media within the
+matching project. No dates or customer names were added to the catalog.
+
+### Wide driveway with diamond joints
+
+The new `large-diamond-driveway` gallery uses the already approved original-photo
+derivatives `driveway-diagonal-joints-wide.webp` (IMG_2501.jpeg) and
+`driveway-garage-joints.webp` (IMG_2503.jpeg). Both are recorded in
+`assets/media/driveways-20261005.json`. Visual comparison confirms the same wide
+driveway at the gray house under construction, with matching garage, porch and
+joint layout. This is distinct from the narrower curved driveway in the existing
+`diamond` story. Source publication and completion dates remain unknown.
+
+### Additional field-welding clip
+
+The original IMG_5139.MOV from the authorized private EBC video collection shows
+the welder beside equipment with his helmet raised. Its outdoor setting,
+equipment and light-blue work shirt match the existing field-welding session;
+it does not show the indoor trailer-workshop project. The complete 3.24-second
+clip is captioned `Welder beside equipment / Soldador junto al equipo`, without
+claiming an active welding arc. The original remains unchanged and private.
+
+Public display derivatives:
+
+- `assets/video/gallery-20261117/welder-beside-equipment.mp4`: H.264,
+  720 × 1280, no audio, approximately 1.65 MB.
+- `assets/images/gallery-20261117/welder-beside-equipment.webp`: frame at 1 second,
+  proportional resize/compression only; no synthetic edits or private metadata.
+
+The existing welding clip is preserved; this separate source is added to the
+`welding` gallery. The workshop photograph remains in its own gallery.

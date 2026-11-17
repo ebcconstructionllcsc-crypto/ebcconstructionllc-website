@@ -8,6 +8,13 @@ The public route is `https://ebcconstructionllc.com/news.html`. Its source is
 story IDs and their `news.html?project=ID` links, including archive stories that
 have no visible card.
 
+`projects.html` also shows every story as a project gallery. Its catalog is
+generated from that same inline JSON by `npm run sync:projects`; do not hand-edit
+the block between `EBC PROJECT CATALOG` markers. Photos, videos, titles and
+service categories therefore stay consistent between Novedades and Projects.
+The project catalog is separate from the older detailed photo collections below
+it, which remain available. Preserve those collections when adding a story.
+
 The three homepage previews live in `index.html`, inside the section with
 `aria-labelledby="latest-work-title"`. Update those links, images and bilingual
 copy together when selecting new work. Keep each preview inside its project.
@@ -20,7 +27,8 @@ connected to this page. Do not change that separate system to publish news.
 
 There is no news generator. Do not depend on `novedades-ebc.html`,
 `assets/data/ebc-news.json` or `scripts/build-news.mjs`. The existing
-`scripts/prepare-pages.mjs` only prepares the deployment artifact.
+`scripts/prepare-pages.mjs` prepares the deployment artifact and synchronizes its
+project catalog from the included news data.
 
 ## Sources and verification
 
@@ -70,15 +78,18 @@ do not disable the task or change its schedule on your own.
    and selected homepage previews. Preserve service categories and existing
    deep links. The news hero currently represents concrete; changing its service
    also requires updating the hero's filter behavior in `assets/news-gallery.js`.
+   Run `npm run sync:projects` and include the regenerated `projects.html` in the
+   same change. Update sitemap dates only for pages whose content changed.
 3. Run `node tests/news-gallery-flow.mjs`, then `npm test`. The gallery test
    checks metadata, assets, card/story links, homepage previews, filters and
    viewer behavior without a fixed total number of stories. Do not weaken
-   checks merely to accept new content.
+   checks merely to accept new content. `npm test` also rejects a stale project
+   catalog and validates its service filters, language, links and source media.
 4. Fetch the latest `main` before publishing. If it moved, integrate its changes,
    review the combined diff and rerun the checks. Publish through the existing
    authorized workflow. GitHub Pages deploys pushes to `main` after validation;
    it does not discover or write new posts on its own.
-5. Verify the resulting deployment and the live `news.html` and homepage. Open
+5. Verify the resulting deployment and the live `news.html`, `projects.html` and homepage. Open
    each new project link, check its photos/videos, filters, mobile layout and
    both languages. Report the published source/story links, or the exact
    remaining blocker; do not call an unverified deployment complete.

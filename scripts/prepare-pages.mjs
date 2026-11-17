@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { syncProjectGallery } from './sync-project-gallery.mjs';
 export function preparePages(destination = '.pages-site') {
   const root = path.resolve(import.meta.dirname, '..');
   const output = path.resolve(destination);
@@ -9,6 +10,7 @@ export function preparePages(destination = '.pages-site') {
   for (const file of ["project-stories.html","cleveland-county-nc.html","franklin-county-ga.html","stephens-county-ga.html","habersham-county-ga.html","banks-county-ga.html","rabun-county-ga.html","retaining-walls.html","builders-contractors.html","concrete.html","california-style.html","project-backyard-sod.html","project-concrete-walkway.html","project-field-welding.html","project-curved-driveway.html","project-curved-block-wall.html","project-patio-extension.html","concrete-walkways.html","concrete-driveways.html","concrete-slabs.html","concrete-patios.html",'index.html','services.html','landscaping-pavers.html','welding.html','greenville-county-sc.html','spartanburg-county-sc.html','service-areas.html','pickens-county-sc.html','anderson-county-sc.html','laurens-county-sc.html','henderson-county-nc.html','transylvania-county-nc.html','polk-county-nc.html','abbeville-county-sc.html','oconee-county-sc.html','greenwood-county-sc.html','rutherford-county-nc.html','union-county-sc.html','cherokee-county-sc.html','jackson-county-nc.html','hart-county-ga.html','buncombe-county-nc.html','projects.html','news.html','about.html','reviews.html','contact.html','robots.txt','sitemap.xml','CNAME','assets','app']) {
     fs.cpSync(path.join(root, file), path.join(output, file), { recursive: true });
   }
+  syncProjectGallery({ sourcePath: path.join(output, 'news.html'), targetPath: path.join(output, 'projects.html') });
   fs.writeFileSync(path.join(output, '.nojekyll'), '');
   return output;
 }
