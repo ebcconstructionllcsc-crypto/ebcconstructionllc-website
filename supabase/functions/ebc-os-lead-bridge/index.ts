@@ -45,7 +45,7 @@ function inputView(value:unknown):Input{
  if((action==='detail'&&keys==='action,leadId'||action==='media'&&keys==='action,fileId,leadId')&&typeof value.leadId==='string'&&UUID.test(value.leadId)&&(action==='detail'||typeof value.fileId==='string'&&UUID.test(value.fileId))){if(action==='detail')return {action,leadId:value.leadId.toLowerCase()};return {action:'media',leadId:value.leadId.toLowerCase(),fileId:(value.fileId as string).toLowerCase()};}
  return fail(400,'invalid_request');
 }
-function allowedLead(row:unknown):row is Row{return object(row)&&typeof row.id==='string'&&UUID.test(row.id)&&row.consent_to_contact===true&&websiteSource(row.source)&&date(row.created_at)&&date(row.updated_at);}
+function allowedLead(row:unknown):row is Row{return object(row)&&typeof row.id==='string'&&UUID.test(row.id)&&typeof row.consent_to_contact==='boolean'&&websiteSource(row.source)&&date(row.created_at)&&date(row.updated_at);}
 function fileView(raw:unknown,leadId:string){
  if(!object(raw)||typeof raw.id!=='string'||!UUID.test(raw.id)||raw.lead_id!==leadId||raw.source!=='website'||typeof raw.mime_type!=='string'||!MIME_TYPES.includes(raw.mime_type)||!Number.isSafeInteger(raw.size_bytes)||Number(raw.size_bytes)<1||Number(raw.size_bytes)>MAX_MEDIA||!date(raw.created_at))return null;
  return {id:raw.id,name:clip(raw.file_name,500),mime:raw.mime_type,size:Number(raw.size_bytes),createdAt:raw.created_at as string};
@@ -53,7 +53,7 @@ function fileView(raw:unknown,leadId:string){
 function leadView(row:Row){
  if(!allowedLead(row))return fail(502,'invalid_source_data');
  const files=Array.isArray(row.files)?row.files:[];
- return {id:row.id,fullName:clip(row.full_name,300),phone:clip(row.phone,100),email:clip(row.email,250),serviceType:clip(row.service_type,200),projectAddress:clip(row.project_address,1000),description:clip(row.project_description,12000),preferredTimeline:clip(row.preferred_timeline,500),source:'Website Lead',consentToContact:true,status:clip(row.status,100),createdAt:row.created_at,updatedAt:row.updated_at,files:files.slice(0,MAX_FILES).map(file=>fileView(file,row.id as string)).filter(Boolean)};
+ return {id:row.id,fullName:clip(row.full_name,300),phone:clip(row.phone,100),email:clip(row.email,250),serviceType:clip(row.service_type,200),projectAddress:clip(row.project_address,1000),description:clip(row.project_description,12000),preferredTimeline:clip(row.preferred_timeline,500),source:'Website Lead',consentToContact:row.consent_to_contact,status:clip(row.status,100),createdAt:row.created_at,updatedAt:row.updated_at,files:files.slice(0,MAX_FILES).map(file=>fileView(file,row.id as string)).filter(Boolean)};
 }
 function storagePath(value:unknown,leadId:string){
  if(typeof value!=='string'||value.length>1000)return fail(404,'media_unavailable');
@@ -92,7 +92,9 @@ export function createBridge(dependencies:Dependencies={}){
    const digest=await sha256(match[1]);
    const authenticate=async()=>{const config=await rows('ebc_os_lead_bridge_config',{select:'token_sha256,enabled',id:'eq.ebc-os',limit:'1'},4096);const stored=config[0];if(!stored||stored.enabled!==true||typeof stored.token_sha256!=='string'||!(/^[a-f0-9]{64}$/).test(stored.token_sha256)||!equalHash(digest,stored.token_sha256))return fail(401,'unauthorized');};
    await authenticate();
-   const leadParameters={select:LEAD_COLUMNS+',files:lead_files!lead_files_lead_id_fkey('+FILE_COLUMNS+')',source:'in.("Website Lead","website","Website","website lead")',consent_to_contact:'eq.true','files.source':'eq.website','files.order':'created_at.asc,id.asc','files.limit':String(MAX_FILES)};
+   // Consent controls permission to contact, not the owner's read access. Keep
+   // historical website submissions visible and preserve their original flag.
+   const leadParameters={select:LEAD_COLUMNS+',files:lead_files!lead_files_lead_id_fkey('+FILE_COLUMNS+')',source:'in.("Website Lead","website","Website","website lead")','files.source':'eq.website','files.order':'created_at.asc,id.asc','files.limit':String(MAX_FILES)};
    const findLead=async(leadId:string)=>{const found=await rows('leads',{...leadParameters,id:'eq.'+leadId,limit:'1'});const lead=found[0];if(!allowedLead(lead)||lead.id!==leadId)return fail(404,'lead_unavailable');return lead;};
    if(input.action==='status'){
     await Promise.all([rows('leads',{select:'id',limit:'0'},1024),rows('lead_files',{select:'id',limit:'0'},1024)]);
@@ -114,7 +116,7 @@ export function createBridge(dependencies:Dependencies={}){
    const type=(response.headers.get('content-type')||'').split(';')[0].trim().toLowerCase(),declared=Number(response.headers.get('content-length'));
    if(type!==media.mime||response.headers.has('content-length')&&(!Number.isSafeInteger(declared)||declared!==media.size)){await response.body?.cancel();return fail(502,'invalid_media');}
    const content=await bytes(response.body,MAX_MEDIA,signal);if(content.byteLength!==media.size)return fail(502,'invalid_media');
-   // Deletion, withdrawn consent, relinking, or token rotation during storage IO
+   // Deletion, changed provenance, relinking, or token rotation during storage IO
    // cannot release an attachment from a stale authorization snapshot.
    await authenticate();await findLead(input.leadId!);
    const current=await rows('lead_files',{select:FILE_COLUMNS,id:'eq.'+input.fileId,lead_id:'eq.'+input.leadId,source:'eq.website',limit:'1'}),currentFile=current[0],fresh=fileView(currentFile,input.leadId!);
