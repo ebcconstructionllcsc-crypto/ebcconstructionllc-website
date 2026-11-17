@@ -52,12 +52,90 @@ paver-installation photograph was found among the reviewed samples.
 
 Original footage visually reviewed in Drive; selected frames and silent H.264 clips are published. No synthetic project imagery. File upload dates are not presented as completion dates. Each journal story stays within one project.
 
-| Gallery | Original | Drive file ID | Published clip |
+| Gallery | Original | Source location | Published clip |
 |---|---|---|---|
-| deck | IMG_0686.mov | `1TkNG9iCLO7TohS_bAqMHe2ArSLZcvirC` | 0–18s |
-| sod | IMG_5376.MOV | `1WMeun_ltdR1kFz4zJWivgVHReBQBbdkn` | 38–57s |
-| welding | IMG_5134.MOV | `1WchwKdM9EdHdiIfv6kvtVhbEhdFS_sUd` | 25–37s |
-| driveway | IMG_1281.MOV | `1kXpsZ6p9S6EhMUO3tjPw_Cw1RoHbAB_Y` | 2–22s |
-| walkway | IMG_0769.MOV | `1LeRv_pWqvLxrqBmkL6uujkPKVx1eUqff` | 0–12s |
+| deck | IMG_0686.mov | Authorized private Drive folder | 0–18s |
+| sod | IMG_5376.MOV | Authorized private Drive folder | 38–57s |
+| welding | IMG_5134.MOV | Authorized private Drive folder | 25–37s |
+| driveway | IMG_1281.MOV | Authorized private Drive folder | 2–22s |
+| walkway | IMG_0769.MOV | Authorized private Drive folder | 0–12s |
 
 Sod images replace soil/gravel illustrations on the landscaping page and portfolio. Block walls belong to landscaping in the portfolio and have their own journal filter. Concrete joints are not labeled as pavers. The deck is explicitly in progress. The remaining patio, wall and workshop photos retain their previously documented provenance. Two social-only concrete videos link to their original EBC posts.
+
+
+## November 17 source recovery and journal update
+
+Verified the user-authorized open Facebook session for the professional profile
+`EdgarAguilarEBC` (ID `100059137420359`). The old `galincitobolanos1`
+address returned unavailable content. No Facebook content or privacy settings
+were changed. Dates below are **source publication dates**, never inferred
+construction/completion dates; the verification date is **2026-11-17**.
+
+Reviewed the recent professional-profile content library and opened the relevant
+original posts and photo galleries. Shared EBC Page albums were reached through
+those profile posts, not through discovery of a new source account. Excluded
+recommendations of other contractors, collaboration announcements, cover-photo
+changes, private/unclear entries, archived ephemeral stories, and sales/planning
+listings without verified project media. A private or unverified entry is not
+proof of a completed EBC job and is not a new public journal story.
+
+### Source-to-story mapping
+
+| Story ID | Public source ID | Source published (America/New_York) | Decision |
+|---|---|---|---|
+| `sod` | `1504876491493584` | 2026-11-16 21:36 | Same backyard as existing sod footage: pool fence, shed, white fence and crew match. Add six photographs, retain the original clip and first three frames. |
+| `extension` | `1503891968258703` | 2026-11-15 22:12 | Same driveway as the archived Instagram reel `DeZuQUsgfXP`: video visibly matches the stone-front house, garage, side extensions and curb. Add six photographs and restore a visible card, preserving the existing story ID and video. |
+| `driveway-deck-20261111` | `122154026199348579` | 2026-11-11 22:12 | Add a distinct project with five construction photos. The house wrap, brick foundation and existing timber deck distinguish it from the archive walkway. Exclude the two review screenshots and all customer-identifying copy. |
+| `patio` | `122153943669348579` | 2026-11-11 11:58 | Exact finished-photo match to the existing patio gallery. Add only two before-work images; keep the original three finished images without duplicating the project. |
+| `deck` | Reel `2179539616299336`, post `1470856244895609` | 2026-10-14 00:03 | Pending reel is the existing deck-in-progress project: same shed doors, framing and crew. Add its original source link alongside the existing silent Drive clip; do not create another story or imply completion. |
+
+The landscaping Page album `122155039029348579`, shared by profile post
+`1504565484858018`, repeats the landscaping photos. The driveway Page album
+`122154882927348579`, shared by profile post `1503925871588646`, repeats the
+extension. Profile post `1502950085019558` shares a cover-photo change.
+Profile posts `1500069895307577` and `1499677102013523` point to the deck-connection
+and patio Page albums respectively. These shared posts are not separate projects.
+
+Original public source links:
+
+- `sod`: https://www.facebook.com/EdgarAguilarEBC/posts/pfbid0noeJXPW9kE3EhsMB6ExmREHh7oxFhBMqxWoCAMVS1Nw1cgaTww8RJMn58vwM8tZfl
+- `extension`: https://www.facebook.com/EdgarAguilarEBC/posts/pfbid0sAaH6mUBrDBXaU7AcmGpsUWn7CnEhs5sYLhL3Vkj8UWbZ4qNcPVsMyhzsWKw4oEZl
+- `patio`: https://www.facebook.com/permalink.php?story_fbid=pfbid034QfeMg6KiMcDRGRnBuBuaCAh95hTEcZP9oVbtJGKbymcfL8KbcvfPfc4zBMmjE4Kl&id=61590457384469
+- `driveway-deck-20261111`: https://www.facebook.com/permalink.php?story_fbid=pfbid02kg8H6wztKwYd1JK9WwFfhAQH6cAxuP2rLRtWopDYrsXMtiTqkZ1KAEqfQAcVzhLfl&id=61590457384469
+- `deck`: https://www.facebook.com/reel/2179539616299336
+
+### Display derivatives
+
+The originals remain unchanged. These WebP derivatives use only EXIF orientation,
+proportional downscaling (maximum 1600 px), compression and metadata removal.
+No synthetic imagery, retouching, customer names, addresses or completion dates
+were introduced. Existing pools/decks shown for context are not claimed as EBC
+construction. The new photographs were visually compared against the archive
+before association with a story.
+
+| Story | Facebook photo ID | Local derivative |
+|---|---|---|
+| `sod` | `1504875871493646` | `assets/images/journal-20261117/sod-river-rock.webp` |
+| `sod` | `1504875878160312` | `assets/images/journal-20261117/sod-lawn.webp` |
+| `sod` | `1504875864826980` | `assets/images/journal-20261117/sod-preparation.webp` |
+| `sod` | `1504875934826973` | `assets/images/journal-20261117/sod-installation.webp` |
+| `sod` | `1504875948160305` | `assets/images/journal-20261117/sod-yard.webp` |
+| `sod` | `1504875984826968` | `assets/images/journal-20261117/sod-pool-edge.webp` |
+| `extension` | `1503890141592219` | `assets/images/journal-20261117/extension-after-front.webp` |
+| `extension` | `1503890124925554` | `assets/images/journal-20261117/extension-before-left.webp` |
+| `extension` | `1503890118258888` | `assets/images/journal-20261117/extension-before-right.webp` |
+| `extension` | `1503890184925548` | `assets/images/journal-20261117/extension-side.webp` |
+| `extension` | `1503890214925545` | `assets/images/journal-20261117/extension-after-right.webp` |
+| `extension` | `1503890231592210` | `assets/images/journal-20261117/extension-after-left.webp` |
+| `patio` | `122153943555348579` | `assets/images/journal-20261117/patio-before-wide.webp` |
+| `patio` | `122153943597348579` | `assets/images/journal-20261117/patio-before-edge.webp` |
+| `driveway-deck-20261111` | `122154025989348579` | `assets/images/journal-20261117/deck-connection-finished.webp` |
+| `driveway-deck-20261111` | `122154026031348579` | `assets/images/journal-20261117/deck-connection-deck.webp` |
+| `driveway-deck-20261111` | `122154025857348579` | `assets/images/journal-20261117/deck-connection-before.webp` |
+| `driveway-deck-20261111` | `122154025899348579` | `assets/images/journal-20261117/deck-connection-preparation.webp` |
+| `driveway-deck-20261111` | `122154025947348579` | `assets/images/journal-20261117/deck-connection-reinforcement.webp` |
+
+The three homepage previews now link to `sod`, `extension` and
+`driveway-deck-20261111`. All prior journal IDs and archive links remain valid.
+The concrete hero and service filtering remain unchanged. Only the homepage and
+news sitemap dates were advanced to the actual website-update date.

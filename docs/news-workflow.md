@@ -26,8 +26,14 @@ There is no news generator. Do not depend on `novedades-ebc.html`,
 
 Use only the sources authorized by the existing automation:
 
-- EBC professional Facebook profile: https://www.facebook.com/galincitobolanos1/
-- Original EBC Drive videos: https://drive.google.com/drive/folders/1eMNzi2x4h2J7Aux50zkb_pGBxAyXi2np
+- EBC professional Facebook profile: https://www.facebook.com/EdgarAguilarEBC
+- Original EBC Drive videos: use the source folder explicitly authorized in the
+  private automation configuration. Do not publish private Drive links or file IDs.
+
+On November 17, 2026, the user-authorized open session confirmed this professional
+profile (ID `100059137420359`). The former `galincitobolanos1` URL returned
+unavailable content. The existing automation now uses the verified current URL.
+This is a historical access check, not a promise that future sessions work.
 
 Existing links to other profiles do not authorize new source discovery or
 publication from them. Verify access on each run; this document does not imply
