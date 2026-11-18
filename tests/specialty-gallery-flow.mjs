@@ -13,8 +13,17 @@ window.HTMLMediaElement.prototype.load = () => {};
 window.eval(fs.readFileSync('assets/portfolio.js', 'utf8'));
 const specialty = doc.querySelector('#california-style');
 const photos = [...specialty.querySelectorAll('[data-media-type="image"]')];
-assert.equal(photos.length, 17);
+assert.equal(photos.length, 21);
 assert.equal(specialty.querySelectorAll('[data-media-type="video"]').length, 6);
+const journal = new JSDOM(fs.readFileSync('news.html', 'utf8')).window.document;
+const diamondStory = JSON.parse(journal.querySelector('#news-media-data').textContent).find(story => story.id === 'concrete-before-after-20261109');
+const finishedDiamondPhotos = diamondStory.media.filter(item => item.type === 'image' && /\/after-\d+\.webp$/.test(item.src)).map(item => item.src);
+assert.equal(finishedDiamondPhotos.length, 4);
+assert.deepEqual(photos.slice(0, 4).map(card => card.dataset.fullSrc), finishedDiamondPhotos, 'The specialty opens with all finished views of the diamond project');
+for (const photo of finishedDiamondPhotos) {
+  assert.equal(photos.filter(card => card.dataset.fullSrc === photo).length, 1, 'Each new diamond photo appears once');
+}
+assert.ok(specialty.querySelector('a[href="news.html?project=concrete-before-after-20261109"]'), 'The specialty links to the complete before-and-after story');
 assert.ok(!specialty.hidden);
 assert.ok(doc.querySelector('#driveways').hidden);
 const paths = [...doc.querySelectorAll('.portfolio-phases [data-full-src]')].map(e => e.dataset.fullSrc);
@@ -34,4 +43,4 @@ assert.ok([...specialty.querySelectorAll('[data-category="finish"]')].every(c =>
 doc.querySelector('[data-filter="all"]').click();
 assert.ok([...doc.querySelectorAll('.portfolio-phases .portfolio-card')].every(c => !c.hidden));
 dom.window.close();
-console.log('Specialty: 17 photos, 6 videos, no duplicates, category filters and photo navigation passed.');
+console.log('Specialty: 21 photos, 6 videos, complete diamond project, no duplicates, category filters and photo navigation passed.');

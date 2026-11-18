@@ -15,6 +15,15 @@ service categories therefore stay consistent between Novedades and Projects.
 The project catalog is separate from the older detailed photo collections below
 it, which remain available. Preserve those collections when adding a story.
 
+For visually verified California Style work (such as diamond joints and curved
+concrete layouts), also update the curated `california-style.html` collection and
+the matching `projects.html#california-style` specialty gallery. Include matching
+finished photos, bilingual captions and a link to the complete journal story.
+Keep their media inventories and metadata totals aligned; the existing
+California collection tests check both pages together. Do not assume the general
+catalog synchronization updates specialty collections or classify every concrete
+project as California Style. See `docs/california-style-collection.md`.
+
 The three homepage previews live in `index.html`, inside the section with
 `aria-labelledby="latest-work-title"`. Update those links, images and bilingual
 copy together when selecting new work. Keep each preview inside its project.
