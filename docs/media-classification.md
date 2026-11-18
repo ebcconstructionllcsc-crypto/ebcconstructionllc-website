@@ -176,3 +176,17 @@ Public display derivatives:
 
 The existing welding clip is preserved; this separate source is added to the
 `welding` gallery. The workshop photograph remains in its own gallery.
+
+### Edgar pressure-washing concrete
+
+The owner supplied the original portrait photograph directly on November 17,
+2026 (America/New_York). `assets/images/team/edgar-pressure-washing.jpg` is the
+unchanged 866 × 1279 JPEG (229,249 bytes), with no cropping, retouching or generated
+content. Its metadata contains image dimensions, orientation, color space and
+resolution only; no location or capture date is embedded.
+
+The complete photograph appears in the Projects `edgar-on-site` feature and
+beside Edgar's story on About. Both link to the full image. The photo documents
+Edgar cleaning concrete; it does not establish a separate completed project,
+customer, location or completion date. The feature stays outside the generated
+project catalog so future journal synchronization preserves it.
