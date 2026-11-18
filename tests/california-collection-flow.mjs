@@ -7,8 +7,17 @@ const w=dom.window,d=w.document;
 const expected=[...source.querySelectorAll('#california-style .portfolio-card')].map(e=>e.dataset.fullSrc||e.dataset.videoSrc).sort();
 const media=[...d.querySelectorAll('.california-media')];
 assert.deepEqual(media.map(e=>e.dataset.lightbox||e.dataset.videoSrc).sort(),expected,'every specialty asset must be present exactly once');
-assert.equal(media.filter(e=>e.dataset.lightbox).length,17);
+assert.equal(media.filter(e=>e.dataset.lightbox).length,21);
 assert.equal(media.filter(e=>e.dataset.videoSrc).length,6);
+const journal=new JSDOM(fs.readFileSync('news.html','utf8')).window.document;
+const diamondStory=JSON.parse(journal.querySelector('#news-media-data').textContent).find(story=>story.id==='concrete-before-after-20261109');
+const finishedDiamondPhotos=diamondStory.media.filter(item=>item.type==='image'&&/\/after-\d+\.webp$/.test(item.src)).map(item=>item.src);
+assert.equal(finishedDiamondPhotos.length,4,'the verified diamond project has four finished views');
+const diamondSection=d.querySelector('#diamond-project');
+assert.ok(diamondSection,'the diamond project is featured in California Style');
+assert.deepEqual([...diamondSection.querySelectorAll('[data-lightbox]')].map(e=>e.dataset.lightbox),finishedDiamondPhotos,'the feature includes every finished view from the same journal project');
+assert.ok(diamondSection.querySelector('a[href="news.html?project=concrete-before-after-20261109"]'),'the complete before-and-after gallery remains accessible');
+for(const photo of finishedDiamondPhotos){assert.equal(media.filter(e=>e.dataset.lightbox===photo).length,1,'each new photo appears exactly once');}
 for(const e of media){assert.ok(fs.existsSync(e.dataset.lightbox||e.dataset.videoSrc));assert.ok(e.dataset.captionEn&&e.dataset.captionEs);}
 assert.ok(fs.readFileSync('scripts/prepare-pages.mjs','utf8').includes('california-style.html'));
 assert.ok(fs.readFileSync('sitemap.xml','utf8').includes('/california-style.html'));
@@ -27,4 +36,4 @@ d.querySelector('.lightbox-close').click();assert.equal(d.querySelector('[data-d
 dom.window.close();
 const contact=new JSDOM('<textarea id="project"></textarea>',{url:'https://ebcconstructionllc.com/contact.html?service=concrete&interest=california-style',runScripts:'outside-only'});
 contact.window.eval(fs.readFileSync('assets/project-context.js','utf8'));assert.match(contact.window.document.querySelector('textarea').value,/California-style concrete/);contact.window.close();
-console.log('California Style: all 17 original photos and 6 videos, bilingual lightbox, focus recovery, video cleanup, deployment and estimate context passed.');
+console.log('California Style: 21 photos and 6 videos, complete diamond project, bilingual lightbox, focus recovery, video cleanup, deployment and estimate context passed.');

@@ -190,3 +190,17 @@ beside Edgar's story on About. Both link to the full image. The photo documents
 Edgar cleaning concrete; it does not establish a separate completed project,
 customer, location or completion date. The feature stays outside the generated
 project catalog so future journal synchronization preserves it.
+
+### California Style diamond driveway collection
+
+The four existing finished photos `assets/images/journal-20261109/after-1.webp`
+through `after-4.webp` were visually reviewed for California Style on November 17,
+2026. The shed, boundary fence, trees, broad curved driveway and connecting path
+identify one project, already documented by the seven-photo
+`concrete-before-after-20261109` journal story. Crossing diagonal joints are
+visible in the finished concrete. No new customer, address or completion date
+is inferred.
+
+All four photos now appear in both California Style galleries, and the landscape
+`after-2.webp` is the dedicated page cover. Original files remain unchanged. The
+older wide gray-house driveway already in the collection is a separate project.
